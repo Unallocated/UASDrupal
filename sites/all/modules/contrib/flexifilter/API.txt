@@ -1,0 +1,101 @@
+// $Id: API.txt,v 1.4 2008/02/29 22:11:51 cwgordon7 Exp $
+
+There are three major hooks to implement, hook_flexifilters, hook_flexifilter_conditions, and hook_flexifilter_components. Hook_flexifilters is for defining default flexifilters; hook_flexifilter_conditions is for describing your module's conditions to flexifilter; hook_flexifilter_components is for describing your module's components to flexifilter.
+
+
+
+
+For hook_flexifilters, an array should be returned, each value of the array corresponding to an exported flexifilter (as an array itself).
+
+function hook_flexifilter() {
+  return array(
+    array(
+      // Exported flexifilter here.
+    ),
+    array(
+      // Another exported flexifilter here.
+    ),
+  );
+}
+
+
+
+
+A description of hook_flexifilter_components:
+
+/**
+ * Implements hook_flexifilter_components().
+ *
+ * @return An array of components to be used by the Flexifilter module. The keys of this array
+ * are unique identifiers for the component (called the component class), and the values of the
+ * array are again arrays, with the following keys:
+ * - label : A human readable name for the component
+ * - description (optional) : A human readable description of what the component does (defaults to none)
+ * - is_container (optional) : TRUE if any of the #contains_ fields are TRUE (set automatically)
+ * - contains_condition (optional) : TRUE if the component has a condition associated with it (defaults to FALSE)
+ * - contains_components (optional) : TRUE if the component has children components (defaults to FALSE)
+ * - callback : A callback function which implements the component
+ * - callback_arguments (optional) : An array of arguments to pass to the callback function (defaults to none)
+ * - group (optional) : A human readable name of the group that the component belongs to (defaults to "Other")
+ * - step : The step in which this is to be performed. Can be 'both', 'either', 'process', or 'prepare'.
+ *     - If 'either' is specified, it will default to process, and the user will not be given the option to change it
+ *       unless they have "show advanced options" checked.
+ */
+
+Hook_flexifilter_conditions works in a similar way with only one modification:
+
+ - It has no 'step' attribute.
+
+
+
+
+Two examples of a function specified in the 'callback' key follows:
+
+function flexifilter_component_foo($op, $settings, $text) {
+  switch ($op) {
+    case 'settings':
+      // Here we're passing back a settings form.
+      $form = array();
+      return $form;
+
+    case 'prepare':
+    case 'process':
+      // This filter does the same thing for both prepare and process, as its 'step' is set to 'either'.
+      // This step will append that message to the text being filtered.
+      $text .= ' - This message brought to you by flexifilter.';
+      return $text;
+
+    default:
+      return $text;
+  }
+}
+
+function flexifilter_condition_foo($op, $settings, $text) {
+  switch ($op) {
+    case 'settings':
+      // Here we're passing back a settings form.
+      $form = array();
+      return $form;
+
+    case 'prepare':
+    case 'process':
+      // We return TRUE if 1 + 1 = 2.
+      if ((1 + 1) == 2) {
+        return TRUE;
+      }
+      // If we get here, 1 + 1 is not equal to two.
+      return FALSE;
+  }
+}
+
+
+
+Some useful API functions follow:
+
+flexifilter_invoke_condition($condition, $op, $text); - This will invoke the condition specified in 'condition' with $op and $text. It will return either TRUE or FALSE, depending on what the condition returned.
+
+flexifilter_invoke_component($component, $op, $settings = array(), $text = ''); - This will invoke the component specified in 'component' with $op, $settings, and $text. 
+
+flexifilter_components_involve_step($components, $step); - This will return TRUE if any of the components in the components array will run in the current step 'process' or 'prepare'.
+
+flexifilter_save_filter($filter); - This will save the filter specified in $filter. It can be used for both INSERTs and UPDATEs.

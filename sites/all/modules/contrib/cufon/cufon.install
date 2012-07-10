@@ -1,0 +1,24 @@
+<?php
+/**
+ * @file
+ * Installation code for Cufon
+ */
+
+/**
+ * Implementation of hook_install().
+ */
+function cufon_install() {
+  // Ensure late execution
+  $update = db_update('system')
+    ->condition('name', 'cufon')
+    ->fields(array('weight' => 100));
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function cufon_uninstall() {
+  // Variable(s) cleanup
+  variable_del('cufon_selectors');
+  variable_del('cufon_remote_url');
+}

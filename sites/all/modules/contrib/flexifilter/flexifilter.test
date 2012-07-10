@@ -1,0 +1,100 @@
+<?php
+// $Id$
+
+class FlexifilterTestCase extends DrupalWebTestCase {
+  var $admin_user;
+  var $basic_user;
+  
+  public function setUp() {
+    parent::setUp('flexifilter');
+    $this->admin_user = $this->drupalCreateUser(array('administer nodes', 'administer flexifilter'));
+    $this->basic_user = $this->drupalCreateUser();
+  }
+}
+
+class FlexifilterAdministrationTestCase extends FlexifilterTestCase {
+  public static function getInfo() {
+    return array(
+      'name' => t('Administration'),
+      'description' => t('Administration tests for Flexifilter.'),
+      'group' => t('Flexifilter'),
+    );
+  }
+  
+  public function testPermissions() {
+    $this->drupalLogin($this->admin_user);
+    $this->drupalGet('admin/structure/flexifilters');
+    $this->assertText('Enabled Flexifilters');
+    $this->assertText('Disabled Flexifilters');
+    $this->drupalLogin($this->basic_user);
+    $this->drupalGet('admin/structure/flexifilters');
+    $this->assertNoText('Enabled Flexifilters');
+    $this->assertNoText('Disabled Flexifilters');
+  }
+
+  public function testDefaultFlexifilter() {
+    $default_flexifilter_label = 'Mediawiki Format';
+    $this->drupalLogin($this->admin_user);
+    $this->drupalGet('admin/structure/flexifilters');
+    $this->assertText($default_flexifilter_label);
+    $filters = flexifilter_get_filters(FALSE);
+    foreach($filters as $fid => $filter) {
+      $this->assertTrue(is_array($filter));
+      $this->assertLink('Edit');
+      $this->assertLinkByHref('admin/structure/flexifilters/'.$fid.'/edit');
+      $this->drupalGet('admin/structure/flexifilters/'.$fid.'/edit');
+      $this->assertFieldById('edit-basic-label', $filter['label']);
+      $this->assertFieldById('edit-basic-description', $filter['description']);
+    }
+  }
+
+  public function testCreateFlexifilter() {
+    $this->drupalLogin($this->admin_user);
+    $this->drupalGet('admin/structure/flexifilters/add');
+  }
+
+  public function testEnableFlexifilter() {
+    $this->drupalLogin($this->admin_user);
+    db_query('UPDATE {flexifilter} SET enabled = 0');
+    $filters = flexifilter_get_filters(FALSE);
+    foreach($filters as $fid => $filter) {
+      $this->drupalGet('admin/structure/flexifilters/'.$fid.'/enable');
+      $this->drupalPost('admin/structure/flexifilters/1/enable', array(), t('Enable'));
+      
+      $this->drupalGet('admin/structure/flexifilters/'.$fid.'/enable');
+      $this->assertUrl('admin/structure/flexifilters');
+      $this->assertText('This Flexifilter is already enabled.');
+    }
+  }
+
+  public function testDisableFlexifilter() {
+    $this->drupalLogin($this->admin_user);
+    db_query('UPDATE {flexifilter} SET enabled = 1');
+    $filters = flexifilter_get_filters(FALSE);
+    foreach($filters as $fid => $filter) {
+      $this->drupalGet('admin/structure/flexifilters/'.$fid.'/disable');
+      $this->drupalPost('admin/structure/flexifilters/1/disable', array(), t('Disable'));
+      
+      $this->drupalGet('admin/structure/flexifilters/'.$fid.'/disable');
+      $this->assertUrl('admin/structure/flexifilters');
+      $this->assertText('This Flexifilter is already disabled.');
+    }
+  }
+}
+
+class FlexifilterFunctionalTestCase extends FlexifilterTestCase {
+  public static function getInfo() {
+    return array(
+      'name' => t('Functional'),
+      'description' => t('Functional tests for Flexifilter.'),
+      'group' => t('Flexifilter'),
+    );
+  }
+  
+  public function testMediawikiFlexifilter() {
+    $this->drupalLogin($this->admin_user);
+    //TODO: create content here.
+    $this->drupalLogin($this->basic_user);
+    //TODO: check content here.
+  }
+}

@@ -1,0 +1,11 @@
+name = Colors
+description = API for coloring selectors.
+core = 7.x
+configure = admin/config/user-interface/colors
+
+; Information added by drupal.org packaging script on 2011-12-27
+version = "7.x-1.0-beta2"
+core = "7.x"
+project = "colors"
+datestamp = "1325001943"
+

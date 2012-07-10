@@ -1,13 +1,37 @@
 /* This file will hold styles for the mobile version of your website (mobile first). */
 /* This also can include ANY global CSS that applies site-wide. Unless overwritten by a more specific style rule, CSS declarations in global.css will apply site-wide. */
 
+/**
+ * 	Colors:
+ * 
+ *  Background gray: 	#3f3f3f
+ *  Dark Gray: 			#222222
+ *  Gold:				#eba713
+ *  OrangeRed:  		#ff4500		
+ */
+
+
 body {
-	background-color: #222222;
+	background-color: #3f3f3f;
 	font: 13px/1.5 "Trebuchet MS", Helvetica, sans-serif;
-	
+	color: #ffffff;
 }
 
 h1, h2, h3, h4, h5, h6 {
 	font-family: "Trebuchet MS", Helvetica, sans-serif;
 	
 }
+
+a:visited, a:link {
+	color: #eba713;
+	text-decoration: none;
+}
+
+a:active {
+	color: #ff4500;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+

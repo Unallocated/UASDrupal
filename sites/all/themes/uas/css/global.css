@@ -1,2 +1,13 @@
 /* This file will hold styles for the mobile version of your website (mobile first). */
 /* This also can include ANY global CSS that applies site-wide. Unless overwritten by a more specific style rule, CSS declarations in global.css will apply site-wide. */
+
+body {
+	background-color: #222222;
+	font: 13px/1.5 "Trebuchet MS", Helvetica, sans-serif;
+	
+}
+
+h1, h2, h3, h4, h5, h6 {
+	font-family: "Trebuchet MS", Helvetica, sans-serif;
+	
+}

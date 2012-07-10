@@ -19,7 +19,7 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
 	font-family: "Trebuchet MS", Helvetica, sans-serif;
-	
+	color: #EBA713;	
 }
 
 a:visited, a:link {
@@ -33,4 +33,129 @@ a:active {
 
 a:hover {
 	text-decoration: underline;
+}
+
+/**
+ * 	Main menu
+ */
+.primary-nav ul li {
+	list-style: none;
+	font-size: 1.5em;
+	float: left;
+	margin: 0;
+	padding: 0;
+}
+
+.primary-nav ul li a {
+	display: block;
+	padding: 0 15px;
+}
+
+.primary-nav ul li.first a{
+	padding-left: 0px;
+}
+
+.primary-nav ul li.active a {
+	color: #ff4500;
+	text-decoration: none;
+}
+
+.primary-nav ul li a:hover {
+	color: #FFFFFF;
+	text-decoration: none;
+}
+
+/**
+ * 	User menu
+ */
+
+#zone-user .region-inner {
+	padding-top: 10px;
+}
+.zone-user .block-user {
+	float: right;
+}
+
+.zone-user .block-user .user-login-block {
+	float: left;
+	position: absolute;
+	right: -10px;
+	z-index: 20;
+	
+	background: #9A9A9A;
+	padding: 10px;
+	border: 2px solid #222222;
+	border-top: none;
+}
+
+.block-logintoboggan {
+	float: right;
+}
+/**
+ * 	Header
+ */
+
+
+#zone-branding-wrapper {
+	background-color: #222222;
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#505050), to(#222222)); /* for webkit browsers */
+	padding-top: 1px;
+	box-shadow: 0 -10px 30px -10px #FFFFFF;
+}
+#zone-branding-inner-wrapper {
+	border-top: 1px solid #3f3f3f;
+	padding-top: 15px;
+	padding-bottom: 35px;
+}
+#zone-menu-wrapper {
+	background: #222222;
+	padding-bottom: 1px;
+	box-shadow: 0 10px 30px -10px #FFFFFF;
+	margin-bottom: 10px;
+}
+
+#block-search-form {
+	float: right;
+}
+
+#zone-menu-inner-wrapper {
+	border-bottom: 1px solid #3f3f3f;
+}
+
+#branding-data { 
+	margin-bottom: 35px;
+}
+
+/**
+ * 	Treatments
+ */
+
+.dark-block {
+	background-color: #222222;
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#333333), to(#222222)); /* for webkit browsers */
+	padding: 10px;
+}
+.dark-block .views-field-title a {
+	font-size: 1.5em;
+	color: #FFFFFF;
+}
+
+.dark-block .views-row {
+	border-bottom: 1px solid #3F3F3F;
+	padding-bottom: 10px;
+	margin-bottom: 5px;
+}
+.dark-block .views-row-last {
+	border-bottom: none;
+	margin-bottom: 0;
+}
+
+.date-byline {
+	font-size: .9em;
+	color: #666666;
+}
+
+.hackerspace-intro .pane-content {
+	font-size: 1.2em;
+	line-height: 2em;
 }

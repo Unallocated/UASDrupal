@@ -1,0 +1,103 @@
+<?php
+
+function uas_checkin_menu() {
+	$items = array();
+	$items['admin/config/uas/checkin'] = array(
+		'title' 			=> 'UAS Checkin',
+	    'description' 		=> 'Configuration for uas space checkin elements',
+	    'page callback' 	=> 'drupal_get_form',
+	    'page arguments' 	=> array('uas_checkin_settings'),
+	    'access arguments' 	=> array('administer uas checkin settings'),
+	    'type'				=> MENU_NORMAL_ITEM
+	);
+	
+	return $items;
+}
+
+/**
+ * Implementation of hook_permission()
+ */
+function uas_checkin_permission() {
+	return array(
+		'administer uas checkin settings'
+	);
+}
+
+/**
+ * Implementation of hook_theme()
+ */
+function uas_checkin_theme($existing, $type, $theme, $path) {
+	$path = drupal_get_path('module', 'uas_checkin'); 
+	return array(
+		'uas_checkin_status' => array(
+			'variables' => array('status' => NULL, 'msg' => NULL),
+			'path' => drupal_get_path('module', 'uas_checkin').'/templates',
+			'template' => 'uas_checkin_status'
+		)
+	);
+}
+
+function uas_checkin_settings () {
+	$form = array();
+	
+	$form['uas_checkin_status_url'] = array(
+		'#type'				=> 'textfield',
+		'#title' 			=> t('UAS Checkin Status URL'),
+		'#default_value'	=> variable_get('uas_checkin_status_url', ''),
+	);
+	
+	return system_settings_form($form);
+}
+
+function uas_checkin_settings_validate($form, &$form_state) {
+	if(!valid_url(&$form_state['values']['uas_checkin_status_url'])) {
+		form_set_error('uas_checkin_status_url', "Invalid URL. Do it right, bitch! Remember your http protocol");
+	}
+}
+
+/**
+ * Implementation of hook_block_info()
+ */
+function uas_checkin_block_info() {
+	$blocks = array();
+	
+	$blocks['uas_checkin_status'] = array(
+		'info' => 'UAS: Check-in Status', 
+	);
+	
+	return $blocks;
+}
+
+function uas_checkin_block_view($delta = '') {
+	$block = array();
+	
+	switch($delta) {
+		case 'uas_checkin_status':
+			$block['subject'] = t('UAS Checkin Status');
+			$block['content'] = uas_checkin_status_view();
+			break;
+	}
+	
+	return $block;
+}
+
+function uas_checkin_status_view() {
+	
+	$uas_checkin_status_url = check_plain(variable_get('uas_checkin_status_url', ''));
+	
+	
+	if($fp = fopen($uas_checkin_status_url, 'r')) {
+		$content = '';
+		while ($line = fread($fp, 1024)) {
+			$content .= $line."\n";
+		}
+	}
+	
+	$pos = strpos($content, 'open');
+	
+	return theme('uas_checkin_status', array(
+		'status' => $pos ? TRUE : FALSE, 
+		'msg' => $pos ? 'The space is OPEN' : 'The space is CLOSED')
+	);
+}
+

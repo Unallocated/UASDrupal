@@ -50,7 +50,7 @@ function uas_checkin_settings () {
 }
 
 function uas_checkin_settings_validate($form, &$form_state) {
-	if(!valid_url(&$form_state['values']['uas_checkin_status_url'])) {
+	if(!valid_url($form_state['values']['uas_checkin_status_url'])) {
 		form_set_error('uas_checkin_status_url', "Invalid URL. Do it right, bitch! Remember your http protocol");
 	}
 }

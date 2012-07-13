@@ -6,6 +6,7 @@
  * 
  *  Background gray: 	#3f3f3f
  *  Dark Gray: 			#222222
+ *  Light Gray:			#505050
  *  Gold:				#eba713
  *  OrangeRed:  		#ff4500		
  */
@@ -158,4 +159,8 @@ a:hover {
 .hackerspace-intro .pane-content {
 	font-size: 1.2em;
 	line-height: 2em;
+}
+
+.round {
+	border-radius: 15px;
 }

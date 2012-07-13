@@ -9,6 +9,7 @@
 .uas-checkin-status-inner {
 	padding: 15px 0 15px 70px;
 	font-size: 1.3em;
+	font-family: Arial, Helvetica, sans-serif
 }
 
 .uas-checkin-status-open .uas-checkin-status-inner {

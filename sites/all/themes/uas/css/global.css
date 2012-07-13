@@ -95,8 +95,6 @@ a:hover {
 /**
  * 	Header
  */
-
-
 #zone-branding-wrapper {
 	background-color: #222222;
 	background-image: -webkit-gradient(linear, left top, left bottom, from(#505050), to(#222222)); /* for webkit browsers */
@@ -134,7 +132,8 @@ a:hover {
 .dark-block {
 	background-color: #222222;
 	background-image: -webkit-gradient(linear, left top, left bottom, from(#333333), to(#222222)); /* for webkit browsers */
-	padding: 10px;
+	padding: 10px; 
+	margin-bottom: 10px;
 }
 .dark-block .views-field-title a {
 	font-size: 1.5em;
@@ -163,4 +162,13 @@ a:hover {
 
 .round {
 	border-radius: 15px;
+}
+
+#homepage .grid-6 {
+	width: 585px;
+}
+
+.know-more-list {
+	list-style: none;
+	
 }

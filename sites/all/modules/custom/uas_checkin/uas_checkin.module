@@ -50,7 +50,7 @@ function uas_checkin_settings () {
 }
 
 function uas_checkin_settings_validate($form, &$form_state) {
-	if(!valid_url($form_state['values']['uas_checkin_status_url'])) {
+	if(!valid_url($form_state['values']['uas_checkin_status_url'], TRUE)) {
 		form_set_error('uas_checkin_status_url', "Invalid URL. Do it right, bitch! Remember your http protocol");
 	}
 }
@@ -82,6 +82,8 @@ function uas_checkin_block_view($delta = '') {
 }
 
 function uas_checkin_status_view() {
+	
+	drupal_add_css(drupal_get_path('module', 'uas_checkin').'/css/uas_checkin.css');
 	
 	$uas_checkin_status_url = check_plain(variable_get('uas_checkin_status_url', ''));
 	

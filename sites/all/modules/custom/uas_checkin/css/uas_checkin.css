@@ -11,10 +11,6 @@
 	font-family: Arial, Helvetica, sans-serif
 }
 
-.uas-checkin-status-open .uas-checkin-status-inner {
-	background: transparent url('../images/greenled.png') 10px center no-repeat;
-}
-
-.uas-checkin-status-closed .uas-checkin-status-inner {
-	background: transparent url('../images/redled.png') 10px center no-repeat;
-}
+.uas-checkin-status-open .uas-checkin-status-inner { background: transparent url('../images/greenled.png') 10px center no-repeat; }
+.uas-checkin-status-closed .uas-checkin-status-inner { background: transparent url('../images/redled.png') 10px center no-repeat; }
+.uas-checkin-status-no-connection .uas-checkin-status-inner { background: transparent url('../images/greyled.png') 10px center no-repeat;}

@@ -1,5 +1,9 @@
 <?php
 
+define('UAS_CHECKIN_STATUS_OPEN', 200);
+define('UAS_CHECKIN_STATUS_CLOSED', 300);
+define('UAS_CHECKIN_STATUS_NOT_CONNECTED', 400);
+
 function uas_checkin_menu() {
 	$items = array();
 	$items['admin/config/uas/checkin'] = array(
@@ -30,7 +34,7 @@ function uas_checkin_theme($existing, $type, $theme, $path) {
 	$path = drupal_get_path('module', 'uas_checkin'); 
 	return array(
 		'uas_checkin_status' => array(
-			'variables' => array('status' => NULL, 'msg' => NULL),
+			'variables' => array('checkin_status' => NULL),
 			'path' => drupal_get_path('module', 'uas_checkin').'/templates',
 			'template' => 'uas_checkin_status'
 		)
@@ -81,25 +85,52 @@ function uas_checkin_block_view($delta = '') {
 	return $block;
 }
 
+/**
+ * Main checkin block view function
+ */
 function uas_checkin_status_view() {
+	$checkin_status = array();
 	
 	drupal_add_css(drupal_get_path('module', 'uas_checkin').'/css/uas_checkin.css');
 	
+	//Grab url from admin settings	
 	$uas_checkin_status_url = check_plain(variable_get('uas_checkin_status_url', ''));
 	
-	
-	if($fp = fopen($uas_checkin_status_url, 'r')) {
+	//Check the uas file
+	if($fp = @fopen($uas_checkin_status_url, 'r')) { //suppress the error here - we're handling the false case in the 'else' statement
 		$content = '';
 		while ($line = fread($fp, 1024)) {
 			$content .= $line."\n";
 		}
+		
+		//Parse for existence of string 'open';
+		$pos = strpos($content, 'open');
+		if($pos) {
+			$checkin_status = array(
+				'status'	=> UAS_CHECKIN_STATUS_OPEN,
+				'class'		=> 'uas-checkin-status-open',
+				'msg' => t('The space is OPEN')
+			);
+			
+		} else {
+			$checkin_status = array(
+				'status' => UAS_CHECKIN_STATUS_CLOSED,
+				'class'	=> 'uas-checkin-status-closed',
+				'msg' => 'The space is CLOSED',
+			);
+		}
+	} else {
+		
+		//
+		$checkin_status = array(
+			'status' => UAS_CHECKIN_STATUS_NOT_CONNECTED,
+			'class' => 'uas-checkin-status-no-connection',
+			'msg' => t("Unable to get space status")
+		);
 	}
-	
-	$pos = strpos($content, 'open');
-	
+
 	return theme('uas_checkin_status', array(
-		'status' => $pos ? TRUE : FALSE, 
-		'msg' => $pos ? 'The space is OPEN' : 'The space is CLOSED')
-	);
+		'checkin_status' => $checkin_status
+	));
 }
 

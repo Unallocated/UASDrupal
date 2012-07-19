@@ -92,6 +92,33 @@ a:hover {
 .block-logintoboggan {
 	float: right;
 }
+
+/**
+ * 	Secondary Navigation
+ */
+
+.secondary-nav {
+	
+}
+
+.secondary-nav .menu { 
+	list-style: none;
+}
+
+.secondary-nav .menu li { 
+	list-style-image: none;
+	list-style-type: none;
+	border-bottom: 1px solid #3F3F3F;
+	margin: 0px;
+}
+
+.secondary-nav .menu li.last {
+	border-bottom: none;
+}
+
+.secondary-nav .menu a { color: #777777; display: block; padding: 5px; text-align: right;}
+.secondary-nav .menu a:hover { color: #FFFFFF; text-decoration: none; }
+.secondary-nav .menu a.active { color: #EBA713; }
 /**
  * 	Header
  */

@@ -1,0 +1,16 @@
+name = Content Type: Video
+description = UAS video content type
+core = 7.x
+package = UAS Content Types
+version = 7.x-1.0-dev
+project = content_type_video
+dependencies[] = features
+dependencies[] = field_sql_storage
+dependencies[] = file
+dependencies[] = media
+dependencies[] = node
+dependencies[] = text
+features[features_api][] = api:1
+features[field][] = node-video-body
+features[field][] = node-video-field_video
+features[node][] = video

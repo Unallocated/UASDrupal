@@ -1,0 +1,13 @@
+name = FileField Sources Plupload
+description = Extends File fields to allow multiple file uploads.
+dependencies[] = filefield_sources
+dependencies[] = plupload
+package = Fields
+core = 7.x
+
+; Information added by drupal.org packaging script on 2012-03-26
+version = "7.x-1.x-dev"
+core = "7.x"
+project = "filefield_sources_plupload"
+datestamp = "1332720973"
+

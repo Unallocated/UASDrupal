@@ -1,1 +1,0 @@
-See major version branches.

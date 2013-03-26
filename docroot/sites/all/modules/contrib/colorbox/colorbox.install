@@ -44,7 +44,7 @@ function colorbox_uninstall() {
 }
 
 /**
- * Delete the unused colorbox_login_form variabel.
+ * Delete the unused colorbox_login_form variable.
  */
 function colorbox_update_7001() {
   $ret = array();
@@ -55,7 +55,7 @@ function colorbox_update_7001() {
 
 /**
  * Delete the unused colorbox_title_trim and
- * colorbox_title_trim_length variabels.
+ * colorbox_title_trim_length variables.
  */
 function colorbox_update_7002() {
   $ret = array();

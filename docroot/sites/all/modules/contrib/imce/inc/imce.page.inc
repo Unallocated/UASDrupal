@@ -259,7 +259,7 @@ function imce_fileop_form_validate($form, &$form_state) {
     return form_error($form['filenames'], t('Please select a file.'));
   }
 
-  //filenames come seperated by colon
+  //filenames come separated by colon
   $filenames = explode(':', $form_state['values']['filenames']);
   $cnt = count($filenames);
   //check the number of files.
@@ -424,10 +424,6 @@ function imce_delete_filepath($uri) {
     // Force delete file. Prevent running file_usage_list() second time.
     if (!file_delete($file, TRUE)) {
       return FALSE;
-    }
-    // Remove imce usage
-    if ($is_imce) {
-      file_usage_delete($file, 'imce');
     }
   }
   // Not in db. Probably loaded via ftp.

@@ -1,0 +1,8 @@
+name = UAS Checkin
+description = Manages the UAS check-in system and reporting.
+core = 7.x
+package = UAS
+
+dependencies[] = uas
+
+configure = admin/config/uas/checkin

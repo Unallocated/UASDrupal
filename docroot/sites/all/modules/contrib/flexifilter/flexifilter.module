@@ -1,0 +1,781 @@
+<?php
+// $Id: flexifilter.module,v 1.16.2.7 2008/11/22 22:13:33 cwgordon7 Exp $
+
+$path = drupal_get_path('module', 'flexifilter');
+include_once DRUPAL_ROOT . '/' . ($path . '/flexifilter.components.inc');
+include_once DRUPAL_ROOT . '/' . ($path . '/flexifilter.conditions.inc');
+include_once DRUPAL_ROOT . '/' . ($path . '/flexifilter.flexifilters.inc');
+
+define('FLEXIFILTER_PART_TYPE_COMPONENT', 0);
+define('FLEXIFILTER_PART_TYPE_CONDITION', 1);
+define('FLEXIFILTER_PART_TYPE_ROOT', 2);
+
+/**
+ * Implements hook_permission().
+ */
+function flexifilter_permission() {
+  return array(
+    'administer flexifilter' => array(
+      'title' => t('Administer Flexifilter'),
+      'description' => t('Change administrative settings for Flexifilter'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_menu().
+ */
+function flexifilter_menu() {
+  $items = array();
+  $items['admin/structure/flexifilters'] = array(
+    'title' => 'Flexifilters',
+    'description' => 'Create new flexible input filters without writing any code.',
+    'page callback' => 'drupal_get_form',
+    'access arguments' => array('administer flexifilter'),
+    'page arguments' => array('flexifilter_filter_list_form'),
+    'file' => 'flexifilter.admin.inc',
+  );
+  $items['admin/structure/flexifilters/list'] = array(
+    'title' => 'List',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+  );
+  $items['admin/structure/flexifilters/add'] = array(
+    'title' => 'Add new Flexifilter',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('flexifilter_filter_edit_form'),
+    'type' => MENU_LOCAL_ACTION,
+    'weight' => 1,
+    'access arguments' => array('administer flexifilter'),
+    'file' => 'flexifilter.admin.inc',
+  );
+  $items['admin/structure/flexifilters/import'] = array(
+    'title' => 'Import a Flexifilter',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('flexifilter_filter_input_form'),
+    'type' => MENU_LOCAL_ACTION,
+    'weight' => 2,
+    'access arguments' => array('administer flexifilter'),
+    'file' => 'flexifilter.admin.inc',
+  );
+  $items['admin/structure/flexifilters/defaults'] = array(
+    'title' => 'Load a default Flexifilter',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('flexifilter_filter_default_form'),
+    'type' => MENU_LOCAL_ACTION,
+    'weight' => 3,
+    'access arguments' => array('administer flexifilter'),
+    'file' => 'flexifilter.admin.inc',
+  );
+  $items['admin/structure/flexifilters/%flexifilter'] = array(
+    'title callback' => 'flexifilter_get_field',
+    'title arguments' => array(3, 'label'),
+    'type' => MENU_CALLBACK,
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('flexifilter_filter_edit_form', 3),
+    'access arguments' => array('administer flexifilter'),
+    'file' => 'flexifilter.admin.inc',
+  );
+  $items['admin/structure/flexifilters/%flexifilter/edit'] = array(
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'access arguments' => array('administer flexifilter'),
+    'title' => 'Edit',
+  );
+  $items['admin/structure/flexifilters/%flexifilter/export'] = array(
+    'title' => 'Export',
+    'type' => MENU_LOCAL_TASK,
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('flexifilter_filter_export_form', 3),
+    'access arguments' => array('administer flexifilter'),
+    'file' => 'flexifilter.admin.inc',
+  );
+  $items['admin/structure/flexifilters/%flexifilter/preview'] = array(
+    'title' => 'Preview',
+    'type' => MENU_LOCAL_TASK,
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('flexifilter_filter_preview_form', 3),
+    'access arguments' => array('administer flexifilter'),
+    'file' => 'flexifilter.admin.inc',
+  );
+  $items['admin/structure/flexifilters/%flexifilter/delete'] = array(
+    'title' => 'Delete',
+    'type' => MENU_CALLBACK,
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('flexifilter_filter_delete_form', 3),
+    'access arguments' => array('administer flexifilter'),
+    'file' => 'flexifilter.admin.inc',
+  );
+  $items['admin/structure/flexifilters/%flexifilter/enable'] = array(
+    'title' => 'Enable',
+    'type' => MENU_CALLBACK,
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('flexifilter_filter_enable_form', 3),
+    'access arguments' => array('administer flexifilter'),
+    'file' => 'flexifilter.admin.inc',
+  );
+  $items['admin/structure/flexifilters/%flexifilter/disable'] = array(
+    'title' => 'Disable',
+    'type' => MENU_CALLBACK,
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('flexifilter_filter_disable_form', 3),
+    'access arguments' => array('administer flexifilter'),
+    'file' => 'flexifilter.admin.inc',
+  );
+  return $items;
+}
+
+/**
+ * Implements hook_help().
+ */
+function flexifilter_help($path, $arg) {
+  switch ($path) {
+    case 'admin/help#flexifilter':
+      $output = '<p>' . t('Flexifilters are flexible filters that can be used by <a href="@input_formats">Input Formats</a> to filter created content.', array('@input_formats' => url('admin/config/filter'))) . '</p>';
+      $output .= '<p>' . t('For more information, see the online handbook entry for <a href="@flexifilter">Flexifilter module</a>.', array('@flexifilter' => 'http://drupal.org/node/212410/')) . '</p>';
+      return $output;
+
+    case 'admin/structure/flexifilters':
+      return '<p>' . t('Flexifilters are flexible filters that can be used by <a href="@input_formats">text formats</a> to filter created content.', array('@input_formats' => url('admin/config/filter'))) . '</p>';
+
+    case 'admin/structure/flexifilters/%/edit':
+      $output = '<p>' . t('Flexifilters are defined in terms of components. A component can range from something simple like "regex replacement" to "invoke other filter" or "while loop". By combining these components, you can create a filter to do what you want. Use the "Add component" dropdown to add a new component to the end of your filter, and then use the "Re/move" dropdown within the component to remove the component, or to move it up/down within the list of components.') . '</p>';
+      $output .= '<p>' . t('Some components (for example, the if/while loops) can have components and conditions within them. In this case, the if/while has a list of components, just like the filter itself has a list of components. The if/while will also have a condition, which controls when the list of components happen.');
+      return $output;
+  }
+}
+
+/**
+ * An API function that gets a list of all the Flexifilter components present.
+ *
+ * @param $reset Set to TRUE to clear the cache (cache is per-page-request)
+ *
+ * @return An array containing the components. Each component will be a
+ * key/value pair in this array. The key is a unique identifier of the
+ * component, also called the component class. The values are associative
+ * arrays containing the following keys:
+ *  - label : A human readable name for the component
+ *  - description : A human readable description of what the component does
+ *  - is_container : TRUE if any of the #contains_ fields are TRUE
+ *  - contains_condition : TRUE if the component has a condition associated with it
+ *  - contains_components : TRUE if the component has children components
+ *  - callback : A callback function which implements the component
+ *  - callback_arguments : An array of arguments to pass to the callback function
+ *  - group : A human readable name of the group that the component belongs to
+ *  - is_advanced : TRUE if the component is only shown in advanced mode
+ */
+function flexifilter_get_component_list($include_advanced_items = TRUE, $reset = FALSE) {
+  static $cache = array();
+  if (!isset($cache[$include_advanced_items]) || $reset) {
+    $components = module_invoke_all('flexifilter_components');
+    foreach ($components as $key => $component) {
+      if (!isset($component['group'])) {
+        $components[$key]['group'] = t('Other');
+      }
+      if (!isset($component['description'])) {
+        $components[$key]['description'] = '';
+      }
+      if (!isset($component['callback_arguments'])) {
+        $components[$key]['callback_arguments'] = array();
+      }
+      if (!isset($component['contains_condition'])) {
+        $components[$key]['contains_condition'] = FALSE;
+      }
+      if (!isset($component['contains_components'])) {
+        $components[$key]['contains_components'] = FALSE;
+      }
+      if (!isset($component['is_container'])) {
+        $components[$key]['is_container'] = $components[$key]['contains_condition'] || $components[$key]['contains_components'];
+      }
+      if (!isset($component['is_advanced'])) {
+        $components[$key]['is_advanced'] = FALSE;
+      }
+      if (!$include_advanced_items && $components[$key]['is_advanced']) {
+        unset($components[$key]);
+      }
+    }
+    $cache[$include_advanced_items] = $components;
+  }
+  return $cache[$include_advanced_items];
+}
+
+/**
+ * An API function that gets a list of all the Flexifilter components present.
+ */
+function flexifilter_get_condition_list($include_advanced_items = TRUE, $reset = FALSE) {
+  static $cache = array();
+  if (!isset($cache[$include_advanced_items]) || $reset) {
+    $conditions = module_invoke_all('flexifilter_conditions');
+    foreach ($conditions as $key => $condition) {
+      if (!isset($condition['group'])) {
+        $conditions[$key]['group'] = t('Other');
+      }
+      if (!isset($condition['description'])) {
+        $conditions[$key]['description'] = '';
+      }
+      if (!isset($condition['callback_arguments'])) {
+        $conditions[$key]['callback_arguments'] = array();
+      }
+      if (!isset($condition['contains_conditions'])) {
+        $conditions[$key]['contains_conditions'] = FALSE;
+      }
+      if (!isset($condition['is_container'])) {
+        $conditions[$key]['is_container'] = $conditions[$key]['contains_conditions'];
+      }
+      if (!isset($condition['is_advanced'])) {
+        $conditions[$key]['is_advanced'] = FALSE;
+      }
+      if (!$include_advanced_items && $conditions[$key]['is_advanced']) {
+        unset($conditions[$key]);
+      }
+    }
+    $cache[$include_advanced_items] = $conditions;
+  }
+  return $cache[$include_advanced_items];
+}
+
+/**
+ * Causes a component to run
+ *
+ * @param $component A component (e.g. from flexifilter_get_component_list())
+ * @param $op The operation to run on the component. "settings", "prepare" and "process" are valid operations.
+ * @param $settings The values from the component's settings form (can be an empty array for "settings" operation)
+ * @param $text The text to run the component over (ignored for "settings" operation)
+ *
+ * @return "prepare" and "process" operations return the new text, "settings" returns an FAPI table. For any
+ * operations that the component doesn't support, it will return $text.
+ */
+function flexifilter_invoke_component($component, $op, $settings = array(), $text = '') {
+  $text = call_user_func_array($component['callback'], array_merge($component['callback_arguments'], array($op, $settings, $text)));
+  $_flexifilter_preview = variable_get('flexifilter_preview', FALSE);
+  if ($_flexifilter_preview) {
+    $_flexifilter_preview_text = variable_get('flexifilter_preview_text', array());
+    $_flexifilter_preview_text[] = array(
+      'value' => $text,
+      'type' => 'component',
+      'step' => $op,
+      'class' => $component['label'],
+      'settings' => $settings,
+    );
+    variable_set('flexifilter_preview_text', $_flexifilter_preview_text);
+  }
+  return $text;
+}
+
+/**
+ * Causes a condition to run
+ *
+ * @param $data Array containing condition data. Should have at least two keys:
+ *  - class : The class name of the component
+ *  - settings : Array of settings to pass to the component
+ * @param $op The operation to run on the condition. "settings", "prepare" and "process" are valid operations.
+ * @param $text The text to run the condition over (ignored for "settings" operation)
+ *
+ * @return "prepare" and "process" operations return either TRUE or FALSE, "settings" returns an FAPI table
+ */
+function flexifilter_invoke_condition($data, $op, $text = '') {
+  // Blank class name is the faux condition "No Condition"
+  if ($data['class'] === '') {
+    if ($op == 'settings') {
+      return array();
+    }
+    else {
+      return FALSE;
+    }
+  }
+
+  // Anything else is a proper condition, so dispatch it
+  $conditions   = flexifilter_get_condition_list();
+  $condition    = $conditions[$data['class']];
+  $settings     = $data['settings'];
+  $return_value = call_user_func_array($condition['callback'], array_merge($condition['callback_arguments'], array($op, $settings, $text)));
+
+  switch ($op) {
+    // For settings, return the value as-is
+    case 'settings':
+      return $return_value;
+
+    // For prepare and process, force the return value to TRUE or FALSE
+    case 'prepare':
+    case 'process':
+      if ($return_value) {
+        return TRUE;
+      }
+      else {
+        return FALSE;
+      }
+  }
+}
+
+/**
+ * Causes a series of components to run
+ *
+ * @param $components An array containing components. Each value in this array must be an array with the following keys:
+ *  - class : The name of a component class (i.e. one of the keys in the flexifilter_get_component_list() array)
+ *  - step : If the component can run in either step, should contain "prepare" or "process". Ignored if the component runs in a set step.
+ *  - settings : An array of settings for the component, suitable for passing to flexifilter_invoke_component()
+ * @param $op The operation to perform on the components. Should be "prepare" or "process".
+ * @param $text The text to prepare or process
+ *
+ * @return The new text, after preparation / processing
+ */
+function flexifilter_invoke_components($components, $op, $text) {
+  $component_list = flexifilter_get_component_list();
+  foreach ($components as $key => $component) {
+    if ($key !== 'id_prefix' && $key !== 'id_next') {
+      $class = $component_list[$component['class']];
+      if ($class['step'] == 'both' || $component['settings']['step'] == $op || $class['step'] == $op) {
+        $text = flexifilter_invoke_component($class, $op, $component['settings'], $text);
+      }
+    }
+  }
+  return $text;
+}
+
+/**
+ * API function that returns TRUE if the components are involved in the step.
+ *
+ * @param $components
+ *   An array of components to check for involvement.
+ * @param $step
+ *   The step to check for involvement, either 'process' or 'prepare'.
+ */
+function flexifilter_components_involve_step($components, $step) {
+  $component_list = flexifilter_get_component_list();
+  foreach ($components as $key => $component) {
+    if ($key !== 'id_prefix' && $key !== 'id_next') {
+      $class = $component_list[$component['class']];
+      // If step is explicity set to the one being tested, then it is involved
+      if ((isset($component['step']) && $component['step'] == $step) || $class['step'] == $step) {
+        return TRUE;
+      }
+      // If step is set to both, then it is involved (unless it is a container)
+      if ($class['is_container'] !== TRUE && $class['step'] == 'both') {
+        return TRUE;
+      }
+      // Finally, if one of its children is involed, then it is
+      if (isset($component['components']) && flexifilter_components_involve_step($component['components'], $step)) {
+        return TRUE;
+      }
+    }
+  }
+  return FALSE;
+}
+
+/**
+ * Turns an array of elements into an array of groups containing element labels
+ *
+ * @param $elements An array of elements. Each key/value pair is an element, with the
+ * value being an associative array containing at least label and group.
+ *
+ * @return An array of groups, such that: $returned['element_group']['element_key'] = 'element_label'.
+ */
+function flexifilter_get_grouped_labels($elements) {
+  $grouped = array();
+
+  foreach ($elements as $name => $element) {
+    $grouped[$element['group']][$name] = $element['label'];
+  }
+  array_map('asort', $grouped);
+  ksort($grouped);
+  return $grouped;
+}
+
+function flexifilter_filter_info() {
+  $filters = array();
+  foreach (flexifilter_get_filters(FALSE) as $fid => $filter) {
+    if($filter['enabled']) {
+      $filters[$filter['label']] = array(
+        'title' => t($filter['label']),
+        'description' => t($filter['description']),
+        'prepare callback' => 'flexifilter_filter_prepare',
+        'process callback' => 'flexifilter_filter_process',
+        'tips callback' => 'flexifilter_filter_tips',
+      );
+    }
+  }
+  return $filters;
+}
+
+function flexifilter_filter_prepare($text, $filter, $format, $langcode, $cache, $cache_id) {
+  $filters = flexifilter_get_filters(FALSE);
+  foreach($filters as $row) {
+    if($row['enabled'] && $row['label'] == $filter->title) {
+      $flexifilter = $row;
+    }
+  }
+  return flexifilter_invoke_components($flexifilter['components'], 'prepare', $text);
+}
+
+function flexifilter_filter_process($text, $filter, $format, $langcode, $cache, $cache_id) {
+  $filters = flexifilter_get_filters(FALSE);
+  foreach($filters as $row) {
+    if($row['enabled'] && $row['label'] == $filter->title) {
+      $flexifilter = $row;
+    }
+  }
+  return flexifilter_invoke_components($flexifilter['components'], 'process', $text);
+}
+
+function flexifilter_filter_tips($filter, $format, $long = FALSE) {
+  $filters = flexifilter_get_filters(FALSE);
+  foreach($filters as $row) {
+    if($row['enabled'] && $row['label'] == $filter->title) {
+      $flexifilter = $row;
+    }
+  }
+  if ($long) {
+    return str_replace('<--break-->', '', $flexifilter['description']);
+  }
+  else {
+    $pos = strpos($flexifilter['description'], '<!--break-->');
+    if ($pos === FALSE) {
+      return drupal_substr($flexifilter['description'], 0);
+    }
+    return drupal_substr($flexifilter['description'], 0, $pos);
+  }
+}
+
+/**
+ * Menu callback; loads a Flexifilter object.
+ *
+ * @param $fid
+ *   The unique Flexifilter ID of the Flexifilter to load.
+ * @return
+ *   The Flexifilter upon success; FALSE upon failure.
+ */
+function flexifilter_load($fid) {
+  if (!is_numeric($fid)) {
+    return FALSE;
+  }
+  $result = db_query('SELECT * FROM {flexifilter} WHERE fid = :fid', array(':fid' => $fid));
+
+  foreach ($result as $row) {
+    return _flexifilter_filter_from_db_row($row, TRUE);
+  }
+  return FALSE;
+}
+
+function flexifilter_get_field($flexifilter, $field) {
+  return $flexifilter[$field];
+}
+
+/**
+ * Returns all Flexifilters
+ *
+ * @param $include_components If TRUE, then the filter's components are not retrieved. This saves a lot of work from being done, so set it to FALSE if you only require the Flexifilter names and other simple details.
+ * @param $reset May be set to true to clear the cache.
+ *
+ * @return An array of Flexifilters. For each key/value pair, the key is the Flexifilter ID and the value
+ * is an array containing the following fields:
+ *  - label : A human readable name for the Flexifilter
+ *  - description : The description given to the Flexifilter
+ *  - id : The Flexifilter ID number
+ *  - enabled : TRUE if the Flexifilter is enabled, FALSE otherwise
+ *  - advanced
+ *  - components : An array containing the components of the Flexifilter
+ */
+function flexifilter_get_filters($include_components = TRUE, $reset = FALSE) {
+  static $cache = array();
+  if (!isset($cache[$include_components]) || $reset) {
+    $filters = array();
+    $result = db_query('SELECT * FROM {flexifilter}');
+    foreach ($result as $row) {
+      $filters[$row->fid] = _flexifilter_filter_from_db_row($row, $include_components);
+    }
+    $cache[$include_components] = $filters;
+  }
+  return $cache[$include_components];
+}
+
+/**
+ * Saves a Flexifilter to the database.
+ *
+ * @param $filter A Flexifilter to save. Should be of same form as the Flexifilters returned from flexifilter_get_filters
+ * (e.g. an array containing the label,description,id,enabled,advanced and components fields), although ID can be
+ * set to 'new' to create a new Flexifilter rather than update an existing one. Do not use.
+ *
+ * @return The fid.
+ */
+function flexifilter_save_filter($filter) {
+  $fid         = $filter['fid'];
+  $label       = $filter['label'];
+  $description = $filter['description'];
+  $advanced    = $filter['advanced'];
+  $cache       = isset($filter['cache']) ? $filter['cache'] : 1;
+  
+  $filter_values = array(
+    'label' => $label,
+    'description' => $description,
+    'enabled' => 0,
+    'pid_root' => 0,
+    'advanced' => $advanced,
+    'cache' => $cache,
+  );
+  if ($fid === 'new') {
+    drupal_write_record('flexifilter', $filter_values);
+    $fid = $filter_values['fid'];
+    $pids_to_reuse = array();
+    $pid_root      = _flexifilter_save_filter_components($filter['components'], $fid, $pids_to_reuse);
+    $pid_root_values = array('pid_root' => $pid_root, 'fid' => $fid);
+    drupal_write_record('flexifilter', $pid_root_values, 'fid');
+  }
+  else {
+    $pids_to_reuse = array();
+    $result = db_query('SELECT pid FROM {flexifilter_parts} WHERE fid = :fid', array(':fid' => $fid));
+    foreach ($result as $row) {
+      $pids_to_reuse[] = $row->pid;
+    }
+    sort($pids_to_reuse, SORT_NUMERIC);
+    $filter_values['pid_root'] = _flexifilter_save_filter_components($filter['components'], $fid, $pids_to_reuse);
+    if (count($pids_to_reuse) > 0) {
+      db_query('DELETE FROM {flexifilter_parts} WHERE pid = ' . implode($pids_to_reuse, ' OR pid = '), array($fid));
+    }
+    $filter_values['fid'] = $fid;
+    drupal_write_record('flexifilter', $filter_values, 'fid');
+  }
+  $existing_filters = flexifilter_get_filters(FALSE, TRUE);
+  if (isset($existing_filters[$fid]['enabled']) && isset($filter['enabled'])) {
+    if ($existing_filters[$fid]['enabled'] != $filter['enabled']) {
+      if (!$filter['enabled']) {
+        $disable = array('enabled' => 0, 'fid' => $fid);
+        drupal_write_record('flexifilter', $disable, 'fid');
+      }
+    }
+  }
+  return $fid;
+}
+
+function _flexifilter_save_filter_components($components, $fid, &$pids_to_reuse, $parent = FALSE) {
+  if ($parent === FALSE) {
+    $values = array(
+      'fid' => (int)$fid,
+      'parent_pid' => 0,
+      'type' => FLEXIFILTER_PART_TYPE_ROOT,
+      'class_name' => '',
+      'settings' => '',
+    );
+    if ($reuse_pid = array_shift($pids_to_reuse)) {
+      $values['pid'] = $reuse_pid;
+      drupal_write_record('flexifilter_parts', $values, 'pid');
+    }
+    else {
+      drupal_write_record('flexifilter_parts', $values);
+    }
+    $parent = $values['pid'];
+  }
+  foreach ($components as $key => $child) {
+    if (is_numeric($key)) {
+      if (isset($child['settings']['components'])) {
+        $child_components = $child['settings']['components'];
+        unset($child['settings']['components']);
+      }
+      if (isset($child['settings']['condition'])) {
+        $child_condition = $child['settings']['condition'];
+        unset($child['settings']['condition']);
+      }
+
+      $child_values = array(
+        'fid' => $fid,
+        'parent_pid' => $parent,
+        'type' => FLEXIFILTER_PART_TYPE_COMPONENT,
+        'class_name' => $child['class'],
+        'settings' => serialize($child['settings']),
+      );
+
+      if ($child_cid = array_shift($pids_to_reuse)) {
+        $child_values['pid'] = $child_cid;
+        drupal_write_record('flexifilter_parts', $child_values, 'pid');
+      }
+      else {
+        drupal_write_record('flexifilter_parts', $child_values);
+      }
+      $child_cid = $child_values['pid'];
+      if (isset($child_components)) {
+        _flexifilter_save_filter_components($child_components, $fid, $pids_to_reuse, $child_cid);
+      }
+      if (isset($child_condition)) {
+        _flexifilter_save_filter_condition($child_condition, $fid, $pids_to_reuse, $child_cid);
+      }
+    }
+  }
+  return $parent;
+}
+
+function _flexifilter_save_filter_condition($condition, $fid, &$pids_to_reuse, $parent) {
+  if (isset($condition['settings']['conditions'])) {
+    $condition_conditions = $condition['settings']['conditions'];
+    unset($condition['settings']['conditions']);
+  }
+  $values = array(
+    'fid' => $fid,
+    'parent_pid' => $parent,
+    'type' => FLEXIFILTER_PART_TYPE_CONDITION,
+    'class_name' => $condition['class'],
+    'settings' => serialize($condition['settings']),
+  );
+  if ($our_pid = array_shift($pids_to_reuse)) {
+    $values['pid'] = $our_pid;
+    drupal_write_record('flexifilter_parts', $values, 'pid');
+  }
+  else {
+    drupal_write_record('flexifilter_parts', $values);
+  }
+  $our_pid = $values['pid'];
+  if (isset($condition_conditions)) {
+    foreach ($condition_conditions as $sub_condition) {
+      _flexifilter_save_filter_condition($sub_condition, $fid, $pids_to_reuse, $our_pid);
+    }
+  }
+}
+
+/**
+ * Helper function for flexifilter_get_filters; converts a row from the flexifilter table
+ * into a full Flexifilter.
+ */
+function _flexifilter_filter_from_db_row($row, $include_components) {
+  $filter = array(
+    'label' => $row->label,
+    'description' => $row->description,
+    'id' => $row->fid,
+    'enabled' => ($row->enabled == 1),
+    'advanced' => ($row->advanced == 1),
+    'cache' => $row->cache,
+  );
+  $pid_root = $row->pid_root;
+
+  if ($include_components) {
+    // Fetch all the parts of the filter and store them in a flat array
+    $result             = db_query('SELECT * FROM {flexifilter_parts} WHERE fid = :fid', array(':fid' => $row->fid));
+    $components_flat    = array();
+    $component_children = array();
+    $id_next            = 0;
+    foreach ($result as $row) {
+      $components_flat[$row->pid] = array(
+        'class' => $row->class_name,
+        'settings' => $row->settings,
+        'type' => $row->type,
+        'pid' => $row->pid,
+      );
+      $id_next = max($id_next, $row->pid + 1);
+      if (!isset($component_children[$row->parent_pid])) {
+        $component_children[$row->parent_pid] = array($row->pid);
+      }
+      else {
+        $component_children[$row->parent_pid][] = $row->pid;
+      }
+    }
+    $filter['components'] = _flexifilter_reconstruct_components($pid_root, $components_flat, $component_children);
+    $filter['components']['id_next'] = $id_next;
+    $filter['components']['id_prefix'] = 'flexifilter_component_';
+  }
+  return $filter;
+}
+
+/**
+ * Helper function for _flexifilter_filter_from_db_row; recursively collects the component
+ * children of a Flexifilter part.
+ */
+function _flexifilter_reconstruct_components($root, &$components_flat, &$component_children) {
+  $component_list = flexifilter_get_component_list();
+  $components = array();
+  if (isset($component_children[$root])) {
+    foreach ($component_children[$root] as $child_pid) {
+      $child = $components_flat[$child_pid];
+      if ($child['type'] == FLEXIFILTER_PART_TYPE_COMPONENT) {
+        $class = $component_list[$child['class']];
+        $child_reconstructed = array(
+          'class' => $child['class'],
+          'settings' => unserialize($child['settings']),
+          'id' => $child['pid'],
+        );
+        if ($class['contains_components']) {
+          $child_reconstructed['settings']['components'] = _flexifilter_reconstruct_components($child_pid, $components_flat, $component_children);
+        }
+        if ($class['contains_condition']) {
+          $conditions = _flexifilter_reconstruct_conditions($child_pid, $components_flat, $component_children);
+          $child_reconstructed['settings']['condition'] = $conditions[0];
+        }
+        $components[] = $child_reconstructed;
+      }
+    }
+  }
+  return $components;
+}
+
+/**
+ * Helper function for _flexifilter_filter_from_db_row; recursively collects the condition
+ * children of a Flexifilter part.
+ */
+function _flexifilter_reconstruct_conditions($root, &$conditions_flat, &$condition_children) {
+  $condition_list = flexifilter_get_condition_list();
+  $conditions = array();
+  if (isset($condition_children[$root])) {
+    foreach ($condition_children[$root] as $child_pid) {
+      $child = $conditions_flat[$child_pid];
+      if ($child['type'] == FLEXIFILTER_PART_TYPE_CONDITION) {
+        if ($child['class'] == '') {
+          $child_reconstructed = array(
+            'class' => '',
+            'settings' => array(),
+          );
+        }
+        else {
+          $class = $condition_list[$child['class']];
+          $child_reconstructed = array(
+            'class' => $child['class'],
+            'settings' => unserialize($child['settings']),
+          );
+          if ($class['contains_conditions']) {
+            $child_reconstructed['settings']['conditions'] = _flexifilter_reconstruct_conditions($child_pid, $conditions_flat, $condition_children);
+          }
+        }
+        $conditions[] = $child_reconstructed;
+      }
+    }
+  }
+  return $conditions;
+}
+
+/**
+ * Returns the number of enabled Flexifilters.
+ */
+function flexifilter_get_number_enabled_filters($reset = FALSE) {
+  static $count;
+  if (!isset($count) || $reset) {
+    $count = 0;
+    $filters = flexifilter_get_filters($reset);
+    foreach ($filters as $filter) {
+      if ($filter['enabled']) {
+        $count++;
+      }
+    }
+  }
+  return $count;
+}
+
+/**
+ * API function: installs Flexifilters.
+ *
+ * @param $module - The name of the module whose Flexifilters should be installed.
+ * @param $flexifilters - Optional. An array of Flexifilters to be installed. If passed in, $module is irrelevant.
+ * @return
+ *   An array of fids of the filters saved.
+ */
+function flexifilter_install_flexifilters($module, $flexifilters = NULL) {
+  if (is_null($flexifilters)) {
+    // Allow for magic file naming.
+    $file = drupal_get_path('module', $module) . '/$module.flexifilters.inc';
+    if (file_exists($file)) {
+      require_once DRUPAL_ROOT . '/' . $file;
+    }
+    $flexifilters = module_invoke($module, 'flexifilters');
+  }
+  $fids = array();
+  foreach ($flexifilters as $flexifilter) {
+    $fid = flexifilter_save_filter($flexifilter);
+    drupal_set_message(t('The !url Flexifilter has been saved.', array('!url' => l($flexifilter['label'], "admin/structure/flexifilters/$fid"))));
+    watchdog('flexifilter', 'The !url Flexifilter has been saved.', array('!url' => l($flexifilter['label'], "admin/structure/flexifilters/$fid")));
+    $fids[] = $fid;
+  }
+  return $fids;
+}
+

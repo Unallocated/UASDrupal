@@ -1,0 +1,69 @@
+<?php
+/**
+ * @file
+ * Break free from CSS prefix hell!
+ */
+
+/**
+ * Implements hook_init().
+ */
+function prefixfree_init() {
+  drupal_add_library('prefixfree', 'prefixfree', TRUE);
+}
+
+/**
+ * Implements hook_library().
+ */
+function prefixfree_library() {
+  $libraries = array();
+
+  $libraries['prefixfree'] = array(
+    'title' => 'Prefix free',
+    'website' => 'http://leaverou.github.com/prefixfree',
+    'version' => '',
+    'js' => array(
+      prefixfree_get_library_file() => array(),
+    ),
+  );
+
+  return $libraries;
+}
+
+/**
+ * Helper function gets the path to the library directory.
+ */
+function prefixfree_get_library_path() {
+  $default_path = drupal_get_path('module', 'prefixfree') . '/prefixfree';
+  $path = NULL;
+
+  // If Libraries API is enabled, make sure the file exists before pointing there.
+  if (function_exists('libraries_get_path') && file_exists(libraries_get_path('prefixfree'))) {
+    $path = libraries_get_path('prefixfree');
+  }
+  // If the library can't be found, try to get it from the module directory.
+  elseif (file_exists($default_path)) {
+    $path = $default_path;
+  }
+
+  return $path;
+}
+
+/**
+ * Helper function gets the path to the library Javascript file.
+ */
+function prefixfree_get_library_file() {
+  $file = NULL;
+  $path = prefixfree_get_library_path();
+
+  if (file_exists($path . '/prefixfree.js')) {
+    $file = $path . '/prefixfree.js';
+  }
+
+  // This is not a else if because prefixfree.min.js should override
+  // prefixfree.js if if exists.
+  if (file_exists($path . '/prefixfree.min.js')) {
+    $file = $path . '/prefixfree.min.js';
+  }
+
+  return $file;
+}

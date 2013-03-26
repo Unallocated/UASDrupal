@@ -1,0 +1,16 @@
+--- .htaccess	2011-12-05 17:18:55.000000000 -0500
++++ sites/all/modules/ais/ais.htaccess.example	2011-12-19 09:20:51.000000000 -0500
+@@ -97,6 +103,13 @@
+   # uncomment the following line:
+   # RewriteBase /
+ 
++# AIS: Adaptive Image Style
++  RewriteBase /
++  RewriteCond %{REQUEST_URI} ^(.+)/files/styles/adaptive/(.+)$
++  RewriteCond %{REQUEST_URI} !/modules/image/sample.png
++  RewriteCond %{HTTP_COOKIE} ais=([a-z0-9-_]+)
++  RewriteRule ^(.+)/files/styles/adaptive/(.+)$ $1/files/styles/%1/$2 [R=302,L]
++
+   # Pass all requests not referring directly to files in the filesystem to
+   # index.php. Clean URLs are handled in drupal_environment_initialize().
+   RewriteCond %{REQUEST_FILENAME} !-f

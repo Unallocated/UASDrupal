@@ -1,0 +1,12 @@
+// $Id: INSTALL.txt,v 1.1 2008/01/09 01:19:04 cwgordon7 Exp $
+
+Installation
+============
+
+1) Place this directory in your modules directory.
+
+2) Enable the module at admin/build/modules.
+
+3) Configure, edit, add, enable, disable, or delete flexifilters at admin/build/flexifilters.
+
+4) Add your custom filters to input formats at admin/settings/filters.

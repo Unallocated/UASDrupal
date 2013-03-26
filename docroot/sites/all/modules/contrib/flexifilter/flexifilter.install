@@ -1,0 +1,144 @@
+<?php
+// $Id: flexifilter.install,v 1.6.2.4 2008/11/22 22:13:33 cwgordon7 Exp $
+
+/**
+ * @file
+ * Install, update and uninstall functions for the Flexifield module.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function flexifilter_install() {
+  flexifilter_install_flexifilters('flexifilter');
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function flexifilter_uninstall() {
+}
+
+/**
+ * Implements hook_schema().
+ */
+function flexifilter_schema() {
+  $schema = array();
+
+  $schema['flexifilter'] = array(
+    'description' => 'Holds definitions for flexifilters.',
+    'fields' => array(
+      'fid' => array(
+        'description' => 'The primary identifier for a Flexifilter.',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'label' => array(
+        'type' => 'varchar',
+        'length' => 127,
+        'not null' => TRUE,
+        'description' => 'Flexifilter human-readable name.',
+      ),
+      'description' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'description' => 'Flexifilter filter tips.',
+      ),
+      'enabled' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'size' => 'tiny',
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => '1 if the Flexifilter is enabled, 0 otherwise',
+        'disp-width' => '3',
+      ),
+      'pid_root' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => FALSE,
+        'disp-width' => '10',
+        'description' => 'ID of a faux Flexifilter part used as a parent for the root level components',
+      ),
+      'advanced' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'size' => 'tiny',
+        'not null' => TRUE,
+        'disp-width' => '3',
+        'description' => '1 if the Flexifilter admin interface should display advanced settings for this Flexifilter, 0 otherwise',
+      ),
+      'cache' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'size' => 'tiny',
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => '1 if the Flexifilter has caching enabled, 0 otherwise. Used for dynamic filters.',
+      ),
+    ),
+    'primary key' => array('fid'),
+  );
+
+  $schema['flexifilter_parts'] = array(
+    'description' => 'Holds definitions for individual Flexifilter parts (components and conditions).',
+    'fields' => array(
+      'pid' => array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'disp-width' => '10',
+        'description' => 'Primary identifier for a Flexifilter part.',
+      ),
+      'fid' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'disp-width' => '10',
+        'description' => 'ID of the Flexifilter containing this part.',
+      ),
+      'parent_pid' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => FALSE,
+        'disp-width' => '10',
+        'description' => 'ID of the Flexifilter part that directly contains this part.',
+      ),
+      'type' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'size' => 'tiny',
+        'not null' => TRUE,
+        'disp-width' => '3',
+        'description' => 'Type number of this part (component / condition / root)',
+      ),
+      'class_name' => array(
+        'type' => 'varchar',
+        'length' => '255',
+        'not null' => FALSE,
+        'description' => 'Class name of the component / condition',
+      ),
+      'settings' => array(
+        'type' => 'text',
+        'size' => 'big',
+        'not null' => TRUE,
+        'description' => 'Serialized array of any settings that have been set for this part',
+      ),
+    ),
+    'primary key' => array('pid'),
+    'indexes' => array(
+      'fid' => array('fid'),
+    ),
+  );
+
+  return $schema;
+}
+
+function flexifilter_update_7000() {
+  db_query('ALTER TABLE {flexifilters} RENAME TO {flexifilter}');
+  db_query('ALTER TABLE {flexifilters_parts} RENAME TO {flexifilter_parts}');
+  db_query('ALTER TABLE {flexifilter} DROP INDEX delta');
+  db_query('ALTER TABLE {flexifilter} DROP COLUMN delta');
+}

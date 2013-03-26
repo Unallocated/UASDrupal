@@ -1,0 +1,254 @@
+<?php
+
+/**
+ * @file
+ * Adds simple Cufón support to Drupal.
+ *
+ */
+
+/**
+ * Implementation of hook_permission().
+ */
+function cufon_permission() {
+  return array(
+    'administer cufon' => array(
+      'title' => t('Administer Cufón'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_theme().
+ */
+function cufon_theme() {
+  $theme_hooks = array(
+    'cufon_selectors' => array(
+      'render element' => 'form',
+    ),
+  );
+
+  return $theme_hooks;
+}
+
+/**
+ * Returns HTML for an admin selectors form.
+ *
+ * @param $variables
+ *   An associative array containing:
+ *   - form: A render element representing the form.
+ *
+ * @ingroup themeable
+ */
+function theme_cufon_selectors($variables) {
+  $form = $variables['form'];
+
+  $headers = array(t('Enabled'), t('Selector'), t('Font family'), t('Enable hover state'), t('Text shadow'));
+  $rows = array();
+
+  foreach (element_children($form) as $key) {
+    // Build the table row.
+    $row = array(
+      'no_striping' => TRUE,
+      'data' => array(
+        drupal_render($form[$key]['options']['enabled']),
+        drupal_render($form[$key]['selector']),
+        drupal_render($form[$key]['options']['fontFamily']),
+        drupal_render($form[$key]['options']['hover']),
+        drupal_render($form[$key]['options']['textShadow']),
+      ),
+    );
+
+    // Add any additional classes set on the row.
+    if (!empty($form[$key]['#attributes']['class'])) {
+      $row['class'] = array_merge($row['class'], $form[$key]['#attributes']['class']);
+    }
+
+    $rows[] = $row;
+  }
+
+  $output = theme('table', array('header' => $headers, 'rows' => $rows, 'attributes' => array('id' => 'cufon-selector-table')));
+  $output .= drupal_render_children($form);
+
+  return $output;
+}
+
+/**
+ * Implementation of hook_init().
+ */
+function cufon_init() {
+  global $user;
+  static $cufonLib;
+  $remote_url = variable_get('cufon_remote_url', '');
+
+  // If a remote URL is used and it's a valid absolute URL, use that.
+  if (strlen($remote_url) > 0) {
+    if (valid_url($remote_url, TRUE)) {
+      drupal_add_js($remote_url, 'external');
+    }
+    else {
+      drupal_set_message(t('<strong>Cufón:</strong> You have provided an invalid absolute URL to Cufón library. Cufón has not been loaded.'), 'warning');
+    }
+  }
+  else {
+    // No remote URL used, so search for a local JS file.
+    //
+    // Search in theme folder first for cufon-yui.js
+    $cufonLib = file_scan_directory(path_to_theme(), '/^cufon-yui.js$/', array('key' => 'name'));
+
+    if (empty($cufonLib)) {
+      // Search in module folder for cufon-yui.js
+      $cufonLib = file_scan_directory(drupal_get_path('module', 'cufon'), '/^cufon-yui.js$/', array('key' => 'name'));
+    }
+
+    if (empty($cufonLib)) {
+      // Search in libraries folders for cufon-yui.js
+      $cufonLib = drupal_system_listing('/^cufon-yui.js$/', 'libraries/cufon', 'name', 0);
+    }
+
+    if (empty($cufonLib)) {
+      // Include cufon library
+      drupal_add_js($cufonLib['cufon-yui']->uri, 'file');
+    }
+
+    if (!isset($cufonLib['cufon-yui'])) {
+      // Show message only to cufon administrator(s).
+      if (user_access('administer cufon')) {
+        drupal_set_message(t('<strong>Cufón:</strong> You must download <a href="http://cufon.shoqolate.com/js/cufon-yui.js">cufon-yui.js</a> and install it to <code>libraries/cufon</code> folder.'), 'error');
+      }
+      return;
+    }
+    else {
+      // Include cufon library
+      drupal_add_js($cufonLib['cufon-yui']->uri, 'file');
+    }
+  }
+
+  $selectors = variable_get('cufon_selectors', array());
+
+  // Remove disabled selectors
+  foreach ($selectors as $id => $selector) {
+    if (empty($selector['options']['enabled'])) {
+      unset($selectors[$id]);
+    }
+  }
+
+  // Include only used fonts.
+  foreach (_cufon_find_fonts() as $family => $font) {
+    foreach ($selectors as $selector) {
+      if (!empty($selector['options']['autoDetect']) || $family == $selector['options']['fontFamily']) {
+        drupal_add_js($font->uri, array('type' => 'file', 'scope' => 'header'));
+        break;
+      }
+    }
+  }
+
+  // Add settings
+  drupal_add_js(array('cufonSelectors' => $selectors), array('type' => 'setting'));
+
+  // Add behaviour(s)
+  drupal_add_js(drupal_get_path('module', 'cufon') . '/js/cufon-drupal.js');
+
+  // Add Cufon.now() to footer but before any other scripts
+  drupal_add_js('Cufon.now();', array('type' => 'inline', 'scope' => 'footer', 'weight' => -99));
+}
+
+/**
+ * Implementation of hook_menu().
+ */
+function cufon_menu() {
+  return array(
+    'admin/config/media/cufon' => array(
+      'title' => 'Cufón Settings',
+      'description' => 'Adds Cufón support to Drupal',
+      'access arguments' => array('administer cufon'),
+      'page callback' => 'drupal_get_form',
+      'page arguments' => array('cufon_admin'),
+      'file' => 'includes/cufon.admin.inc',
+    ),
+  );
+}
+
+/**
+ * _cufon_find_fonts().
+ *
+ * Find all installed Cufon fonts.
+ *
+ *  - <current_theme>
+ *  - profiles/<profile>/libraries/cufon-fonts/
+ *  - sites/all/libraries/cufon-fonts/
+ *  - sites/<current_site>/libraries/cufon-fonts/
+ *
+ */
+function _cufon_find_fonts($use_cache = TRUE) {
+  global $language;
+
+  // Check for a cached fonts
+  if ($use_cache && ($cached = cache_get('cufon_fonts'))) {
+    return $cached->data;
+  }
+
+  // Search all .js files.
+  // It is slower tha searching for .font.js only files but will find 3rd party created fonts, too.
+  $pattern = '/.*\.js$/';
+  $conf_path = conf_path();
+
+  // Search for fonts in this order:
+  // - theme folders (only enabled themes)
+  // - site library folder
+  // - if you want to use different fonts for different languages put them into <langcode>/ subfolder
+  // - default font MUST exist!
+
+  $files = array();
+  foreach (list_themes() as $theme) {
+    if ($theme->status === '0')
+      continue;
+
+    $files += file_scan_directory(drupal_get_path('theme', $theme->name), $pattern);
+  }
+
+  $files += drupal_system_listing($pattern, 'libraries/cufon-fonts', 'name', 0);
+
+  $fonts = array();
+  foreach ($files as $file) {
+
+    // Check for language specific font
+    if (!empty($language)) {
+      $f = dirname($file->uri) . '/' . $language->language . '/' . $file->filename;
+      if (file_exists($f)) {
+        $file->uri = $f;
+      }
+    }
+
+    // Resolve font families...
+    $families = _cufon_get_font_families($file->uri);
+
+    if (empty($families))
+      continue;
+
+    foreach ($families as $family) {
+      // ... and keep complete file info if not set already
+      if (!isset($fonts[$family]))
+        $fonts[$family] = $file;
+    }
+  }
+
+  // Cache fonts
+  cache_set('cufon_fonts', $fonts);
+
+  return $fonts;
+}
+
+/**
+ * _cufon_get_font_families().
+ *
+ * Extracts "font-family" parameter from file contents
+ *
+ * Returns: array of found font families.
+ */
+function _cufon_get_font_families($file) {
+  $file_content = file_get_contents($file);
+  if (preg_match_all('/[\'"]font-family[\'"]\s*:\s*([\'"]([^"\r\n]+)[\'"])/', $file_content, $matches)) {
+    return $matches[2];
+  }
+  return array();
+}

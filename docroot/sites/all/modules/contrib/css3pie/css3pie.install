@@ -1,0 +1,60 @@
+<?php
+/**
+ * @file css3pie.install
+ * Contains install and update hooks for CSS3PIE.
+ */
+
+/**
+ * Implementation of hook_install().
+ */
+function css3pie_install() {
+  if (!file_exists(libraries_get_path('PIE') . '/PIE.htc')) {
+    drupal_set_message(st('PIE library missing. Download PIE library from http://css3pie.com/ and add it to sites/all/libraries/PIE.'), 'error');
+  }
+}
+
+/**
+ * Implementation of hook_uninstall().
+ */
+function css3pie_uninstall() {
+  db_query("DELETE FROM {variable} WHERE name LIKE 'css3pie_css_%'");
+  if (file_exists(file_default_scheme() . '://css3pie/css3pie.js')) {
+    drupal_unlink(file_default_scheme() . '://css3pie/css3pie.js');
+  }
+  if (file_exists(file_default_scheme() . '://css3pie/css3pie.css')) {
+    drupal_unlink(file_default_scheme() . '://css3pie/css3pie.css');
+  }
+  if (is_dir(file_default_scheme() . '://css3pie')) {
+    drupal_rmdir(file_default_scheme() . '://css3pie');
+  }
+}
+
+/**
+ * Add variable for css3pie js mode.
+ */
+function css3pie_update_7001() {
+  if (!variable_get('css3pie_css_use_js_mode')) {
+    variable_set('css3pie_css_use_js_mode', FALSE);
+  }
+  return;
+}
+
+/**
+ * Add variable for theme info file usage.
+ */
+function css3pie_update_7002() {
+  if (!variable_get('css3pie_css_use_theme_settings')) {
+    variable_set('css3pie_css_use_theme_settings', FALSE);
+  }
+  return;
+}
+
+/**
+ * Enable ctools if it is installed but not enabled.
+ */
+function css3pie_update_7003() {
+  if (!module_exists('ctools') && drupal_get_path('module', 'ctools')) {
+    module_enable(array('ctools'));
+  }
+  return;
+}

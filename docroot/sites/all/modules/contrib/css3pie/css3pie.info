@@ -1,0 +1,14 @@
+
+name = CSS3PIE
+description = Provides CSS3PIE (http://css3pie.com/) library support.
+core = 7.x
+dependencies[] = libraries
+dependencies[] = ctools
+configure = admin/config/user-interface/css3pie
+
+; Information added by drupal.org packaging script on 2012-03-28
+version = "7.x-2.1"
+core = "7.x"
+project = "css3pie"
+datestamp = "1332951952"
+

@@ -1,0 +1,315 @@
+<?php
+
+/**
+ * @file css3pie.module
+ * a very simple Drupal module to implement the css3pie.com javascript to your drupal and
+ * make the css selectors configurable over ui. This module creates a real css file on drupal
+ * files folder and add them via drupal_add_css.
+ */
+
+/**
+ * Define a cache key for storing the CTools CSS file id.
+ */
+define('CSS3PIE_CSS_CACHE_KEY', 'css3pie_css_cache');
+
+/**
+ * Implements hook_permission()
+ * only users with "administer css3pie" permission can edit
+ * the settings form.
+ *
+ * @see hook_permission();
+ * @return <array> permissions array
+ */
+function css3pie_permission() {
+  return array('administer css3pie' => array(
+    'title' => t('Administer CSS3PIE selectors'),
+    'description' => t('user can change the used css3pie selectors'),
+  ));
+}
+
+/**
+ * Implements hook_menu()
+ * admin settings page under themes page
+ *
+ * @see hook_menu();
+ * @return string
+ */
+function css3pie_menu() {
+  $items = array();
+
+  $items['admin/config/user-interface/css3pie'] = array(
+    'title' => 'CSS3PIE',
+    'description' => 'Adds css3pie support to Drupal',
+    'access arguments' => array('administer css3pie'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('css3pie_admin'),
+    'type' => MENU_NORMAL_ITEM,
+    'file' => 'css3pie.admin.inc',
+  );
+
+  return $items;
+}
+
+/**
+ * Implements of hook_menu_alter().
+ */
+function css3pie_menu_alter(&$items) {
+  $items['admin/appearance/css3pie']['type'] = MENU_LOCAL_TASK;
+}
+
+/**
+ * Implements own hook_css3pie()
+ * returns a array with selectors
+ * that will be added to css3pie css file on next cache clear
+ *
+ * @return <array> multiarray with selectors use module name as key for namespace
+ */
+function css3pie_css3pie() {
+  $css3pie_selectors = variable_get('css3pie_css_selectors', '');
+  $css3pie_theme_selectors = FALSE;
+  $css3pie_namespace = 'css3pie';
+
+  // Find names of all enabled themes
+  $result = db_query("SELECT s.name FROM {system} s WHERE s.status=1 AND s.type='theme'");
+  
+  if (variable_get('css3pie_css_use_theme_settings', FALSE)) {
+    // Merge selectors from theme info file in here from enabled themes
+    foreach ($result as $record) {
+      if ($css3pie_theme_selectors = theme_get_setting('css3pie', $record->name)) {
+        if (isset($css3pie_theme_selectors['selectors']) && is_array($css3pie_theme_selectors['selectors'])) {
+          $css3pie_selectors .= "\n" . implode("\n", $css3pie_theme_selectors['selectors']);
+        }
+      }
+    } 
+  }
+
+  if ($css3pie_selectors) {
+    $css3pie_selectors = explode("\n", $css3pie_selectors);
+    $css3pie_selectors = array_filter(array_map('trim', $css3pie_selectors));
+
+    return array($css3pie_namespace => $css3pie_selectors);
+  }
+}
+
+/**
+ * theme preprocess to add the css file
+ * @param <type> $vars
+ */
+function css3pie_preprocess_html(&$vars) {
+  ctools_include('css');
+  // get the path of css3pie file
+  $path_to_css3pie_css_file = _css3pie_build_css3pie_css();
+  $path_to_css3pie_js_file = file_default_scheme() . '://css3pie/css3pie.js';
+  
+  $piejslibrary = drupal_get_library('css3pie', 'css3pie_js');
+  // get file from library array because the filename is in the key..
+  $path_to_pie_js_file = NULL;
+  if (is_array($piejslibrary)) {
+    foreach ($piejslibrary['js'] as $file => $options) {
+      $path_to_pie_js_file = $file;
+    }
+  }
+  
+  // add to drupal´ css only if we have a cssfile
+  if ($path_to_css3pie_css_file && !variable_get('css3pie_css_use_js_mode')) {
+    drupal_add_css($path_to_css3pie_css_file, array('browsers' => array('IE' => 'lt IE 10', '!IE' => FALSE)));
+  }
+  
+  if ($path_to_pie_js_file && variable_get('css3pie_css_use_js_mode') && $path_to_css3pie_js_file) {
+    $pie_js_to_html_head = array(
+      '#type' => 'markup',
+      '#markup' => '<!--[if lt IE 10]><script language="javascript" type="text/javascript" src="' . file_create_url($path_to_pie_js_file) . '"></script>' . PHP_EOL . '<script language="javascript" type="text/javascript" src="' . file_create_url($path_to_css3pie_js_file) . '"></script><![endif]-->' . PHP_EOL,
+    );
+
+    drupal_add_html_head($pie_js_to_html_head, 'css3pie');
+  }
+}
+
+/**
+ * Implementation of hook_library()
+ * add the css3pie files as library so any module maintaner can use hook_library_alter()
+ * but we can´t use drupal_add_library on the htc file because we use it in the css file
+ */
+function css3pie_library() {
+  if (file_exists(libraries_get_path('PIE') . '/PIE.htc')) {
+    $libraries = array();
+   
+    // css3pie htc file...
+    $libraries['css3pie_htc'] = array(
+      'title' => 'CSS3PIE',
+      'website' => 'http://www.css3pie.com',
+      'version' => '1.0beta4',
+      'js' => array(
+        libraries_get_path('PIE') . '/PIE.htc' => array(),
+      ),
+    );
+   
+    // css3pie php wrapper for htc (outputs the right http header)
+    $libraries['css3pie_php'] = array(
+      'title' => 'CSS3PIE',
+      'website' => 'http://www.css3pie.com',
+      'version' => '1.0beta4',
+      'js' => array(
+        libraries_get_path('PIE') . '/PIE.php' => array(),
+      ),    
+    );
+   
+    // css3pie javascript edition
+    $libraries['css3pie_js'] = array(
+      'title' => 'CSS3PIE',
+      'website' => 'http://www.css3pie.com',
+      'version' => '1.0beta4',
+      'js' => array(
+        libraries_get_path('PIE') . '/PIE.js' => array(),
+      ),    
+    );
+   
+    return $libraries;
+  }
+}
+
+/**
+ * helper function to build the module functionality
+ */
+
+function _css3pie_build_css3pie_functionality() {
+  if (variable_get('css3pie_css_use_js_mode', FALSE)) {
+    _css3pie_build_css3pie_js();
+  }
+  else {
+    // We can just clear the cache, and let the file get rebuilt on demand.
+    cache_clear_all(CSS3PIE_CSS_CACHE_KEY, 'cache');
+  }
+}
+
+/**
+ * helper function get all selectors and generates content for css file
+ * @param <type> $css
+ * @return <type> path to new created file
+ */
+function _css3pie_build_css3pie_css() {
+  $cache = cache_get(CSS3PIE_CSS_CACHE_KEY);
+  if (!empty($cache) && !empty($cache->data)) {
+    // Try to get that CSS file from ctools.
+    if ($filename = ctools_css_retrieve($cache->data)) {
+      return $filename;
+    }
+  }
+
+  // Otherwise we actually need to compute the ID of the stored CSS.
+
+  $output = '';
+
+  // invoke hook_css3pie in all modules to get the selectors
+  $css3pie_selectors = module_invoke_all('css3pie');
+
+  if ($css3pie_selectors) {
+    $show_namespaces_as_comments = variable_get('css3pie_css_comment', TRUE);
+    $cnt_namespaces = count($css3pie_selectors);
+    $i = 0;
+  
+    foreach ($css3pie_selectors as $namespace => $selectors) {
+      $i++;
+      
+      if ($show_namespaces_as_comments) {
+        $output .= '/* ' . $namespace . ' */' . "\n";
+      }
+      $output .= implode(', ', $selectors);
+  
+      if ($i < $cnt_namespaces) {
+        $output .= ',' . "\n";
+      }
+    }
+
+    // Check if php wrapper mode is wanted...
+    if (!variable_get('css3pie_css_use_js_mode')) {
+      if (!variable_get('css3pie_css_use_php_wrapper', FALSE)) {
+        $css3library = drupal_get_library('css3pie', 'css3pie_htc');
+      }
+      else {
+        $css3library = drupal_get_library('css3pie', 'css3pie_php');    
+      }
+    }
+    // get file from library array because the filename is in the key..
+    $css3file = '';
+    foreach ($css3library['js'] as $file => $options) {
+      $css3file = $file;
+    }
+  
+    // @TODO: fix hard key search in array
+    $output .= "\n" . '{' . "\n" . '  behavior: url(' . base_path() . $css3file . ');' . "\n" . '}';
+  
+  }
+  
+  // Hash the CSS that is stored to generate the CTools CSS ID.
+  $id = md5($output);
+  cache_set(CSS3PIE_CSS_CACHE_KEY, $id);
+  // Try to get the file from CTools.
+  if ($filename = ctools_css_retrieve($id)) {
+    return $filename;
+  }
+  else {
+    // Otherwise store in the CTools CSS store.
+    return ctools_css_store($id, $output, FALSE);
+  }
+}
+
+/**
+ * helper function get all selectors and generates content for js file
+ * @param <type> $js
+ * @return <type> path to new created file
+ */
+function _css3pie_build_css3pie_js() {
+  $output = '';
+
+  // invoke hook_css3pie in all modules to get the selectors
+  $css3pie_selectors = module_invoke_all('css3pie');
+
+  $output .= "$(function() {\n";
+  $output .= "if (window.PIE) {\n";
+  $output .= "$(function() {\n";
+  
+  foreach ($css3pie_selectors as $namespace => $selectors) {    
+    foreach ($selectors as $a => $selector) {
+      $output .= "$('" . $selector . "').each(function() {\n";
+      $output .= "PIE.attach(this);\n";
+      $output .= "});\n";
+    }
+  }
+  
+  $output .= "}\n";
+  $output .= "});";
+
+  return _css3pie_create_css3pie_js($output);
+}
+
+/**
+ * helper function creates a real js file within files directory using new drupal streamwrapper;
+ *
+ * @param <type> $css - the css markup
+ * @return <type>
+ */
+function _css3pie_create_css3pie_js($js = NULL) {
+  if (!$js) {
+    drupal_set_message(t('No js content given.'), 'error');
+    return FALSE;
+  }
+  
+  // create the path stream to files directory (D7)
+  $css3pie_js_path = file_default_scheme() . '://css3pie';
+  
+  // create css3pie directory and check if successfull...
+  if (!file_prepare_directory($css3pie_js_path, FILE_CREATE_DIRECTORY)) {
+      drupal_set_message(t('Unable to create CSS3PIE cache directory. Check the permissions on your files directory.'), 'error');
+      return;
+  }
+  
+  // save css data to our real css file...
+  $filename = $css3pie_js_path . '/css3pie.js';
+  $filename = file_unmanaged_save_data($js, $filename, FILE_EXISTS_REPLACE);
+
+  // clear the js cache
+  drupal_clear_js_cache();
+
+  return $filename;
+}

@@ -1,7 +1,7 @@
-# Ignore configuration files that may contain sensitive information.
-sites/*/settings*.php
-sites/default/settings.php
+# Ignore any files added by editors or operating systems.
+.DS_Store
+.project
+.buildpath
+.settings
 
-# Ignore paths that contain user-generated content.
-sites/*/files
-sites/*/private
+

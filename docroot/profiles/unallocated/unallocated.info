@@ -28,6 +28,7 @@ dependencies[] = admin_menu
 dependencies[] = admin_menu_toolbar
 dependencies[] = backup_migrate
 
-; Custom
+; Features
+dependencies[] = content_type_project
 dependencies[] = content_type_announcement
 dependencies[] = content_type_video

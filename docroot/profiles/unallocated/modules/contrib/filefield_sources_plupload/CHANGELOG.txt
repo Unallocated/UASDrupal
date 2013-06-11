@@ -1,0 +1,30 @@
+filefield_sources_plupload 7.x-1.x, , xxxx-xx-xx
+-------------------------------------------------
+
+filefield_sources_plupload 7.x-1.x, , 2012-09-14
+-------------------------------------------------
+- Added support for Silverlight
+- Changes wording from "multi file" to "advanced" to prepare for future
+  changes to allow use of Plupload for single file fields
+- Fixed typo
+
+filefield_sources_plupload 7.x-1.x, , 2012-02-13
+-------------------------------------------------
+- Set 1mb as fixed chunk size since this was changed to php post size as
+  default in Plupload. We need 1mb chunks to make the Flash uploader more
+  reliable and to provide upload progress.
+
+filefield_sources_plupload 7.x-1.x, , 2012-02-13
+-------------------------------------------------
+- Changed code to not verify if max size is set within PHP limit, as Plupload
+  use 1mb chunks (per default) and thus can transfer larger files without
+  regard to PHP file or post max size-limitations.
+- Added support for file size client side validation. Uses the field instance
+  settings, and PHP max if not set. Does not use Plupload settings, but
+  overrides these to behave the same way as the File field it is attached to.
+
+filefield_sources_plupload 7.x-1.x, , 2012-02-07
+-------------------------------------------------
+- #1417606-3 by slashrsm: Remove redundant theme function, merge include file
+  with module and minor comment cleanup.
+- Initial baseline

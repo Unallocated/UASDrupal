@@ -1,0 +1,29 @@
+****************************** DRUPAL 7 - 2.x BRANCH ********************************
+
+September 02, 2011
+------------------
+Issue #1266340 by OnkelTem: Fixed bug where disabled selectors were still active.
+
+August 04, 2011
+---------------
+Issue #1236760 by logaritmisk: Changed code to search for fonts in all enabled themes.
+
+July 20, 2011
+-------------
+Issue #1224426 by damd: Added ability to load Cufón from remote URL.
+
+June 22, 2011
+-------------
+Issue #1192188 by troky: Changed font search pattern from *.font.js to *.js
+by troky: Added support for multi-font-family files.
+
+June 12, 2011
+-------------
+Issue #565616 by troky: Added autoDetect option.
+
+May 19, 2011
+------------
+Issue #1160060 by troky: Added support for installation profiles.
+Issue #667468 by troky: Missing cufon-yui.js file message is displayed to administrator(s) only.
+
+

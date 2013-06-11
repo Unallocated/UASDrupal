@@ -1,0 +1,163 @@
+<?php
+/**
+ * @file
+ * Install file for the threshold-ais module
+ *
+ */
+
+/**
+ * Implements hook_install().
+ */
+function ais_install() {
+  $defaults = array(
+    array('name' => 'threshold-480', 'size' => 480),
+    array('name' => 'threshold-768', 'size' => 768),
+    array('name' => 'threshold-992', 'size' => 992),
+    array('name' => 'threshold-1382', 'size' => 1382),
+  );
+  variable_set("ais_adaptive_styles", $defaults);
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function ais_unistall() {
+  variable_del("ais_adaptive_styles");
+}
+
+/**
+ * Implements hook_requirements().
+ */
+function ais_requirements($phase) {
+  $t = get_t();
+  $requirements = array();
+  $okrequirements['ais'] = array(
+    'title' => $t("Adaptive Image Styles"),
+    'description' => "AIS appears to be configured correctly",
+    'severity' => REQUIREMENT_OK,
+    'value' => array(),
+  );
+
+  if ($phase == 'runtime') {
+    if (!preg_match("/apache/i", php_sapi_name()) and !preg_match("/apache/i", $_SERVER["SERVER_SOFTWARE"])) {
+      $requirements['apache'] =  array(
+        'title' => $t("Adaptive Image Styles"),
+        'description' => $t("It doesn't look like you're running Apache.  Please verify that the web server settings required are in place for AIS to work."),
+        'severity' => REQUIREMENT_WARNING,
+      );
+      return $requirements;
+    }
+    $okrequirements['ais']['value'][] = "Apache Detected";
+
+    if (!file_exists(".htaccess")) {
+      $requirements['htaccess'] =  array(
+        'title' => $t("Adaptive Image Styles"),
+        'description' => $t("The htaccess file could not be checked, please verify that AIS is working correctly."),
+        'severity' => REQUIREMENT_WARNING,
+      );
+      return $requirements;
+    }
+
+    $okrequirements['ais']['value'][] = ".htaccess file found";
+
+    $htaccess = array();
+    $rawhtaccess = file(".htaccess");
+    foreach ($rawhtaccess as $ht) {
+      $ht = trim($ht);
+      if (drupal_substr($ht, 0, 1) == '#') {
+        continue;
+      }
+      $htaccess[] = $ht;
+    }
+    $htaccess = implode("\n", $htaccess);
+
+    $after = array(
+      "RewriteCond %{REQUEST_FILENAME} !-f",
+      "RewriteCond %{REQUEST_FILENAME} !-d",
+      "RewriteCond %{REQUEST_URI} !=/favicon.ico",
+      "RewriteRule ^ index.php [L]"
+    );
+    $after_loc = strpos($htaccess, implode("\n", $after));
+
+    if (!$after_loc) {
+      $requirements['parsing'] =  array(
+        'title' => $t("Adaptive Image Styles"),
+        'description' => $t("There was a problem finding standard Drupal rules in the htaccess file, please verify that AIS is working correctly."),
+        'severity' => REQUIREMENT_WARNING,
+      );
+      return $requirements;
+    }
+
+    $okrequirements['ais']['value'][] = "Drupal Clean URL Rewrite found";
+
+    $lastrule = 0;
+    $rewritebase = "/RewriteBase\s+(\S+)/";
+    $matches = array();
+    preg_match_all($rewritebase, $htaccess, $matches);
+
+    if (sizeof($matches[1]) > 1) {
+      $requirements['multiplerewritebase'] =  array(
+        'title' => $t("Adaptive Image Styles"),
+        'description' => $t("Found multiple RewriteBases configured in the .htaccess file, please correct this."),
+        'severity' => REQUIREMENT_ERROR,
+      );
+    }
+    elseif (sizeof($matches[1]) != 1) {
+      $requirements['norewritebase'] =  array(
+        'title' => $t("Adaptive Image Styles"),
+        'description' => $t("RewriteBase not configured in .htaccess file, AIS requires that the rewritebase be configured."),
+        'severity' => REQUIREMENT_ERROR,
+      );
+    }
+
+    $okrequirements['ais']['value'][] = "Found RewriteBase rule";
+
+    $rewritebase = $matches[1][0];
+    $script = explode("/", $_SERVER['SCRIPT_NAME']);
+
+    if ($rewritebase != "/" . $script[1]) {
+      // Rewrite base appears to be misconfigured
+      $requirements['badrewritebase'] =  array(
+        'title' => $t("Adaptive Image Styles"),
+        'description' => $t("RewriteBase appears to be configured incorrectly in the .htaccess file.  The RewriteBase is set to '%bad', but should be '%good'.", array('%bad' => $rewritebase, '%good' => '/' . $script[1])),
+        'severity' => REQUIREMENT_ERROR,
+      );
+    }
+
+    $okrequirements['ais']['value'][] = "RewriteBase correctly configured: " . $matches[1][0];
+
+    $rules = array(
+      "RewriteCond %{REQUEST_URI} ^(.+)/files/styles/adaptive/(.+)$",
+      "RewriteCond %{REQUEST_URI} !/modules/image/sample.png",
+      "RewriteCond %{HTTP_COOKIE} ais=([a-z0-9-_]+)",
+      "RewriteRule ^(.+)/files/styles/adaptive/(.+)$ $1/files/styles/%1/$2 [R=302,L]"
+    );
+
+    $rules_loc = strpos($htaccess, implode("\n", $rules));
+
+    if (!$rules_loc) {
+      $requirements['patched'] =  array(
+        'title' => $t("Adaptive Image Styles"),
+        'description' => $t("Couldn't find the AIS htaccess rules in the htaccess file.  Without these rules, AIS will not work."),
+        'severity' => REQUIREMENT_ERROR,
+      );
+      return $requirements;
+    }
+
+    $okrequirements['ais']['value'][] = "AIS rules found";
+
+    if ($rules_loc > $after_loc) {
+      $requirements['wrongspot'] =  array(
+        'title' => $t("Adaptive Image Styles"),
+        'description' => $t("The rules added for AIS to work need to come before Drupals index.php redirect rules."),
+        'severity' => REQUIREMENT_ERROR,
+      );
+      return $requirements;
+    }
+
+    $okrequirements['ais']['value'][] = "AIS rules found before Clean URLs rules";
+    $okrequirements['ais']['value'] = implode("<br />", $okrequirements['ais']['value']);
+    return $okrequirements;
+  }
+}
+

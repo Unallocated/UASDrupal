@@ -1,0 +1,283 @@
+<?php
+/**
+ * @file
+ * Adaptive Image Styles Module
+ *
+ */
+
+define("AIS_ADAPTIVE_STYLE", 'adaptive');
+define("AIS_ADAPTIVE_CLASS", 'adaptive');
+
+/**
+ * Implements hook_js_alter().
+ *  Loads the Adaptive javascript as early as possible
+ */
+function ais_js_alter(&$javascript) {
+  $ais = variable_get("ais_adaptive_styles", array());
+  usort($ais, "_ais_cmp_styles");
+  $javascript[] = array(
+    'type' => 'inline',
+    'every_page' => 1,
+    'group' => 0,
+    'weight' => 0,
+    'scope' => 'header',
+    'cache' => 1,
+    'defer' => NULL,
+    'preprocess' => 1,
+    'version' => NULL,
+    'data' => "Drupal.settings.ais = " . drupal_json_encode($ais) . ";\nDrupal.settings.ais_method = \"" . variable_get("ais_adaptive_styles_method", 'both-max') . "\";",
+  );
+
+  $javascript['ais/assets/js/ais.js'] = array(
+    'weight' => 1,
+    'type' => 'file',
+    'group' => 0,
+    'every_page' => 1,
+    'scope' => 'header',
+    'cache' => 1,
+    'defer' => NULL,
+    'preprocess' => 1,
+    'version' => NULL,
+    'data' => drupal_get_path('module', 'ais') . '/assets/js/ais.js',
+  );
+}
+
+/**
+ * Implements hook_permission().
+ */
+function ais_permission() {
+  return array(
+    'administer ais' => array(
+      'title' => t('Administer Adaptive Image Styles'),
+      'description' => t('Configure which images styles are used as adaptive.'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_menu().
+ */
+function ais_menu() {
+  $items = array();
+
+  $items['admin/config/media/ais'] = array(
+    'title' => 'Adaptive Image Styles',
+    'description' => 'Configure when adaptive image style are used.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('ais_admin_settings'),
+    'access arguments' => array('administer ais'),
+    'file' => 'ais.admin.inc',
+  );
+
+  return $items;
+}
+
+/**
+ * Implements hook_image_default_styles().
+ */
+function ais_image_default_styles() {
+  $styles = array();
+
+  $styles['adaptive'] = array(
+    'effects' => array(
+    ),
+  );
+
+  $styles['threshold-480'] = array(
+    'effects' => array(
+      array(
+        'name' => 'image_scale',
+        'data' => array('width' => 480, 'height' => 480, 'upscale' => 0),
+        'weight' => 0,
+      ),
+    ),
+  );
+
+  $styles['threshold-768'] = array(
+    'effects' => array(
+      array(
+        'name' => 'image_scale',
+        'data' => array('width' => 768, 'height' => 768, 'upscale' => 0),
+        'weight' => 0,
+      ),
+    ),
+  );
+
+  $styles['threshold-992'] = array(
+    'effects' => array(
+      array(
+        'name' => 'image_scale',
+        'data' => array('width' => 992, 'height' => 992, 'upscale' => 0),
+        'weight' => 0,
+      ),
+    ),
+  );
+
+  $styles['threshold-1382'] = array(
+    'effects' => array(
+      array(
+        'name' => 'image_scale',
+        'data' => array('width' => 1382, 'height' => 1382, 'upscale' => 0),
+        'weight' => 0,
+      ),
+    ),
+  );
+
+  return $styles;
+}
+
+/**
+ * Implements hook_file_default_displays().
+ *
+ * Provides default display configurations for media types.
+ *
+ * @see file_entity_schema()
+ */
+function ais_file_default_displays() {
+  $default_displays = array();
+
+  $default_image_styles = array(
+    'media_adaptive' => 'adaptive',
+  );
+
+  foreach ($default_image_styles as $view_mode => $image_style) {
+    $display_name = 'image__' . $view_mode . '__file_image';
+    $default_displays[$display_name] = (object) array(
+      'api_version' => 1,
+      'name' => $display_name,
+      'status' => 1,
+      'weight' => 5,
+      'settings' => array('image_style' => $image_style),
+    );
+  }
+
+  return $default_displays;
+}
+
+
+/**
+ * Implements hook_ctools_plugin_api().
+ *
+ * Lets CTools know which plugin APIs are implemented by Media module.
+ */
+function ais_ctools_plugin_api($owner, $api) {
+  static $api_versions = array(
+    'file_entity' => array(
+      'file_default_displays' => 1,
+    ),
+  );
+  if (isset($api_versions[$owner][$api])) {
+    return array('version' => $api_versions[$owner][$api]);
+  }
+}
+
+
+/**
+ * Implements hook_entity_info_alter().
+ *
+ * Add view modes to the file entity type, appropriate for displaying media.
+ */
+function ais_entity_info_alter(&$entity_info) {
+  $entity_info['file']['view modes']['media_adaptive'] = array('label' => t('Adaptive'), 'custom settings' => TRUE);
+}
+
+/**
+ * Checks if the given image styles is set to be adaptive
+ *
+ * @param string $image_style
+ *   Machine name of an image style
+ *
+ * @return boolean
+ *   Returns TRUE if the image style is adaptive, FALSE otherwise.
+ */
+function ais_is_adaptive_style($image_style) {
+  return $image_style == AIS_ADAPTIVE_STYLE;
+}
+
+/**
+ * Implements template_preprocess_image().
+ *
+ * Adds a class to adaptive images for max-width.
+ */
+function ais_preprocess_image(&$variables) {
+  if (isset($variables['style_name'])) {
+    if (ais_is_adaptive_style($variables['style_name'])) {
+      if (!isset($variables['attributes']['class'])) {
+        $variables['attributes']['class'] = array();
+      }
+      elseif ( !is_array($variables['attributes']['class']) ) {
+        $variables['attributes']['class'] = array($variables['attributes']['class']);
+      }
+      $variables['attributes']['class'][] = AIS_ADAPTIVE_CLASS;
+    }
+  }
+}
+
+
+/**
+ * Implements hook_help().
+ */
+function ais_help($path, $arg) {
+  switch ($path) {
+    case 'admin/help#ais':
+      return '<p>' . t('The adaptive image styles module offers an easy way to make any images adaptive.  Simply choosing to display the image with the "adaptive" image style with make the image adapt to the clients window width.  The <a href="@aissettings">Adaptive Image Styles administration page</a> provides an interface for choosing which image styles are using to generate the adapted images and set the threshold for when they are chosen.', array('@aissettings' => url('admin/config/media/ais'))) . '</p>';
+
+    case 'admin/config/media/ais':
+      return '<p>' . t('This page provides a interface for choosing which image style generate the adapted images.  The threshold for when each style is used can also be set.  The threshold refers to browser window width.') . '</p><p>'
+        . t('Example: If there are three image style selected, with thresholds of 480, 768, and 992.  If the window width is from 0 - 480 pixels, the adaptive image will be displayed using the image style with a threshold of 480.  From 481 - 768, the 768 image style will be used, and any wider than 769, the image style with the threshold of 992 will be used.') . '</p>';
+
+  }
+}
+
+
+/**
+ * Checks the given array for the given image style
+ *
+ * @param string $name
+ *   Machine name of the image style
+ * @param array $ais
+ *   Array of image styles
+ *
+ * @return boolean
+ *   Return TRUE if it is in the array, FALSE otherwise.
+ */
+function _ais_is_used($name, &$ais) {
+  foreach ($ais as $is) {
+    if ($is['name'] == $name) {
+      return TRUE;
+    }
+  }
+  return FALSE;
+}
+
+/**
+ * Loads the size saved in the array
+ *
+ * @param string $name
+ *   Machine name of the image style
+ * @param array $ais
+ *   Array of image styles
+ *
+ * @return integer
+ *   Returns the max size, default is zero (0).
+ */
+function _ais_get_size($name, &$ais) {
+  foreach ($ais as $is) {
+    if ($is['name'] == $name) {
+      return $is['size'];
+    }
+  }
+  return 0;
+}
+
+/**
+ * Cmp function for style sort.
+ * @see http://www.php.net/manual/en/function.usort.php
+ */
+function _ais_cmp_styles( $a, $b) {
+  if ($a['size'] == $b['size']) {
+    return 0;
+  }
+  return $a['size'] < $b['size'] ? -1 : 1;
+}
+

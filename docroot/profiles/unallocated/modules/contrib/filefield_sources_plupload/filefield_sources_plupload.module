@@ -1,0 +1,227 @@
+<?php
+
+/**
+ * @file
+ * A File field extension to allow multi uploads using Plupload.
+ *
+ */
+
+/**
+ * Implements hook_filefield_sources_info().
+ */
+function filefield_sources_plupload_filefield_sources_info() {
+  $source = array();
+  $source['plupload'] = array(
+    'name' => t('Advanced upload widget (Plupload)'),
+    'label' => t('Advanced upload'),
+    'description' => t('Upload using enhanced file selection.'),
+    'process' => 'filefield_sources_plupload_source_process',
+  );
+  return $source;
+}
+
+/**
+ * A #process callback to extend the filefield_widget element type.
+ *
+ */
+function filefield_sources_plupload_source_process($element, $form_state, $form) {
+  $field = field_widget_field($element, $form_state);
+  $instance = field_widget_instance($element, $form_state);
+
+  // Get the upload size. Use PHP limit if not defined. This can be specified
+  // larger than PHP limit, since Plupload transfers using 1mb chunks.
+  $max_filesize = !empty($instance['settings']['max_filesize']) ? parse_size($instance['settings']['max_filesize']) : parse_size(file_upload_max_size());
+
+  if ($field['cardinality'] == 1) {
+    $element['filefield_plupload'] = array(
+      '#weight' => 100.5,
+      '#markup' => '<p>' . t('This upload type can not be used on single value fields.') . '</p>',
+      // Required for proper theming.
+      '#filefield_source' => TRUE,
+      '#prefix' => '<div class="filefield-source filefield-source-plupload clear-block">',
+      '#suffix' => '</div>',
+    );
+  }
+  else {
+    $element['filefield_plupload'] = array(
+      '#weight' => 100.5,
+      // Required for proper theming.
+      '#filefield_source' => TRUE,
+      '#prefix' => '<div class="filefield-source filefield-source-plupload clear-block">',
+      '#suffix' => '</div>',
+    );
+    $element['filefield_plupload']['pud'] = array(
+      '#type' => 'plupload',
+      '#title' => t('Select one or more files to upload'),
+      // Even though filefield does validation on submit, this is required for
+      // client side validation as well as proper file munging during upload.
+      '#upload_validators' => $element['#upload_validators'],
+      '#plupload_settings' => array(
+          'max_file_size' => $max_filesize,
+          'chunk_size' => '1mb',
+          'runtimes' => 'html5,flash,silverlight,html4',
+        ),
+      // We need our own value callback as we need access to $form_state.
+      '#value_callback' => 'filefield_sources_plupload_element_value',
+      '#process' => array('filefield_sources_plupload_element_process'),
+    );
+    $element['filefield_plupload']['upload_button'] = array(
+      '#name' => implode('_', $element['#array_parents']) . '_transfer',
+      '#type' => 'submit',
+      '#value' => t('Start upload'),
+      '#validate' => array(),
+      '#submit' => array('filefield_sources_plupload_submit'),
+      '#limit_validation_errors' => array($element['#parents']),
+      '#ajax' => array(
+        'path' => 'file/ajax/' . implode('/', $element['#array_parents']) . '/' . $form['form_build_id']['#value'],
+        'wrapper' => $element['#id'] . '-ajax-wrapper',
+        'method' => 'replace',
+        'effect' => 'fade',
+        'event' => 'pud_update',
+      ),
+    );
+  }
+
+  return $element;
+}
+
+/**
+ * Replace Plupload Integration's javascript with our own.
+ *
+ */
+function filefield_sources_plupload_element_process($element) {
+  $module_path = drupal_get_path('module', 'filefield_sources_plupload');
+  $element['#attached']['js'] = array($module_path . '/js/plupload.js');
+
+  return $element;
+}
+
+/**
+ * Our value handler not only sets the Plupload fields values, but also adds the
+ * files to the filefiels values.
+ *
+ */
+function filefield_sources_plupload_element_value($element, $input = FALSE, &$form_state = NULL) {
+
+  if (isset($input) && $input === FALSE) {
+    return array();
+  }
+
+  // We rely on Plupload Integration module to handle the actual field values.
+  $pud_value = plupload_element_value($element, $input, $form_state);
+
+  if (empty($pud_value)) {
+    return array();
+  }
+
+  $field_parents = array_slice($element['#array_parents'], 0, -3);
+  $field_element = drupal_array_get_nested_value($form_state['complete form'], $field_parents);
+  $field_name = $field_element['#field_name'];
+  $langcode = $field_element['#language'];
+
+  $upload_delta = isset($field_element['#file_upload_delta']) ? $field_element['#file_upload_delta'] : 0;
+  $upload_location = isset($field_element[$upload_delta]['#upload_location']) ? $field_element[$upload_delta]['#upload_location'] : file_default_scheme() . '://';
+  $upload_validators = isset($field_element[$upload_delta]['#upload_validators']) ? $field_element[$upload_delta]['#upload_validators'] : array();
+
+  // A URI may already have a trailing slash or look like "public://".
+  if (drupal_substr($upload_location, -1) != '/') {
+    $upload_location .= '/';
+  }
+  if (!file_prepare_directory($upload_location, FILE_CREATE_DIRECTORY)) {
+    watchdog('file', 'The upload directory %directory for the file field !name could not be created or is not accessible. A newly uploaded file could not be saved in this directory as a consequence, and the upload was canceled.', array('%directory' => $upload_location, '!name' => $field_name));
+    form_set_error($field_name, t('The file could not be uploaded.'));
+    return FALSE;
+  }
+
+  // Validate, clean up and move the files into it's destination, then register
+  // as managed files (status = 0 until entity is saved).
+  $saved_files = array();
+  foreach ($pud_value as $uploaded_file) {
+    if ($uploaded_file['status'] == 'done') {
+      $source = $uploaded_file['tmppath'];
+      $extensions = $upload_validators['file_validate_extensions'][0];
+      // Transliterate, munge and validate file name.
+      $filename = filefield_sources_clean_filename($uploaded_file['name'], $extensions);
+      // Move the file to a temporary destination using final base file name.
+      $temp_destination = file_stream_wrapper_uri_normalize('temporary://' . $filename);
+      $temp_filepath = file_unmanaged_move($source, $temp_destination, FILE_EXISTS_REPLACE);
+      // Save the files to their final destination.
+      if ($file = filefield_sources_save_file($temp_filepath, $upload_validators, $upload_location)) {
+        $saved_files[] = $file;
+      }
+    }
+    else {
+      form_set_error('pud', t('Upload of %name failed.', array('%name' => $uploaded_file['name'])));
+    }
+  }
+
+  // Get exisitng file values.
+  // File Field items are stored in the field state starting from Drupal 7.9.
+  $field_state = field_form_get_state($field_element['#field_parents'], $field_name, $langcode, $form_state);
+  if (isset($field_state['items'])) {
+    $field_values = $field_state['items'];
+  }
+  else {
+    $field_values = drupal_array_get_nested_value($form_state['values'], $field_parents);
+  }
+
+  // Update field values with new files.
+  foreach ($saved_files as $saved_file) {
+    $field_values[$upload_delta] = (array) $saved_file;
+    $field_values[$upload_delta]['_weight'] = $upload_delta;
+    $upload_delta++;
+  }
+
+  // Update form_state values.
+  drupal_array_set_nested_value($form_state['values'], $field_parents, $field_values);
+
+  // Update items.
+  $field_state['items'] = $field_values;
+  field_form_set_state($field_element['#field_parents'], $field_name, $langcode, $form_state, $field_state);
+
+  return $pud_value;
+}
+
+/**
+ * We need our own submit handler until the following issue gets resolved:
+ * http://drupal.org/node/1329056
+ *
+ */
+function filefield_sources_plupload_submit(&$form, &$form_state) {
+
+  $parents = array_slice($form_state['triggering_element']['#array_parents'], 0, -3);
+  $element = drupal_array_get_nested_value($form, $parents);
+  $field_name = $element['#field_name'];
+  $langcode = $element['#language'];
+
+  // Get existing file values.
+  // File Field items are stored in the field state after ajax reloads starting
+  // from Drupal 7.9. We try to support all releases by merging the items.
+  $field_state = field_form_get_state($element['#field_parents'], $field_name, $langcode, $form_state);
+  $field_values = drupal_array_get_nested_value($form_state['values'], $parents);
+
+  if (isset($field_values) && isset($field_state['items'])) {
+    $field_values += $field_state['items'];
+  }
+  elseif (isset($field_state['items'])) {
+    $field_values = $field_state['items'];
+  }
+
+  if (isset($field_values)) {
+    // Update sort order according to weight. Note that this is always stored in
+    // form state. Sorts done before ajax reloads does not work using regular
+    // upload, but that is a core bug.
+    usort($field_values, '_field_sort_items_helper');
+
+    // Update form_state values.
+    drupal_array_set_nested_value($form_state['values'], $parents, $field_values);
+
+    // Update items.
+    $field_state['items'] = $field_values;
+    field_form_set_state($element['#field_parents'], $field_name, $langcode, $form_state, $field_state);
+  }
+
+  // Clear out input as it will need to be rebuildt.
+  drupal_array_set_nested_value($form_state['input'], $element['#parents'], NULL);
+  $form_state['rebuild'] = TRUE;
+}

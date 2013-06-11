@@ -1,0 +1,20 @@
+<?php
+
+/**
+ * Implements hook_install().
+ */
+function whistlepunk_install() {
+  include_once DRUPAL_ROOT . '/profiles/standard/standard.install';
+  standard_install();
+  
+  // jQuery Update settings
+  variable_set('jquery_update_jquery_version', '1.7');
+  variable_set('jquery_update_jquery_cdn', 'google');
+  
+  // Set the default theme.
+  $theme = 'uas';
+  theme_enable(array($theme));
+  variable_set('theme_default', $theme);
+
+  menu_rebuild();
+}

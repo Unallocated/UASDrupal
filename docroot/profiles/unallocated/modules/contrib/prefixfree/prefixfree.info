@@ -1,0 +1,10 @@
+name = Prefix free
+description = Break free from CSS prefix hell!
+core = 7.x
+
+; Information added by drupal.org packaging script on 2012-05-23
+version = "7.x-1.0-alpha1"
+core = "7.x"
+project = "prefixfree"
+datestamp = "1337749289"
+

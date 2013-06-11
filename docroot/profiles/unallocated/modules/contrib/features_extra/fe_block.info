@@ -1,0 +1,17 @@
+name = "FE block"
+description = "Build blocks and block settings as features."
+package = "Features extra"
+core = "7.x"
+
+dependencies[] = block
+dependencies[] = features
+dependencies[] = ctools
+
+files[] = tests/fe_block.test
+
+; Information added by drupal.org packaging script on 2013-02-15
+version = "7.x-1.0-alpha2"
+core = "7.x"
+project = "features_extra"
+datestamp = "1360912912"
+

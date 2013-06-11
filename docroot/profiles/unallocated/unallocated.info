@@ -27,3 +27,7 @@ dependencies[] = rdf
 dependencies[] = admin_menu
 dependencies[] = admin_menu_toolbar
 dependencies[] = backup_migrate
+
+; Custom
+dependencies[] = content_type_announcement
+dependencies[] = content_type_video

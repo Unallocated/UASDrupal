@@ -1,4 +1,0 @@
-name = UAS
-description = Central APIs and management for UAS modules
-core = 7.x
-package = UAS

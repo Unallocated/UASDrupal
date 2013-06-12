@@ -32,3 +32,4 @@ dependencies[] = backup_migrate
 dependencies[] = content_type_project
 dependencies[] = content_type_announcement
 dependencies[] = content_type_video
+dependencies[] = content_type_article

@@ -3,7 +3,7 @@
 /**
  * Implements hook_install().
  */
-function whistlepunk_install() {
+function unallocated_install() {
   include_once DRUPAL_ROOT . '/profiles/standard/standard.install';
   standard_install();
   
@@ -11,10 +11,29 @@ function whistlepunk_install() {
   variable_set('jquery_update_jquery_version', '1.7');
   variable_set('jquery_update_jquery_cdn', 'google');
   
-  // Set the default theme.
   $theme = 'uas';
-  theme_enable(array($theme));
+  $admin_theme = 'seven';
+
+  // Set the default theme.
+  db_update('system')
+    ->fields(array('status' => 1))
+    ->condition('type', 'theme')
+    ->condition('name', $theme)
+    ->execute();
   variable_set('theme_default', $theme);
+
+  // Enable the admin theme.
+  db_update('system')
+    ->fields(array('status' => 1))
+    ->condition('type', 'theme')
+    ->condition('name', $admin_theme)
+    ->execute();
+  variable_set('admin_theme', $admin_theme);
+  variable_set('node_admin_theme', '1');
+
+  // Disable the default Bartik theme
+  theme_disable(array('bartik'));
+
 
   menu_rebuild();
 }

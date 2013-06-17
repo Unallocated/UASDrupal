@@ -118,7 +118,6 @@ function content_type_video_field_default_fields() {
       'settings' => array(
         'display_default' => 0,
         'display_field' => 0,
-        'profile2_private' => FALSE,
         'uri_scheme' => 'public',
       ),
       'translatable' => '0',
@@ -152,32 +151,31 @@ function content_type_video_field_default_fields() {
       'entity_type' => 'node',
       'field_name' => 'field_video',
       'label' => 'Video',
-      'required' => 0,
+      'required' => FALSE,
       'settings' => array(
         'description_field' => 0,
-        'file_directory' => 'videos',
+        'file_directory' => '',
         'file_extensions' => 'txt',
         'max_filesize' => '',
         'user_register_form' => FALSE,
       ),
       'widget' => array(
-        'active' => 1,
-        'module' => 'media',
+        'module' => 'file',
         'settings' => array(
-          'allowed_schemes' => array(
-            'public' => 'public',
-            'vimeo' => 'vimeo',
-            'youtube' => 'youtube',
-          ),
-          'allowed_types' => array(
-            'audio' => 'audio',
-            'default' => 0,
-            'image' => 'image',
-            'video' => 'video',
+          'filefield_sources' => array(
+            'filefield_sources' => array(),
+            'source_attach' => array(
+              'absolute' => 0,
+              'attach_mode' => 'move',
+              'path' => 'file_attach',
+            ),
+            'source_reference' => array(
+              'autocomplete' => '0',
+            ),
           ),
           'progress_indicator' => 'throbber',
         ),
-        'type' => 'media_generic',
+        'type' => 'file_generic',
         'weight' => '32',
       ),
     ),

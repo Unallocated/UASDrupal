@@ -1,0 +1,11 @@
+name = box_front_page_know_more
+description = Front page: Know More.
+core = 7.x
+package = UAS Blocks
+version = 7.x-1.0
+project = box_front_page_know_more
+dependencies[] = boxes
+dependencies[] = ctools
+features[box][] = front_page_know_more
+features[ctools][] = boxes:box:1
+features[features_api][] = api:1

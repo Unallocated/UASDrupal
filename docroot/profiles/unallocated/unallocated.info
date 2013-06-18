@@ -1,0 +1,37 @@
+name = Unallocated
+description = Build profile for Unallocated Space (http://unallocatedspace.org)
+core = 7.x
+
+; Core
+dependencies[] = block
+dependencies[] = color
+dependencies[] = comment
+dependencies[] = contextual
+dependencies[] = dashboard
+dependencies[] = help
+dependencies[] = image
+dependencies[] = list
+dependencies[] = menu
+dependencies[] = number
+dependencies[] = options
+dependencies[] = path
+dependencies[] = taxonomy
+dependencies[] = dblog
+dependencies[] = search
+dependencies[] = shortcut
+dependencies[] = field_ui
+dependencies[] = file
+dependencies[] = rdf
+
+; Contrib
+dependencies[] = admin_menu
+dependencies[] = admin_menu_toolbar
+dependencies[] = backup_migrate
+dependencies[] = boxes
+
+; Features
+dependencies[] = content_type_project
+dependencies[] = content_type_announcement
+dependencies[] = content_type_video
+dependencies[] = content_type_article
+dependencies[] = content_type_download

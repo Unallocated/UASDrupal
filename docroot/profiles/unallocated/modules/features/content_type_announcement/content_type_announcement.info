@@ -1,0 +1,17 @@
+name = Content Type: Announcement
+description = Announcement content type configuration.
+core = 7.x
+package = UAS Content Types
+version = 7.x-1.0
+project = content_type_announcement
+dependencies[] = features
+dependencies[] = field_sql_storage
+dependencies[] = node
+dependencies[] = taxonomy
+dependencies[] = text
+features[features_api][] = api:1
+features[field][] = node-announcement-body
+features[field][] = node-announcement-field_author
+features[field][] = node-announcement-field_tags
+features[node][] = announcement
+features[taxonomy][] = tags

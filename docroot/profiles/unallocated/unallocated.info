@@ -27,6 +27,7 @@ dependencies[] = rdf
 dependencies[] = admin_menu
 dependencies[] = admin_menu_toolbar
 dependencies[] = backup_migrate
+dependencies[] = boxes
 
 ; Features
 dependencies[] = content_type_project

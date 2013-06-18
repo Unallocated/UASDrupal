@@ -1,0 +1,11 @@
+name = box_hackerspace_intro
+description = Hackerspace Intro
+core = 7.x
+package = UAS Blocks
+version = 7.x-1.0
+project = box_hackerspace_intro
+dependencies[] = boxes
+dependencies[] = ctools
+features[box][] = hackerspace_intro
+features[ctools][] = boxes:box:1
+features[features_api][] = api:1

@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the box_hackerspace_intro feature.
+ */
+
+include_once 'box_hackerspace_intro.features.inc';

@@ -29,6 +29,7 @@ dependencies[] = admin_menu_toolbar
 dependencies[] = backup_migrate
 dependencies[] = boxes
 dependencies[] = menu_block
+dependencies[] = module_filter
 
 ; Features
 dependencies[] = content_type_project

@@ -34,6 +34,22 @@ function unallocated_install() {
   // Disable the default Bartik theme
   theme_disable(array('bartik'));
 
+  // Disable some of the default theme settings.
+  $uas_theme_settings = variable_get('theme_uas_settings', array());
+  $uas_theme_settings += array(
+    'toggle_name' => 0,
+    'toggle_slogan' => 0,
+    'toggle_secondary_menu' => 0,
+    'alpha_debug_block_toggle' => 0,
+    'alpha_debug_grid_toggle' => 0,
+    'alpha_libraries' => array(
+      'omega_formalize' => 'omega_formalize',
+      'omega_mediaqueries' => 'omega_mediaqueries',
+      'omega_equalheights' => 'omega_equalheights',
+    )
+  );
+
+  variable_set('theme_uas_settings', $uas_theme_settings);
 
   menu_rebuild();
 }

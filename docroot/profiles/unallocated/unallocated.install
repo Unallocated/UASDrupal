@@ -62,6 +62,7 @@ function unallocated_update_7001() {
     'delta',
     'delta_ui',
     'context',
+    'context_ui',
   );
 
   module_enable($modules);

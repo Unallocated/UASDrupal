@@ -53,3 +53,16 @@ function unallocated_install() {
 
   menu_rebuild();
 }
+
+/**
+ * 7001 - Enable delta, delta_ui, and context modules.
+ */
+function unallocated_update_7001() {
+  $modules = array(
+    'delta',
+    'delta_ui',
+    'context',
+  );
+
+  module_enable($modules);
+}

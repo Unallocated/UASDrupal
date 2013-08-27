@@ -30,6 +30,8 @@ dependencies[] = backup_migrate
 dependencies[] = boxes
 dependencies[] = menu_block
 dependencies[] = module_filter
+dependencies[] = delta
+dependencies[] = context
 
 ; Features
 dependencies[] = content_type_project

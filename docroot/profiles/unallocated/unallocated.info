@@ -39,3 +39,6 @@ dependencies[] = content_type_announcement
 dependencies[] = content_type_video
 dependencies[] = content_type_article
 dependencies[] = content_type_download
+
+; Context Features
+dependencies[] = home_page_anonymous_context

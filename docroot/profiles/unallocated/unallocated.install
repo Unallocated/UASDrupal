@@ -67,3 +67,8 @@ function unallocated_update_7001() {
 
   module_enable($modules);
 }
+
+function unallocated_update_7002() {
+
+  module_enable('home_page_anonymous_context');
+}

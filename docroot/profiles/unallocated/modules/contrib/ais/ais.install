@@ -26,6 +26,13 @@ function ais_unistall() {
 }
 
 /**
+ * Force a rebuild of the menu router
+ */
+function ais_update_7000() {
+  menu_rebuild();
+}
+
+/**
  * Implements hook_requirements().
  */
 function ais_requirements($phase) {
@@ -62,12 +69,17 @@ function ais_requirements($phase) {
 
     $htaccess = array();
     $rawhtaccess = file(".htaccess");
+
     foreach ($rawhtaccess as $ht) {
-      $ht = trim($ht);
-      if (drupal_substr($ht, 0, 1) == '#') {
-        continue;
+      $comment = strpos($ht, '#');
+      if ($comment !== FALSE) {
+        $ht = substr($ht, 0, $comment);
       }
-      $htaccess[] = $ht;
+      $ht = trim($ht);
+
+      if (!empty($ht)) {
+        $htaccess[] = $ht;
+      }
     }
     $htaccess = implode("\n", $htaccess);
 
@@ -77,9 +89,10 @@ function ais_requirements($phase) {
       "RewriteCond %{REQUEST_URI} !=/favicon.ico",
       "RewriteRule ^ index.php [L]"
     );
+
     $after_loc = strpos($htaccess, implode("\n", $after));
 
-    if (!$after_loc) {
+    if ($after_loc === FALSE) {
       $requirements['parsing'] =  array(
         'title' => $t("Adaptive Image Styles"),
         'description' => $t("There was a problem finding standard Drupal rules in the htaccess file, please verify that AIS is working correctly."),
@@ -102,7 +115,7 @@ function ais_requirements($phase) {
         'severity' => REQUIREMENT_ERROR,
       );
     }
-    elseif (sizeof($matches[1]) != 1) {
+    elseif (sizeof($matches[1]) != 1 or !isset($matches[1][0])) {
       $requirements['norewritebase'] =  array(
         'title' => $t("Adaptive Image Styles"),
         'description' => $t("RewriteBase not configured in .htaccess file, AIS requires that the rewritebase be configured."),
@@ -126,16 +139,24 @@ function ais_requirements($phase) {
 
     $okrequirements['ais']['value'][] = "RewriteBase correctly configured: " . $matches[1][0];
 
-    $rules = array(
+    $oldrules = array(
       "RewriteCond %{REQUEST_URI} ^(.+)/files/styles/adaptive/(.+)$",
       "RewriteCond %{REQUEST_URI} !/modules/image/sample.png",
       "RewriteCond %{HTTP_COOKIE} ais=([a-z0-9-_]+)",
-      "RewriteRule ^(.+)/files/styles/adaptive/(.+)$ $1/files/styles/%1/$2 [R=302,L]"
+      "RewriteRule ^(.+)/files/styles/adaptive/(.+)$ $1/files/styles/%1/$2 [R=302,L]",
     );
 
+    $rules = array(
+      "RewriteCond %{REQUEST_URI} ^(.+)/files/styles/adaptive/(.+)$",
+      "RewriteCond %{REQUEST_URI} !/modules/image/sample.png",
+      "RewriteCond %{HTTP_COOKIE} ais=([a-z0-9_-]+)",
+      "RewriteRule ^(.+)/files/styles/adaptive/(.+)$ $1/files/styles/%1/$2 [R=302,L]",
+    );
+
+    $old_rules_loc = strpos($htaccess, implode("\n", $oldrules));
     $rules_loc = strpos($htaccess, implode("\n", $rules));
 
-    if (!$rules_loc) {
+    if ($rules_loc === FALSE and $old_rules_loc === FALSE) {
       $requirements['patched'] =  array(
         'title' => $t("Adaptive Image Styles"),
         'description' => $t("Couldn't find the AIS htaccess rules in the htaccess file.  Without these rules, AIS will not work."),
@@ -159,5 +180,7 @@ function ais_requirements($phase) {
     $okrequirements['ais']['value'] = implode("<br />", $okrequirements['ais']['value']);
     return $okrequirements;
   }
+
+  return array();
 }
 

@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Announcements View feature.
+ */
+
+include_once 'announcements_view.features.inc';

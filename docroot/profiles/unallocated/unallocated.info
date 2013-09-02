@@ -33,6 +33,9 @@ dependencies[] = module_filter
 dependencies[] = delta
 dependencies[] = context
 dependencies[] = fe_nodequeue
+dependencies[] = flexslider
+dependencies[] = flexslider_views
+
 
 ; Features
 dependencies[] = content_type_project

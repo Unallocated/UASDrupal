@@ -84,6 +84,9 @@ function unallocated_update_7003() {
     'fe_nodequeue',
     'strongarm',
     'frontpage_slideshow',
+    'flexslider',
+    'flexslider_views',
+    'ais'
   );
 
   module_enable($modules);

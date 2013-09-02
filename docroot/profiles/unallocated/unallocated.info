@@ -32,6 +32,7 @@ dependencies[] = menu_block
 dependencies[] = module_filter
 dependencies[] = delta
 dependencies[] = context
+dependencies[] = fe_nodequeue
 
 ; Features
 dependencies[] = content_type_project
@@ -39,6 +40,7 @@ dependencies[] = content_type_announcement
 dependencies[] = content_type_video
 dependencies[] = content_type_article
 dependencies[] = content_type_download
+dependencies[] = frontpage_slideshow
 
 ; Context Features
 dependencies[] = home_page_anonymous_context

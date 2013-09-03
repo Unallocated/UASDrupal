@@ -46,7 +46,6 @@ function frontpage_slideshow_fe_nodequeue_export_fields() {
     'reference' => '0',
     'reverse' => '0',
     'i18n' => '0',
-    'subqueues' => '1',
     'types' => array(
       0 => 'project',
     ),

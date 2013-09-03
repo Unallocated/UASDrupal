@@ -72,6 +72,12 @@ function unallocated_update_7001() {
  * 7002 - Enable the frontpage anonymous context module
  */
 function unallocated_update_7002() {
-
   module_enable(array('home_page_anonymous_context'));
+}
+
+/**
+ * 7003 - Enable the announcements view module
+ */
+function unallocated_update_7003() {
+  module_enable(array('announcements_view'));
 }

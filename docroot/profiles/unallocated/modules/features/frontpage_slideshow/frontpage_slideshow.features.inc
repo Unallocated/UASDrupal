@@ -124,7 +124,7 @@ function frontpage_slideshow_image_default_styles() {
         'name' => 'image_scale_and_crop',
         'data' => array(
           'width' => '700',
-          'height' => '350',
+          'height' => '450',
         ),
         'weight' => '1',
       ),
@@ -147,7 +147,7 @@ function frontpage_slideshow_image_default_styles() {
         'name' => 'image_scale_and_crop',
         'data' => array(
           'width' => '880',
-          'height' => '350',
+          'height' => '450',
         ),
         'weight' => '1',
       ),

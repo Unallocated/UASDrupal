@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * Installation actions for Flex Slider
+ * Installation actions for FlexSlider
  */
 
 /**
@@ -50,6 +50,13 @@ function flexslider_schema() {
         'not null' => TRUE,
         'default' => 'flexslider_full',
       ),
+      'imagestyle_thumbnail' => array(
+        'description' => 'The image style for thumbnail images.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => 'flexslider_thumbnail',
+      ),
       'options' => array(
         'description' => 'The options array.',
         'type' => 'blob',
@@ -69,18 +76,7 @@ function flexslider_schema() {
  * Adds a 'default' option set for fresh installs.
  */
 function flexslider_install() {
-/*
-  $optionset = array(
-    'name' => 'default',
-    'title' => 'Default',
-    'options' => array(
-      'height' => 300,
-      'width' => 450,
-    ),
-  );
-
-  flexslider_optionset_save($optionset, TRUE);
-*/
+  // Do nothing for now
 }
 
 /**
@@ -88,6 +84,7 @@ function flexslider_install() {
  */
 function flexslider_uninstall() {
   variable_del('flexslider_debug');
+  variable_del('flexslider_version');
 }
 
 /**
@@ -101,9 +98,9 @@ function flexslider_requirements($phase) {
   // Check to see if the flexslider library is available
   if ($phase == 'runtime') {
     $requirements['flexslider'] = array(
-      'title' => $t('Flex Slider'),
+      'title' => $t('FlexSlider'),
       // @todo have the version automatically detected
-      'description' => $t('Version 1.8 installed'),
+      'description' => $t('Version 2.0 installed'),
       'severity' => REQUIREMENT_OK,
     );
     _flexslider_requirements_library_installed($requirements);
@@ -114,7 +111,7 @@ function flexslider_requirements($phase) {
 /**
  * Implements hook_update_N().
  *
- * Remove/Update table fields to better suit Flex Slider
+ * Remove/Update table fields to better suit FlexSlider
  */
 function flexslider_update_7001(&$sandbox) {
   $field_new = array(
@@ -141,6 +138,58 @@ function flexslider_update_7002(&$sandbox) {
 }
 
 /**
+ * Implements hook_update_N().
+ *
+ * Migrate settings from FlexSlider v1 to v2
+ */
+function flexslider_update_7200(&$sandbox) {
+  $t = get_t();
+
+  $optionsets = flexslider_optionset_load_all();
+
+  foreach ($optionsets as $optionset) {
+    // Map old options to new keys/values
+    $optionset->options['animationSpeed'] = $optionset->options['animationDuration'];
+    $optionset->options['direction'] = $optionset->options['slidedirection'];
+    $optionset->options['keyboard'] = $optionset->options['keyboardnav'];
+    $optionset->options['startAt'] = $optionset->options['slidetostart'];
+    $optionset->options['start'] = $optionset->options['startCallback'];
+    $optionset->options['before'] = $optionset->options['beforeCallback'];
+    $optionset->options['after'] = $optionset->options['afterCallback'];
+    $optionset->options['end'] = $optionset->options['endCallback'];
+
+    // Delete any options which no longer exist
+    unset($optionset->options['animationDuration']);
+    unset($optionset->options['slidedirection']);
+    unset($optionset->options['keyboardnav']);
+    unset($optionset->options['startCallback']);
+    unset($optionset->options['beforeCallback']);
+    unset($optionset->options['afterCallback']);
+    unset($optionset->options['endCallback']);
+    unset($optionset->options['controlsContainer']); // This value changed in the new version. We have to reset it to the default value
+
+    // Merge in defaults for new options
+    $optionset->options += _flexslider_optionset_defaults();
+
+    // Save the updated optionset
+    flexslider_optionset_save($optionset);
+  }
+  drupal_set_message($t('Optionsets migrated. However it is recommended to go validate all your settings manually. Especially if you have callback functions defined. They may reference functions which no longer exist.'), 'warning');
+}
+
+function flexslider_update_7201(&$sandbox) {
+  $field_new = array(
+    'description' => 'The image style for thumbnail images.',
+    'type' => 'varchar',
+    'length' => 255,
+    'not null' => TRUE,
+    'default' => 'flexslider_thumbnail',
+  );
+  // Change the default image style
+  db_add_field('flexslider_optionset', 'imagestyle_thumbnail', $field_new, array());
+}
+
+/**
  * Check if the library is available
  *
  * @param array $requirements
@@ -154,9 +203,9 @@ function _flexslider_requirements_library_installed(&$requirements) {
 
   // Check the results of the test
   if (!$installed) {
-    $requirements['flexslider']['description'] = $t('Flex Slider library not found. Please consult the README.txt for installation instructions.');
+    $requirements['flexslider']['description'] = $t('FlexSlider library not found. Please consult the README.txt for installation instructions.');
     $requirements['flexslider']['severity'] = REQUIREMENT_ERROR;
-    $requirements['flexslider']['value'] = $t('Flex Slider library not found.');
+    $requirements['flexslider']['value'] = $t('FlexSlider library not found.');
     return;
   }
 
@@ -164,19 +213,25 @@ function _flexslider_requirements_library_installed(&$requirements) {
   $header = fread($js, 64);
   $matches = array();
   if (preg_match("/ v([0-9]+)\.([0-9]+)/", $header, $matches)) {
-    if (!($matches[1] == 1 and $matches[2] >= 8)) {
-      $requirements['flexslider']['description'] = $t('Flex Slider must be version 1.8 or higher, but lower than version 2.0.  Please consult the README.txt for installation instructions.');
+    if (!($matches[1] == 2 and $matches[2] >= 0)) {
+      $requirements['flexslider']['description'] = $t('FlexSlider must be version 2.0 or higher, but lower than version 3.0.  Please consult the README.txt for installation instructions.');
       $requirements['flexslider']['severity'] = REQUIREMENT_WARNING;
       $requirements['flexslider']['value'] = $t('Incorrect version detected.');
       return;
-    } else {
-      $requirements['flexslider']['description'] = $t('Version %version installed', array( '%version' => $matches[1] . "." . $matches[2]));
-      $requirements['flexslider']['value'] = $t('Flex Slider library installed.');
+    }
+    else {
+      $version = $matches[1] . "." . $matches[2];
+      variable_set('flexslider_version', $version);
+      $requirements['flexslider']['description'] = $t('Version %version installed', array( '%version' => $version));
+      $requirements['flexslider']['value'] = $t('FlexSlider library installed.');
       return;
     }
-  } else {
-    $requirements['flexslider']['description'] = $t('Flex Slider version could not be determined.  Please consult the README.txt for installation instructions.');
+  }
+  else {
+    $requirements['flexslider']['description'] = $t('FlexSlider version could not be determined.  Please consult the README.txt for installation instructions.');
     $requirements['flexslider']['severity'] = REQUIREMENT_WARNING;
     $requirements['flexslider']['value'] = $t('Unable to detect version.');
   }
 }
+
+// @todo add hook_update_N function to migrate old option set data to new values

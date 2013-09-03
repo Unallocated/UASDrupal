@@ -32,6 +32,10 @@ dependencies[] = menu_block
 dependencies[] = module_filter
 dependencies[] = delta
 dependencies[] = context
+dependencies[] = fe_nodequeue
+dependencies[] = flexslider
+dependencies[] = flexslider_views
+
 
 ; Features
 dependencies[] = content_type_project
@@ -39,6 +43,11 @@ dependencies[] = content_type_announcement
 dependencies[] = content_type_video
 dependencies[] = content_type_article
 dependencies[] = content_type_download
-
-; Context Features
+dependencies[] = frontpage_slideshow
 dependencies[] = home_page_anonymous_context
+
+; Development modules (remove before final version)
+dependencies[] = views_ui
+dependencies[] = context_ui
+dependencies[] = devel
+dependencies[] = devel_generate

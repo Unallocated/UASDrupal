@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Frontpage Slideshow feature.
+ */
+
+include_once 'frontpage_slideshow.features.inc';

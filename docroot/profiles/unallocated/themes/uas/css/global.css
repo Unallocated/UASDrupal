@@ -211,3 +211,35 @@ a:hover {
 .know-more-list .know-more-classes a 	{	background: transparent url('../images/icons/graduation-cap.png') 10px center no-repeat; }
 .know-more-list .know-more-beginners a 	{ 	background: transparent url('../images/icons/person-icon.png') 10px center no-repeat;}
 
+
+/*** --- FRONTPAGE SLIDESHOW --- ***/
+.flexslider {
+    border: 4px solid #505050;
+    background: #222222; /* Old browsers */
+    background: -moz-linear-gradient(top,  #222222 55%, #505050 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(55%,#222222), color-stop(100%,#505050)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  #222222 55%,#505050 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #222222 55%,#505050 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #222222 55%,#505050 100%); /* IE10+ */
+    background: linear-gradient(to bottom,  #222222 55%,#505050 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#222222', endColorstr='#505050',GradientType=0 ); /* IE6-9 */
+}
+
+.flexslider .flex-direction-nav a {
+    color: #FFFFFF;
+    width: 50px;
+    height: 80px;
+}
+
+.flex-text-wrapper {
+    padding: 10px;
+    position: absolute;
+    bottom:0;
+    width: 852px;
+    background: #444444;
+    opacity: .9;
+}
+
+.flex-text-title {
+    font-size: 1.5em;
+}

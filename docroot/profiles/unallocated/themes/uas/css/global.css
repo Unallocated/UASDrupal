@@ -231,11 +231,15 @@ a:hover {
     height: 80px;
 }
 
-.view-frontpage-slideshow .flexslider .views-field-title {
-    font-size: 1.5em;
+.flex-text-wrapper {
+    padding: 10px;
+    position: absolute;
+    bottom:0;
+    width: 852px;
+    background: #444444;
+    opacity: .9;
 }
 
-.view-frontpage-slideshow .flexslider .views-field-title,
-.view-frontpage-slideshow .flexslider .views-field-body {
-    padding: 10px;
+.flex-text-title {
+    font-size: 1.5em;
 }

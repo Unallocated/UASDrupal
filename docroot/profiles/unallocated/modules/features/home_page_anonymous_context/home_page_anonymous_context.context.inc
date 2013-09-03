@@ -31,17 +31,23 @@ function home_page_anonymous_context_context_default_contexts() {
   $context->reactions = array(
     'block' => array(
       'blocks' => array(
-        'boxes-home_page_slideshow' => array(
-          'module' => 'boxes',
-          'delta' => 'home_page_slideshow',
+        'views-frontpage_slideshow-block' => array(
+          'module' => 'views',
+          'delta' => 'frontpage_slideshow-block',
           'region' => 'preface_first',
+          'weight' => '-10',
+        ),
+        'uas_checkin-uas_checkin_status' => array(
+          'module' => 'uas_checkin',
+          'delta' => 'uas_checkin_status',
+          'region' => 'preface_second',
           'weight' => '-10',
         ),
         'boxes-quick_links' => array(
           'module' => 'boxes',
           'delta' => 'quick_links',
           'region' => 'preface_second',
-          'weight' => '-10',
+          'weight' => '-9',
         ),
       ),
     ),

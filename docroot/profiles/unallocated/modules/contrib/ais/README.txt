@@ -60,7 +60,7 @@ Add following:
   RewriteBase /
   RewriteCond %{REQUEST_URI} ^(.+)/files/styles/adaptive/(.+)$
   RewriteCond %{REQUEST_URI} !/modules/image/sample.png
-  RewriteCond %{HTTP_COOKIE} ais=([a-z0-9-_]+)
+  RewriteCond %{HTTP_COOKIE} ais=([a-z0-9_-]+)
   RewriteRule ^(.+)/files/styles/adaptive/(.+)$ $1/files/styles/%1/$2 [R=302,L]
 
 Into the .htaccess file before the following lines:

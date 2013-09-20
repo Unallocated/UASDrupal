@@ -83,3 +83,11 @@ function unallocated_update_7003() {
 
   module_enable(array('download_page'));
 }
+
+/**
+ * 7004 - Enable the downloads view page feature
+ */
+function unallocated_update_7004() {
+
+  module_enable(array('tutorial_page'));
+}

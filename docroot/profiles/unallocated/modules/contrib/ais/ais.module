@@ -16,6 +16,7 @@ function ais_js_alter(&$javascript) {
   $ais = variable_get("ais_adaptive_styles", array());
   usort($ais, "_ais_cmp_styles");
   $javascript[] = array(
+    'browsers' => array(),
     'type' => 'inline',
     'every_page' => 1,
     'group' => 0,
@@ -29,6 +30,7 @@ function ais_js_alter(&$javascript) {
   );
 
   $javascript['ais/assets/js/ais.js'] = array(
+    'browsers' => array(),
     'weight' => 1,
     'type' => 'file',
     'group' => 0,
@@ -70,6 +72,60 @@ function ais_menu() {
   );
 
   return $items;
+}
+
+/**
+ * Implements hook_menu_alter().
+ */
+function ais_menu_alter(&$items) {
+  // Find all page callbacks that use image_style_deliver() (including the ones
+  // for public and private image styles defined by the Image module in Drupal
+  // core) and replace them with a new one that handles adaptive image styles.
+  foreach ($items as &$item) {
+    if (isset($item['page callback']) && $item['page callback'] == 'image_style_deliver') {
+      $item['page callback'] = 'ais_image_style_deliver';
+    }
+  }
+}
+
+/**
+ * Wrapper for image_style_deliver() that handles adaptive image styles.
+ */
+function ais_image_style_deliver($style, $scheme) {
+  $args = func_get_args();
+  array_shift($args);
+  array_shift($args);
+  $target = implode('/', $args);
+
+  // By design, this module allows HTTP clients to switch between different
+  // adaptive image styles for the same image. Therefore, if the request has
+  // the correct security token for the main adaptive style, we can safely
+  // deliver any other adaptive style also.
+  $bypass_granted = FALSE;
+  if (!variable_get('image_allow_insecure_derivatives', FALSE) && defined('IMAGE_DERIVATIVE_TOKEN')) {
+    // First check that an adaptive style is being requested.
+    $bypass = isset($style['name']) && _ais_is_used($style['name'], variable_get('ais_adaptive_styles', array()));
+    // Next check that a valid token for the main adaptive style is present.
+    $bypass = $bypass && isset($_GET[IMAGE_DERIVATIVE_TOKEN]) && $_GET[IMAGE_DERIVATIVE_TOKEN] === image_style_path_token(AIS_ADAPTIVE_STYLE, $scheme . '://' . $target);
+    // If so, we can bypass the standard image_style_deliver() security check
+    // for this request.
+    if ($bypass) {
+      $bypass_granted = TRUE;
+      $GLOBALS['conf']['image_allow_insecure_derivatives'] = TRUE;
+    }
+  }
+
+  // Execute the standard page callback.
+  $func_args = func_get_args();
+  $return = call_user_func_array('image_style_deliver', $func_args);
+
+  // Before returning, reset the 'image_allow_insecure_derivatives' variable if
+  // we changed it above.
+  if ($bypass_granted) {
+    $GLOBALS['conf']['image_allow_insecure_derivatives'] = FALSE;
+  }
+
+  return $return;
 }
 
 /**

@@ -42,3 +42,6 @@ dependencies[] = content_type_download
 
 ; Context Features
 dependencies[] = home_page_anonymous_context
+
+; Page View Features
+dependencies[] = article_views_feature

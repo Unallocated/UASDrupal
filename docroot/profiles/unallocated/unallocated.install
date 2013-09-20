@@ -75,3 +75,11 @@ function unallocated_update_7002() {
 
   module_enable(array('home_page_anonymous_context'));
 }
+
+/**
+ * 7004 - Enable the frontpage anonymous context module
+ */
+function unallocated_update_7004() {
+
+  module_enable(array('article_views_feature'));
+}

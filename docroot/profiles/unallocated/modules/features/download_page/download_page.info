@@ -1,0 +1,11 @@
+name = Download Page
+description = Download Page
+core = 7.x
+package = UAS Pages
+version = 7.x-1.0
+project = download_page
+dependencies[] = ctools
+dependencies[] = views
+features[ctools][] = views:views_default:3.0
+features[features_api][] = api:1
+features[views_view][] = downloads

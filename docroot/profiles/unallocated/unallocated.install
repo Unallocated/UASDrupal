@@ -75,3 +75,27 @@ function unallocated_update_7002() {
 
   module_enable(array('home_page_anonymous_context'));
 }
+
+/**
+ * 7003 - Enable the downloads view page feature
+ */
+function unallocated_update_7003() {
+
+  module_enable(array('download_page'));
+}
+
+/**
+ * 7004 - Enable the OG (Organic Groups) membership type feature
+ */
+function unallocated_update_7004() {
+
+  module_enable(array('og_membership_type'));
+}
+
+/**
+ * 7005 - Enable the OG (Organic Groups) membership type feature
+ */
+function unallocated_update_7005() {
+
+  module_enable(array('og_permissions'));
+}

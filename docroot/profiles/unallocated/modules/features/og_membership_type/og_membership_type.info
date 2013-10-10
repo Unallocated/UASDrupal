@@ -1,0 +1,5 @@
+name = OG membership type
+description = OG membership type
+core = 7.x
+package = Features
+features[features_api][] = api:1

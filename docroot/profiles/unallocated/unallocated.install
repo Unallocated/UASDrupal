@@ -92,3 +92,10 @@ function unallocated_update_7004() {
   module_enable(array('og_membership_type'));
 }
 
+/**
+ * 7005 - Enable the OG (Organic Groups) membership type feature
+ */
+function unallocated_update_7005() {
+
+  module_enable(array('og_permissions'));
+}

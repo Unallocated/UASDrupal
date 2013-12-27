@@ -41,8 +41,9 @@ drush en nodequeue-generate
 drush nodequeue-generate-all
 ```
 
-###Without Drush###
+####Without Drush####
 After completed installation of the Unallocated Site on local environment
+
 1. Log into web site with credentials set during installation.
 1. Navigate to Configuration -> Development -> Generate Content (/admin/config/development/generate/content)
 1. Change the "How many nodes would you like to generate?" value to 100

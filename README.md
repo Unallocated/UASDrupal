@@ -69,10 +69,10 @@ Roadmap
 The current roadmap is subject to change as we get a better handle on
 the requirements
 
-1. Documentation sprint to wireframe site, generate requirements and build ticketing.
+~~1. Documentation sprint to wireframe site, generate requirements and build ticketing.
 1. Convert current implementation into a drupal install profile and features. This will 
 facilitate git-based development, greatly improve deployment workflows, and make 
-contribution by other members much easier.
+contribution by other members much easier.~~
 1. Events integration. Integrate calendar events with Google and Meetup.com 
 to make maintenance of events across multiple systems manageable. Provide events
 natively to other systems with RSS.

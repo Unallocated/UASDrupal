@@ -91,3 +91,16 @@ function unallocated_update_7003() {
 
   module_enable($modules);
 }
+
+/**
+ * 7004 - Enable the anonymous frontpage blocks.
+ */
+function unallocated_update_7004() {
+  $modules = array(
+    'box_front_page_know_more',
+    'box_hackerspace_intro',
+    'space_status_indicator'
+  );
+
+  module_enable($modules);
+}

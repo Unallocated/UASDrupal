@@ -18,22 +18,42 @@ Drush 4.6 or higher
 
 Installation
 ------------
-Currently, installation of the site is a pain in the ass. Once the site has been
-converted to an install profile, this will be a little easier to write out.
-
-Contact r00ster at nick@hepnermedia.com to request a copy of the database that
-currently contains the configurations needed to run this codebase
-
 Install drupal as you would normally, either with drush or using the instructions
 found here: http://drupal.org/documentation/install
 
-Once installed, overwrite the database with the one provided by r00ster. Like magic,
-it should just work. If it does not, wait until install profile is released with
-better instructions.
+During installation, be sure to select the "Unallocated" profile, instead of the "Standard" installation.
+
+###Generating Content###
+Many of the features do not display without content. This system can automatically generate
+sample content appropriate for the site and for development:
+
+####Using Drush####
+1. Generate content for the site (~100 nodes)
+```
+drush generate-content 100 4 --types=announcement,article,page,download,project,video
+```
+1. Enable the Nodequeue Generate module
+```
+drush en nodequeue-generate
+```
+1. Populate a nodequeue with content. This will populate the frontpage slideshow.
+```
+drush nodequeue-generate-all
+```
+
+###Without Drush###
+After completed installation of the Unallocated Site on local environment
+1. Log into web site with credentials set during installation.
+1. Navigate to Configuration -> Development -> Generate Content (/admin/config/development/generate/content)
+1. Change the "How many nodes would you like to generate?" value to 100
+1. Hit the generate button.
+1. Navigate to the modules page (/admin/modules). Enable the Nodequeue Generate module.
+1. Navigate to Structure -> Nodequeues -> Generate queue assignments (/admin/structure/nodequeue/generate_nodequeue)
+1. Select the "Frontpage Slideshow". Hit the "Generate" button.
 
 Current Project Status
 ----------------------
-The project is currently undergoing early development. 
+The project is actively working towards a 1.0 launch release.
 
 This code is expected to be buggy, functionality is missing, processes, apis, and
 development priorities will shift with no announcement in this current stage.

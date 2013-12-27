@@ -47,7 +47,7 @@ function uas_checkin_settings () {
 	$form['uas_checkin_status_url'] = array(
 		'#type'				=> 'textfield',
 		'#title' 			=> t('UAS Checkin Status URL'),
-		'#default_value'	=> variable_get('uas_checkin_status_url', ''),
+		'#default_value'	=> variable_get('uas_checkin_status_url', 'http://unallocatedspace.org/status'),
 	);
 	
 	return system_settings_form($form);

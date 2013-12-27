@@ -41,9 +41,19 @@ drush en nodequeue-generate
 drush nodequeue-generate-all
 ```
 
+###Without Drush###
+After completed installation of the Unallocated Site on local environment
+1. Log into web site with credentials set during installation.
+1. Navigate to Configuration -> Development -> Generate Content (/admin/config/development/generate/content)
+1. Change the "How many nodes would you like to generate?" value to 100
+1. Hit the generate button.
+1. Navigate to the modules page (/admin/modules). Enable the Nodequeue Generate module.
+1. Navigate to Structure -> Nodequeues -> Generate queue assignments (/admin/structure/nodequeue/generate_nodequeue)
+1. Select the "Frontpage Slideshow". Hit the "Generate" button.
+
 Current Project Status
 ----------------------
-The project is actively working towards a 1.0 launch release.  
+The project is actively working towards a 1.0 launch release.
 
 This code is expected to be buggy, functionality is missing, processes, apis, and
 development priorities will shift with no announcement in this current stage.

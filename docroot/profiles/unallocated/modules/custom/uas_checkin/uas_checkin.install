@@ -1,0 +1,8 @@
+<?php
+
+/**
+ * Implements hook_install().
+ */
+function uas_checkin_install() {
+  variable_set('uas_checkin_status_url', 'http://unallocatedspace.org/status');
+}

@@ -25,7 +25,7 @@ function template_process_flexslider_views(&$vars) {
       // Render the row into a slide
       $view->row_index = $id;
       $item['slide'] = $row_plugin->render($row);
-
+      $item['caption'] = (isset($row->caption) && !empty($row->caption)) ? $row->caption : NULL;
       $items[] = $item;
     }
 

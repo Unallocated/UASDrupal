@@ -73,6 +73,15 @@ function flexslider_example_views_default_views() {
   $handler->display->display_options['defaults']['title'] = FALSE;
   $handler->display->display_options['title'] = 'Basic Slider';
   $handler->display->display_options['defaults']['hide_admin_links'] = FALSE;
+  $handler->display->display_options['defaults']['style_plugin'] = FALSE;
+  $handler->display->display_options['style_plugin'] = 'flexslider';
+  $handler->display->display_options['style_options']['captionfield'] = 'title';
+  $handler->display->display_options['defaults']['style_options'] = FALSE;
+  $handler->display->display_options['defaults']['row_plugin'] = FALSE;
+  $handler->display->display_options['row_plugin'] = 'fields';
+  $handler->display->display_options['row_options']['hide_empty'] = TRUE;
+  $handler->display->display_options['row_options']['default_field_elements'] = FALSE;
+  $handler->display->display_options['defaults']['row_options'] = FALSE;
   $handler->display->display_options['defaults']['fields'] = FALSE;
   /* Field: Content: FlexSlider Example Image */
   $handler->display->display_options['fields']['field_flexslider_example_image']['id'] = 'field_flexslider_example_image';
@@ -223,6 +232,56 @@ function flexslider_example_views_default_views() {
   $handler->display->display_options['menu']['weight'] = '0';
   $handler->display->display_options['menu']['name'] = 'menu-flexslider-example';
   $handler->display->display_options['menu']['context'] = 0;
+
+  /* Display: Basic Slider with Thumbnail Caption */
+  $handler = $view->new_display('page', 'Basic Slider with Thumbnail Caption', 'page_5');
+  $handler->display->display_options['defaults']['title'] = FALSE;
+  $handler->display->display_options['title'] = 'Basic Slider with Thumbnail captions';
+  $handler->display->display_options['display_description'] = 'To use thumbnail captions, use the "caption field" option in the style settings.';
+  $handler->display->display_options['defaults']['hide_admin_links'] = FALSE;
+  $handler->display->display_options['defaults']['style_plugin'] = FALSE;
+  $handler->display->display_options['style_plugin'] = 'flexslider';
+  $handler->display->display_options['style_options']['optionset'] = 'flexslider_default_thumbnail_captions';
+  $handler->display->display_options['style_options']['captionfield'] = 'title';
+  $handler->display->display_options['defaults']['style_options'] = FALSE;
+  $handler->display->display_options['defaults']['row_plugin'] = FALSE;
+  $handler->display->display_options['row_plugin'] = 'fields';
+  $handler->display->display_options['row_options']['hide_empty'] = TRUE;
+  $handler->display->display_options['row_options']['default_field_elements'] = FALSE;
+  $handler->display->display_options['defaults']['row_options'] = FALSE;
+  $handler->display->display_options['defaults']['fields'] = FALSE;
+  /* Field: Content: FlexSlider Example Image */
+  $handler->display->display_options['fields']['field_flexslider_example_image']['id'] = 'field_flexslider_example_image';
+  $handler->display->display_options['fields']['field_flexslider_example_image']['table'] = 'field_data_field_flexslider_example_image';
+  $handler->display->display_options['fields']['field_flexslider_example_image']['field'] = 'field_flexslider_example_image';
+  $handler->display->display_options['fields']['field_flexslider_example_image']['label'] = '';
+  $handler->display->display_options['fields']['field_flexslider_example_image']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['field_flexslider_example_image']['click_sort_column'] = 'fid';
+  $handler->display->display_options['fields']['field_flexslider_example_image']['settings'] = array(
+    'image_style' => 'flexslider_full',
+    'image_link' => '',
+  );
+  $handler->display->display_options['fields']['field_flexslider_example_image']['group_rows'] = FALSE;
+  $handler->display->display_options['fields']['field_flexslider_example_image']['delta_offset'] = '0';
+  /* Field: Content: Title */
+  $handler->display->display_options['fields']['title']['id'] = 'title';
+  $handler->display->display_options['fields']['title']['table'] = 'node';
+  $handler->display->display_options['fields']['title']['field'] = 'title';
+  $handler->display->display_options['fields']['title']['label'] = '';
+  $handler->display->display_options['fields']['title']['exclude'] = TRUE;
+  $handler->display->display_options['fields']['title']['element_type'] = '0';
+  $handler->display->display_options['fields']['title']['element_label_type'] = '0';
+  $handler->display->display_options['fields']['title']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['title']['element_wrapper_type'] = '0';
+  $handler->display->display_options['fields']['title']['element_default_classes'] = FALSE;
+  $handler->display->display_options['fields']['title']['link_to_node'] = FALSE;
+  $handler->display->display_options['path'] = 'flexslider-views-example-thumbnail-captions';
+  $handler->display->display_options['menu']['type'] = 'normal';
+  $handler->display->display_options['menu']['title'] = 'Thumbnail Captions (Views)';
+  $handler->display->display_options['menu']['description'] = 'Basic slider with thumbnail captions';
+  $handler->display->display_options['menu']['weight'] = '0';
+  $handler->display->display_options['menu']['name'] = 'menu-flexslider-example';
+  $handler->display->display_options['menu']['context'] = 0;
   $translatables['flexslider_views_example'] = array(
     t('Master'),
     t('FlexSlider Views Example'),
@@ -243,6 +302,9 @@ function flexslider_example_views_default_views() {
     t('Basic Carousel'),
     t('Carousel with min and max ranges'),
     t('carousel with min and max ranges'),
+    t('Basic Slider with Thumbnail Caption'),
+    t('Basic Slider with Thumbnail captions'),
+    t('To use thumbnail captions, use the "caption field" option in the style settings.'),
   );
   $export['flexslider_views_example'] = $view;
 

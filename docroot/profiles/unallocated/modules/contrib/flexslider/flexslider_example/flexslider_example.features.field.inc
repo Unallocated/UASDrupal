@@ -125,9 +125,9 @@ function flexslider_example_field_default_fields() {
           'label' => 'above',
           'module' => 'flexslider_fields',
           'settings' => array(
-            'caption' => FALSE,
-            'flexslider_reference_img_src' => NULL,
-            'optionset' => 'default',
+            'caption' => 1,
+            'image_style' => '',
+            'optionset' => 'flexslider_default_thumbnail_slider',
           ),
           'type' => 'flexslider',
           'weight' => '1',

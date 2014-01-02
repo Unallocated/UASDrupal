@@ -1,16 +1,21 @@
 <?php
 
 /**
+ * @file
+ * Main functions and hook implementations for FE Profile.
+ */
+
+/**
  * Implements hook_features_api().
  */
 function fe_profile_features_api() {
   return array(
-      'fe_profile' => array(
-          'name' => t('Profile fields'),
-          'feature_source' => TRUE,
-          'default_hook' => 'fe_profile_export_fields',
-          'default_file' => FEATURES_DEFAULTS_INCLUDED_COMMON,
-      )
+    'fe_profile' => array(
+      'name' => t('Profile fields'),
+      'feature_source' => TRUE,
+      'default_hook' => 'fe_profile_export_fields',
+      'default_file' => FEATURES_DEFAULTS_INCLUDED_COMMON,
+    ),
   );
 }
 
@@ -71,8 +76,13 @@ function fe_profile_features_revert($module) {
   }
 }
 
+/**
+ * Saves a profile field to the database.
+ *
+ * @param array $field_data
+ *   The field data to save.
+ */
 function _fe_profile_save_field($field_data) {
-
   if (!isset($field_data['options'])) {
     $field_data['options'] = '';
   }
@@ -80,18 +90,17 @@ function _fe_profile_save_field($field_data) {
     $field_data['page'] = '';
   }
   if (!isset($field_data['fid'])) {
-    $field_data = (object)$field_data;
+    $field_data = (object) $field_data;
     drupal_write_record('profile_field', $field_data);
   }
   else {
-    $field_data = (object)$field_data;
+    $field_data = (object) $field_data;
 
-    if (!db_query("SELECT * FROM {profile_field} WHERE fid = :fid", array(':fid' => $field_data->fid))->fetchObject() )  {
+    if (!db_query("SELECT * FROM {profile_field} WHERE fid = :fid", array(':fid' => $field_data->fid))->fetchObject()) {
       drupal_write_record('profile_field', $field_data);
     }
     else {
       drupal_write_record('profile_field', $field_data, array('fid'));
     }
-
   }
 }

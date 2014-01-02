@@ -202,6 +202,30 @@ function flexslider_option_elements($options = array()) {
       'thumbnails' => t('Thumbnails'),
     )
   );
+  $form['nav_controls']['thumbCaptions'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Thumbnail Captions'),
+    '#description' => t('<em>Requires FlexSlider Library 2.2+</em>. After selecting this captions will be added to thumbnails and removed from the main slide.'),
+    '#default_value' => isset($options['thumbCaptions']) ? $options['thumbCaptions'] : _flexslider_optionset_defaults('thumbCaptions'),
+    '#states' => array(
+      'visible' => array(
+        ':input[name="controlNav"]' => array('value' => 'thumbnails'),
+      ),
+    ),
+    '#element_validate' => array('_flexslider_validate_minimum_version_22'),
+  );
+  $form['nav_controls']['thumbCaptionsBoth'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Display both thumbnail captions and normal captions'),
+    '#description' => t('<em>Requires FlexSlider Library 2.2+</em>. Display captions in the thumbnail as well as in the slider.'),
+    '#default_value' => isset($options['thumbCaptionsBoth']) ? $options['thumbCaptionsBoth'] : _flexslider_optionset_defaults('thumbCaptionsBoth'),
+    '#states' => array(
+      'visible' => array(
+        ':input[name="controlNav"]' => array('value' => 'thumbnails'),
+      ),
+    ),
+    '#element_validate' => array('_flexslider_validate_minimum_version_22'),
+  );
   $form['nav_controls']['keyboard'] = array(
     '#type' => 'checkbox',
     '#title' => t('Keyboard Navigation'),
@@ -516,4 +540,20 @@ function _flexslider_validate_selector($element, &$form_state) {
   // @todo
   // @see form_error()
   return TRUE;
+}
+
+/**
+ * Validate a form element that should have a number as value.
+ */
+function _flexslider_validate_minimum_version_22($element, &$form_state) {
+  $lib = libraries_detect('flexslider');
+  $version = $lib['version'];
+  $required = "2.2";
+
+  if (!version_compare($version, $required, '>=')) {
+    form_error($element, t('To use %name you must install FlexSlider version !required or higher.', array(
+      '%name' => $element['#title'],
+      '!required' => l($required, 'https://github.com/woothemes/FlexSlider/tree/version/2.2'),
+    )));
+  }
 }

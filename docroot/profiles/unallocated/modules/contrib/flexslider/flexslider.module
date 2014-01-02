@@ -467,6 +467,8 @@ function _flexslider_optionset_defaults($key = NULL) {
     'pauseText' => t('Pause'),
     'playText' => t('Play'),
     'randomize' => FALSE,
+    'thumbCaptions' => FALSE,
+    'thumbCaptionsBoth' => FALSE,
     //'slidetostart' => 0, // integer value, not boolean --  replace by "startAt"
     'animationLoop' => TRUE,
     'pauseOnAction' => TRUE,
@@ -541,6 +543,8 @@ function _flexslider_typecast_optionset(&$options) {
         case 'directionNav':
         case 'pausePlay':
         case 'randomize':
+        case 'thumbCaptions':
+        case 'thumbCaptionsBoth':
         case 'animationLoop':
         case 'pauseOnAction':
         case 'pauseOnHover':

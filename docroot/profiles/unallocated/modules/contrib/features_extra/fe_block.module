@@ -130,6 +130,14 @@ function fe_block_settings_features_export_render($module_name = '', $data) {
       $export_block['node_types'] = _fe_block_get_block_node_types($block);
       // Add role visibility settings.
       $export_block['roles'] = _fe_block_get_block_roles($block);
+      // Add block_class support.
+      if (module_exists('block_class')) {
+        $export_block['css_class'] = _fe_block_get_block_css_class($block);
+      }
+      // Add i18n_block support.
+      if (module_exists('i18n_block')) {
+        $export_block['i18n_block_language'] = _fe_block_get_block_i18n_block_language($block);
+      }
       // Add theme specific settings for every active theme.
       $export_block['themes'] = array();
       foreach ($themes as $theme) {
@@ -299,11 +307,11 @@ function _fe_block_get_block_node_types($block) {
  *
  * This is derived from _block_rehash().
  *
- * @param $theme
+ * @param string $theme
  *   The theme to retrieve blocks for. If not provided, defaults to the
  *   currently used theme.
  *
- * @return
+ * @return array
  *   Blocks currently exported by modules.
  */
 function _fe_block_get_blocks($theme = NULL) {
@@ -397,7 +405,7 @@ function _fe_block_get_blocks($theme = NULL) {
  */
 function _fe_block_get_active_themes() {
   $theme_names = array();
-  foreach (list_themes() as $machine_name => $theme) {
+  foreach (system_list('theme') as $machine_name => $theme) {
     if (!empty($theme->status)) {
       $theme_names[] = $machine_name;
     }
@@ -433,9 +441,13 @@ function fe_block_settings_features_revert($module_name = NULL) {
     $block_themes = $block['themes'];
     $block_node_types = isset($block['node_types']) ? $block['node_types'] : NULL;
     $block_roles = isset($block['roles']) ? $block['roles'] : NULL;
+    $block_css_class = isset($block['css_class']) ? $block['css_class'] : NULL;
+    $block_i18n_block_language = isset($block['i18n_block_language']) ? $block['i18n_block_language'] : NULL;
     unset($block['themes']);
     unset($block['node_types']);
     unset($block['roles']);
+    unset($block['css_class']);
+    unset($block['i18n_block_language']);
 
     // Restore theme specific settings for every active theme.
     foreach ($active_themes as $theme) {
@@ -477,6 +489,16 @@ function fe_block_settings_features_revert($module_name = NULL) {
     if (isset($block_roles)) {
       _fe_block_settings_update_block_roles($block, $block_roles);
     }
+
+    // Update block CSS classes.
+    if (isset($block_css_class) && module_exists('block_class')) {
+      _fe_block_settings_update_block_css_class($block, $block_css_class);
+    }
+
+    // Set i18n_block languages.
+    if (module_exists('i18n_block') && isset($block_i18n_block_language)) {
+      _fe_block_settings_update_i18n_block_language($block, $block_i18n_block_language);
+    }
   }
 
   // Clear block cache.
@@ -489,10 +511,15 @@ function fe_block_settings_features_revert($module_name = NULL) {
  * Helper to update global block settings for a specific block.
  *
  * @param array $block
- *   block definition
+ *   Block definition.
  */
 function _fe_block_settings_update_global_settings($block) {
   $globals = _fe_block_get_global_settings($block);
+
+  // Filter out any keys that do not correspond to fields in the block table.
+  $fields = drupal_schema_fields_sql('block');
+  $globals = array_intersect_key($globals, array_flip($fields));
+
   db_update('block')
     ->fields($globals)
     ->condition('module', $block['module'])
@@ -504,9 +531,9 @@ function _fe_block_settings_update_global_settings($block) {
  * Helper to update node type settings for a given block.
  *
  * @param array $block
- *   block definition
+ *   Block definition.
  * @param array $node_types
- *   array of node types
+ *   Array of node types.
  */
 function _fe_block_settings_update_block_node_type_settings($block, $node_types) {
 
@@ -534,11 +561,11 @@ function _fe_block_settings_update_block_node_type_settings($block, $node_types)
  * Helper to update the block role settings for a given block.
  *
  * @param array $block
- *   block definiton
- * @param array $roles
- *   Associative array of roles
- *   - key: role name
- *   - value: (foreign) role id
+ *   Block definition.
+ * @param array $block_roles
+ *   Associative array of roles.
+ *   - key: role name.
+ *   - value: (foreign) role id.
  */
 function _fe_block_settings_update_block_roles($block, $block_roles) {
   static $roles;
@@ -576,6 +603,79 @@ function _fe_block_settings_update_block_roles($block, $block_roles) {
     if ($found) {
       $insert->execute();
     }
+  }
+}
+
+/**
+ * Helper to update the block class settings for a given block.
+ *
+ * @param array $block
+ *   Block definition of the block to update.
+ * @param string $block_css_class
+ *   List of CSS classes to apply to the block.
+ */
+function _fe_block_settings_update_block_css_class($block, $block_css_class) {
+  // This functionality is provided by the Block Class module.
+  if (module_exists('block_class')) {
+    // Block Class 1.x maintained its own table.
+    if (db_table_exists('block_class')) {
+      // First delete the old block_class settings, if any.
+      db_delete('block_class')
+        ->condition('module', $block['module'])
+        ->condition('delta', $block['delta'])
+        ->execute();
+
+      // Then write the new settings, if any are present.
+      if (!empty($block_css_class)) {
+        db_insert('block_class')
+          ->fields(array('module', 'delta', 'css_class'))
+          ->values(array(
+              'module' => $block['module'],
+              'delta' => $block['delta'],
+              'css_class' => $block_css_class,
+            ))
+          ->execute();
+      }
+    }
+
+    // Block Class 2.x extends the core Block table.
+    elseif (db_field_exists('block', 'css_class')) {
+      db_update('block')
+        ->fields(array('css_class' => $block_css_class))
+        ->condition('module', $block['module'])
+        ->condition('delta', $block['delta'])
+        ->execute();
+    }
+  }
+}
+
+/**
+ * Helper to update the i18n block language settings for a specific block.
+ *
+ * @param array $block
+ *   Block definition.
+ * @param array $block_languages
+ *   Array of associated languages.
+ */
+function _fe_block_settings_update_i18n_block_language($block, $block_languages) {
+  // First remove the old settings.
+  db_delete('i18n_block_language')
+    ->condition('module', $block['module'])
+    ->condition('delta', $block['delta'])
+    ->execute();
+
+  // Then write the new settings.
+  if (!empty($block_languages)) {
+    $insert = db_insert('i18n_block_language')
+      ->fields(array('module', 'delta', 'language'));
+    foreach ($block_languages as $langcode) {
+      $insert->values(array(
+        'module' => $block['module'],
+        'delta' => $block['delta'],
+        'language' => $langcode,
+      ));
+    }
+    $insert->execute();
   }
 }
 
@@ -633,7 +733,7 @@ function fe_block_boxes_features_export($data, &$export, $module_name = '') {
   $export['dependencies']['fe_block'] = 'fe_block';
 
   $table = 'fe_block_boxes';
-  // Add the components
+  // Add the components.
   foreach ($data as $object_name) {
     $export['features'][$table][$object_name] = $object_name;
   }
@@ -715,7 +815,7 @@ function fe_block_boxes_features_revert($module_name = NULL) {
       $result = _fe_block_save_box((array) $object);
     }
   }
-  // Clear block cache
+  // Clear block cache.
   cache_clear_all(NULL, 'cache_block');
 
   return TRUE;
@@ -762,7 +862,7 @@ function fe_block_form_alter(&$form, $form_state, $form_id) {
     $form['#submit'][] = 'fe_block_machine_name_delete';
   }
 
-  // Add & edit
+  // Add & edit.
   if (!empty($default_values)) {
     $form['settings']['machine_name'] = array(
       '#type' => 'textfield',
@@ -810,12 +910,12 @@ function fe_block_machine_name_validate($form, &$form_state) {
  * Save machine name.
  */
 function fe_block_machine_name_submit($form, &$form_state) {
-  // Insert
+  // If a block id is not given, retrieve it from the database.
   if (empty($form_state['values']['bid'])) {
     $form_state['values']['bid'] = db_select('block_custom')
-       ->fields('block_custom', array('bid'))
-       ->condition('info', $form_state['values']['info'])
-       ->execute()->fetch()->bid;
+      ->fields('block_custom', array('bid'))
+      ->condition('info', $form_state['values']['info'])
+      ->execute()->fetch()->bid;
   }
   if (empty($form_state['values']['bid'])) {
     return;
@@ -839,17 +939,7 @@ function fe_block_machine_name_delete($form, &$form_state) {
 }
 
 /**
- * Public APIs.
- *
- * TODO
- */
-
-/**
- * Internal functions.
- */
-
-/**
- * Sort blocks with "module" and "delta".
+ * Callback for usort(). Sorts blocks on "module" and "delta".
  */
 function _fe_block_compare($a, $b) {
   $module_cmp = strcmp($a['module'], $b['module']);
@@ -949,8 +1039,11 @@ function _fe_block_build_id($block) {
 /**
  * Save a box.
  *
- * @param $settings
+ * @param array $settings
+ *   A box settings array.
+ *
  * @return array
+ *   Updated settings array.
  */
 function _fe_block_save_box($settings = array()) {
   if (empty($settings['info'])) {
@@ -969,7 +1062,7 @@ function _fe_block_save_box($settings = array()) {
     return FALSE;
   }
 
-  // Defaults
+  // Provide some default settings.
   $default_settings = array(
     'info'   => '',
     'body'   => '',
@@ -977,7 +1070,7 @@ function _fe_block_save_box($settings = array()) {
   );
   $settings = array_merge($default_settings, $settings);
 
-  // Save
+  // Save the block settings.
   if (empty($settings['bid'])) {
     drupal_write_record('block_custom', $settings);
   }
@@ -1031,6 +1124,54 @@ function _fe_block_get_block_roles($block) {
     ->orderBy('r.name', 'ASC');
   $roles = $query->execute()->fetchAllKeyed(0, 1);
   return $roles;
+}
+
+/**
+ * Helper function to get block class settings.
+ *
+ * @param array $block
+ *   The block definition.
+ *
+ * @return string
+ *   Class name(s) for the block.
+ */
+function _fe_block_get_block_css_class($block) {
+  // This functionality depends on the Block Class module.
+  if (module_exists('block_class')) {
+    // Block Class 2.x extends the core Block table, so we have the data.
+    if (!empty($block['css_class'])) {
+      return $block['css_class'];
+    }
+
+    // Block Class 1.x maintains its own table.
+    if (db_table_exists('block_class')) {
+      $css_class = db_select('block_class', 'b')
+        ->fields('b', array('css_class'))
+        ->condition('module', $block['module'])
+        ->condition('delta', $block['delta'])
+        ->execute()
+        ->fetchField();
+    }
+  }
+  return !empty($css_class) ? $css_class : '';
+}
+
+/**
+ * Get i18n block language from i18n_block.
+ *
+ * @param array $block
+ *   Block definition array.
+ *
+ * @return array
+ *   Array of language codes for the specified block.
+ */
+function _fe_block_get_block_i18n_block_language($block) {
+  $query = db_select('i18n_block_language', 'bl')
+    ->condition('module', $block['module'])
+    ->condition('delta', $block['delta'])
+    ->fields('bl', array('language'))
+    ->orderBy('bl.language');
+  return $query->execute()->fetchCol();
 }
 
 /**

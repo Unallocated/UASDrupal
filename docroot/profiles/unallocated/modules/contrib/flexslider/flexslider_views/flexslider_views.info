@@ -9,9 +9,9 @@ dependencies[] = flexslider
 files[] = flexslider_views.module
 files[] = flexslider_views.views.inc
 files[] = flexslider_views_plugin_style_flexslider.inc
-; Information added by drupal.org packaging script on 2013-08-27
-version = "7.x-2.0-alpha2+5-dev"
+; Information added by drupal.org packaging script on 2013-09-08
+version = "7.x-2.0-alpha3"
 core = "7.x"
 project = "flexslider"
-datestamp = "1377609634"
+datestamp = "1378663043"
 

@@ -130,22 +130,29 @@ function template_process_flexslider_list_item(&$vars) {
   $item = &$vars['item'];
   $settings = &$vars['settings'];
   $caption = &$vars['caption'];
-  $thumb = &$vars['thumb'];
   $attributes = &$vars['settings']['attributes'];
 
   // Generated thumbnail support
-  if ($settings['optionset']->options['controlNav'] === "thumbnails") {
+  if (isset($settings['optionset']->options['controlNav']) and $settings['optionset']->options['controlNav'] === "thumbnails") {
     // If the thumbnails are enabled in the option set, scan for the first img
     // tag and extract the src attribute to set as the thumbnail data
     $src = array();
-    preg_match( '/src="([^"]*)"/i', $item, $src ) ;
+    preg_match("<img.+?src=[\"'](.+?)[\"'].+?>", $item, $src);
 
     if (!empty($src[1])) {
       $attributes['data-thumb'] = $src[1];
     }
   }
 
+  if (isset($settings['optionset']->options['thumbCaptions']) and $settings['optionset']->options['thumbCaptions'] and !empty($caption)) {
+    $attributes['data-thumbcaption'] = $caption;
+    // Prevent captions from appearing in the slider as well
+    if (isset($settings['optionset']->options['thumbCaptionsBoth']) and FALSE === $settings['optionset']->options['thumbCaptionsBoth']) {
+      $caption = '';      
+    }
+  }
+
   if (!empty($caption)) {
-    $caption = '<p class="flex-caption">' . $caption . '</p>';
+    $caption = '<div class="flex-caption">' . $caption . '</div>';
   }
 }

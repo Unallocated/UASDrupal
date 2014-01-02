@@ -24,15 +24,16 @@ features[flexslider_optionset][] = flexslider_carousel_with_min_and_max_ranges
 features[flexslider_optionset][] = flexslider_default_basic_carousel
 features[flexslider_optionset][] = flexslider_default_slider_thumbnail_controlnav
 features[flexslider_optionset][] = flexslider_default_slider_w_thumbnail_slider
+features[flexslider_optionset][] = flexslider_default_thumbnail_captions
 features[flexslider_optionset][] = flexslider_default_thumbnail_slider
 features[menu_custom][] = menu-flexslider-example
 features[node][] = flexslider_example
 features[variable][] = field_bundle_settings_node__flexslider_example
 features[views_view][] = flexslider_views_example
 
-; Information added by drupal.org packaging script on 2013-08-27
-version = "7.x-2.0-alpha2+5-dev"
+; Information added by drupal.org packaging script on 2013-09-08
+version = "7.x-2.0-alpha3"
 core = "7.x"
 project = "flexslider"
-datestamp = "1377609634"
+datestamp = "1378663043"
 

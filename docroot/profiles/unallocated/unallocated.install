@@ -111,3 +111,19 @@ function unallocated_update_7004() {
 function unallocated_update_7005() {
   variable_set('uas_checkin_status_url', 'http://unallocatedspace.org/status');
 }
+
+/**
+ * 7006 - Add uas_announcements_view as requirements to unallocated install profile.
+ */
+function unallocated_update_7006() {
+
+  // Enable the UAS Announcements Views
+  $modules = array(
+    'uas_announcements_view'
+  );
+
+  module_enable($modules);
+
+  // Set the front page to 'announcements'
+  variable_set('site_frontpage', 'announcements');
+}

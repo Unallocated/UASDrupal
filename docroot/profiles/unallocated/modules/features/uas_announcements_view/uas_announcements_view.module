@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the UAS Announcements View feature.
+ */
+
+include_once 'uas_announcements_view.features.inc';

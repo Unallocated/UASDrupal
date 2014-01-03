@@ -34,7 +34,7 @@ drush generate-content 100 4 --types=announcement,article,page,download,project,
 ```
 1. Enable the Nodequeue Generate module
 ```
-drush en nodequeue-generate
+drush en nodequeue_generate
 ```
 1. Populate a nodequeue with content. This will populate the frontpage slideshow.
 ```

@@ -77,9 +77,8 @@ function uas_announcements_view_views_default_views() {
     'announcement' => 'announcement',
   );
 
-  /* Display: Page */
-  $handler = $view->new_display('page', 'Page', 'page');
-  $handler->display->display_options['path'] = 'announcements';
+  /* Display: Block */
+  $handler = $view->new_display('block', 'Block', 'block_1');
   $export['announcements'] = $view;
 
   return $export;

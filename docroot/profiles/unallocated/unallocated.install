@@ -119,7 +119,7 @@ function unallocated_update_7004() {
 }
 
 /**
- * 7005 - Update default UAS checkin url
+ * 7005 - Update default UAS checkin url.
  */
 function unallocated_update_7005() {
   variable_set('uas_checkin_status_url', 'http://unallocatedspace.org/status');
@@ -139,4 +139,27 @@ function unallocated_update_7006() {
 
   // Set the front page to 'announcements'
   variable_set('site_frontpage', 'announcements');
+}
+
+/**
+ * 7007 - Set new front page.
+ */
+function unallocated_update_7007() {
+
+  // Set the front page to 'announcements'
+  variable_set('site_frontpage', 'frontpage-slideshow');
+}
+
+/**
+ * 7008 - Remove Main content block from default settings.
+ */
+function unallocated_update_7008() {
+  db_merge('block')
+    ->key(array('theme' => 'uas', 'delta' => 'main', 'module' => 'system'))
+    ->fields(array(
+      'region' => (''),
+      'pages' => trim($form_state['values']['pages']),
+      'status' => (int) (0),
+    ))
+    ->execute();
 }

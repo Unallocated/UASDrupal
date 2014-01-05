@@ -31,9 +31,21 @@ function home_page_anonymous_context_context_default_contexts() {
   $context->reactions = array(
     'block' => array(
       'blocks' => array(
-        'views-frontpage_slideshow-block' => array(
+        'views-announcements-block_1' => array(
           'module' => 'views',
-          'delta' => 'frontpage_slideshow-block',
+          'delta' => 'announcements-block_1',
+          'region' => 'sidebar_first',
+          'weight' => '-10',
+        ),
+        'boxes-hackerspace_intro' => array(
+          'module' => 'boxes',
+          'delta' => 'hackerspace_intro',
+          'region' => 'sidebar_second',
+          'weight' => '-10',
+        ),
+        'system-main' => array(
+          'module' => 'system',
+          'delta' => 'main',
           'region' => 'preface_first',
           'weight' => '-10',
         ),

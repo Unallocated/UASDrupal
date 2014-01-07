@@ -51,7 +51,20 @@ function unallocated_install() {
 
   variable_set('theme_uas_settings', $uas_theme_settings);
 
-  menu_rebuild();
+  // Enable feature dependencies. They cannot be enabled as a dependency in the .info file.
+  $features = array(
+    'content_type_project',
+    'content_type_announcement',
+    'content_type_video',
+    'content_type_article',
+    'content_type_download',
+    'frontpage_slideshow',
+    'home_page_anonymous_context',
+    'box_front_page_know_more',
+    'box_hackerspace_intro',
+    'space_status_indicator',
+  );
+  module_enable($features);
 }
 
 /**

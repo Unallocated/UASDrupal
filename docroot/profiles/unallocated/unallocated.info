@@ -36,19 +36,6 @@ dependencies[] = fe_nodequeue
 dependencies[] = flexslider
 dependencies[] = flexslider_views
 
-
-; Features
-dependencies[] = content_type_project
-dependencies[] = content_type_announcement
-dependencies[] = content_type_video
-dependencies[] = content_type_article
-dependencies[] = content_type_download
-dependencies[] = frontpage_slideshow
-dependencies[] = home_page_anonymous_context
-dependencies[] = box_front_page_know_more
-dependencies[] = box_hackerspace_intro
-dependencies[] = space_status_indicator
-
 ; Development modules (remove before final version)
 dependencies[] = views_ui
 dependencies[] = context_ui

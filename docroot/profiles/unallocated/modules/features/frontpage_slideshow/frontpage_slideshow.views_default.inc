@@ -66,7 +66,7 @@ function frontpage_slideshow_views_default_views() {
   $handler->display->display_options['fields']['title']['alter']['word_boundary'] = FALSE;
   $handler->display->display_options['fields']['title']['alter']['ellipsis'] = FALSE;
   $handler->display->display_options['fields']['title']['element_label_colon'] = FALSE;
-  /* Field: Content: Body */
+  /* Field: Content: Description */
   $handler->display->display_options['fields']['body']['id'] = 'body';
   $handler->display->display_options['fields']['body']['table'] = 'field_data_body';
   $handler->display->display_options['fields']['body']['field'] = 'body';
@@ -129,8 +129,9 @@ function frontpage_slideshow_views_default_views() {
   $handler->display->display_options['filters']['field_image_fid']['field'] = 'field_image_fid';
   $handler->display->display_options['filters']['field_image_fid']['operator'] = 'not empty';
 
-  /* Display: Block */
-  $handler = $view->new_display('block', 'Block', 'block');
+  /* Display: Page */
+  $handler = $view->new_display('page', 'Page', 'page_1');
+  $handler->display->display_options['path'] = 'frontpage-slideshow';
   $export['frontpage_slideshow'] = $view;
 
   return $export;

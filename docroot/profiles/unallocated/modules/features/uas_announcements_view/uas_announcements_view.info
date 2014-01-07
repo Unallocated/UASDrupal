@@ -1,8 +1,9 @@
 name = UAS Announcements View
-description = View to display announcements on the front page. 
+description = View to display announcements on the front page.
 core = 7.x
 package = UAS Pages
-version = 7.x-1.0
+php = 5.2.4
+version = 7.x-1.2
 project = uas_announcements_view
 dependencies[] = ctools
 dependencies[] = views

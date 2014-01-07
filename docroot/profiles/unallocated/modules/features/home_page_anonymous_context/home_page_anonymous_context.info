@@ -5,6 +5,7 @@ package = UAS Pages
 php = 5.2.4
 version = 7.x-1.0
 project = home_page_anonymous_context
+dependencies[] = box_hackerspace_intro
 dependencies[] = boxes
 dependencies[] = context
 dependencies[] = ctools

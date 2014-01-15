@@ -10,46 +10,6 @@ function unallocated_install() {
   // jQuery Update settings
   variable_set('jquery_update_jquery_version', '1.7');
   variable_set('jquery_update_jquery_cdn', 'google');
-  
-  $theme = 'uas';
-  $admin_theme = 'seven';
-
-  // Set the default theme.
-  db_update('system')
-    ->fields(array('status' => 1))
-    ->condition('type', 'theme')
-    ->condition('name', $theme)
-    ->execute();
-  variable_set('theme_default', $theme);
-
-  // Enable the admin theme.
-  db_update('system')
-    ->fields(array('status' => 1))
-    ->condition('type', 'theme')
-    ->condition('name', $admin_theme)
-    ->execute();
-  variable_set('admin_theme', $admin_theme);
-  variable_set('node_admin_theme', '1');
-
-  // Disable the default Bartik theme
-  theme_disable(array('bartik'));
-
-  // Disable some of the default theme settings.
-  $uas_theme_settings = variable_get('theme_uas_settings', array());
-  $uas_theme_settings += array(
-    'toggle_name' => 0,
-    'toggle_slogan' => 0,
-    'toggle_secondary_menu' => 0,
-    'alpha_debug_block_toggle' => 0,
-    'alpha_debug_grid_toggle' => 0,
-    'alpha_libraries' => array(
-      'omega_formalize' => 'omega_formalize',
-      'omega_mediaqueries' => 'omega_mediaqueries',
-      'omega_equalheights' => 'omega_equalheights',
-    )
-  );
-
-  variable_set('theme_uas_settings', $uas_theme_settings);
 
   // Enable feature dependencies. They cannot be enabled as a dependency in the .info file.
   $features = array(
@@ -63,9 +23,19 @@ function unallocated_install() {
     'box_front_page_know_more',
     'box_hackerspace_intro',
     'space_status_indicator',
+    'uas_announcements_view',
     'uas_site_configuration',
   );
   module_enable($features);
+
+  db_merge('block')
+    ->key(array('theme' => 'uas', 'delta' => 'main', 'module' => 'system'))
+    ->fields(array(
+      'region' => (''),
+      'pages' => trim(''),
+      'status' => (int) (0),
+    ))
+    ->execute();
 }
 
 /**
@@ -159,7 +129,7 @@ function unallocated_update_7008() {
     ->key(array('theme' => 'uas', 'delta' => 'main', 'module' => 'system'))
     ->fields(array(
       'region' => (''),
-      'pages' => trim($form_state['values']['pages']),
+      'pages' => trim(''),
       'status' => (int) (0),
     ))
     ->execute();

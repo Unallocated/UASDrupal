@@ -12,12 +12,13 @@ function unallocated_install() {
   variable_set('jquery_update_jquery_cdn', 'google');
 
   // Enable feature dependencies. They cannot be enabled as a dependency in the .info file.
-  $features = array(
+  $features = [
     'content_type_project',
     'content_type_announcement',
     'content_type_video',
     'content_type_article',
     'content_type_download',
+    'content_type_events',
     'frontpage_slideshow',
     'home_page_anonymous_context',
     'box_front_page_know_more',
@@ -25,7 +26,7 @@ function unallocated_install() {
     'space_status_indicator',
     'uas_announcements_view',
     'uas_site_configuration',
-  );
+  ];
   module_enable($features);
 
   db_merge('block')
@@ -157,6 +158,7 @@ function unallocated_update_7010() {
     'date_repeat_field',
     'date_views',
     'date_all_day',
+    'content_type_events',
   );
 
   module_enable($modules);

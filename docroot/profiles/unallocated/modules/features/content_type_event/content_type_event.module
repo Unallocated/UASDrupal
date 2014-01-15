@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Content Type: Event feature.
+ */
+
+include_once 'content_type_event.features.inc';

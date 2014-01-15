@@ -145,3 +145,19 @@ function unallocated_update_7009() {
 
   module_enable($modules);
 }
+
+/**
+ * 7010 - Enable date modules
+ */
+function unallocated_update_7010() {
+  $modules = array(
+    'date',
+    'date_popup',
+    'date_repeat',
+    'date_repeat_field',
+    'date_views',
+    'date_all_day',
+  );
+
+  module_enable($modules);
+}

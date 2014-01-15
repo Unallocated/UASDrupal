@@ -63,6 +63,7 @@ function unallocated_install() {
     'box_front_page_know_more',
     'box_hackerspace_intro',
     'space_status_indicator',
+    'uas_site_configuration',
   );
   module_enable($features);
 }
@@ -162,4 +163,15 @@ function unallocated_update_7008() {
       'status' => (int) (0),
     ))
     ->execute();
+}
+
+/**
+ * 7009 - Enable the uas_site_configuration settings.
+ */
+function unallocated_update_7009() {
+  $modules = array(
+    'uas_site_configuration',
+  );
+
+  module_enable($modules);
 }

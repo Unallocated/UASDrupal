@@ -18,7 +18,7 @@ function unallocated_install() {
     'content_type_video',
     'content_type_article',
     'content_type_download',
-    'content_type_events',
+    'content_type_event',
     'frontpage_slideshow',
     'home_page_anonymous_context',
     'box_front_page_know_more',

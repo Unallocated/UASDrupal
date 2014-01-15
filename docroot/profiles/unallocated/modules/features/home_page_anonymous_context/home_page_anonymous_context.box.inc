@@ -13,6 +13,21 @@ function home_page_anonymous_context_default_box() {
   $box = new stdClass();
   $box->disabled = FALSE; /* Edit this to true to make a default box disabled initially */
   $box->api_version = 1;
+  $box->delta = 'donations_box';
+  $box->plugin_key = 'simple';
+  $box->title = 'Donations';
+  $box->description = 'Donations Box';
+  $box->options = array(
+    'body' => array(
+      'value' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean ultricies fringilla diam, vel laoreet arcu adipiscing vitae. Aenean sed purus eget lectus pharetra tristique vitae et massa. Ut luctus tellus sed dui lobortis vehicula. Vivamus vel tellus faucibus, fringilla felis quis, ornare lacus. Vivamus congue risus et leo eleifend malesuada. Nunc ornare cursus felis, ac dapibus erat aliquet vitae. Phasellus quis tempus nulla, sed dignissim dolor. Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+      'format' => 'filtered_html',
+    ),
+  );
+  $export['donations_box'] = $box;
+
+  $box = new stdClass();
+  $box->disabled = FALSE; /* Edit this to true to make a default box disabled initially */
+  $box->api_version = 1;
   $box->delta = 'home_page_slideshow';
   $box->plugin_key = 'simple';
   $box->title = '';

@@ -13,6 +13,7 @@ dependencies[] = delta
 dependencies[] = frontpage_slideshow
 dependencies[] = uas_checkin
 dependencies[] = views
+features[box][] = donations_box
 features[box][] = home_page_slideshow
 features[box][] = quick_links
 features[context][] = home-page-anonymous

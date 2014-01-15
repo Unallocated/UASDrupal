@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the UAS Site configuration feature.
+ */
+
+include_once 'uas_site_configuration.features.inc';

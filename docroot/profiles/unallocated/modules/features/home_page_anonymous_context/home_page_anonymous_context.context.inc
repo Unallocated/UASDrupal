@@ -43,6 +43,12 @@ function home_page_anonymous_context_context_default_contexts() {
           'region' => 'sidebar_second',
           'weight' => '-10',
         ),
+        'boxes-donations_box' => array(
+          'module' => 'boxes',
+          'delta' => 'donations_box',
+          'region' => 'sidebar_second',
+          'weight' => '-9',
+        ),
         'system-main' => array(
           'module' => 'system',
           'delta' => 'main',

@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the UAS Default Content feature.
+ */
+
+include_once 'uas_default_content.features.inc';

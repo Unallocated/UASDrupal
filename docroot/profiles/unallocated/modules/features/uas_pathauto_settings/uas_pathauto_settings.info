@@ -5,6 +5,7 @@ version = 7.x-1.0
 project = uas_pathauto_settings
 dependencies[] = ctools
 dependencies[] = strongarm
+dependencies[] = pathauto
 features[ctools][] = strongarm:strongarm:1
 features[features_api][] = api:1
 features[variable][] = pathauto_blog_pattern

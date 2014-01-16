@@ -163,3 +163,15 @@ function unallocated_update_7010() {
 
   module_enable($modules);
 }
+
+/**
+ * 7011 - Enable node export modules and features
+ */
+function unallocated_update_7011() {
+  $modules = array(
+    'node_export',
+    'node_export_features',
+  );
+
+  module_enable($modules);
+}

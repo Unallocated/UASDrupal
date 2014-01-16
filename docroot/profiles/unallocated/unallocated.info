@@ -41,6 +41,8 @@ dependencies[] = date_repeat
 dependencies[] = date_repeat_field
 dependencies[] = date_views
 dependencies[] = date_all_day
+dependencies[] = node_export
+dependencies[] = node_export_features
 
 ; Development modules (remove before final version)
 dependencies[] = views_ui

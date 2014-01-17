@@ -13,7 +13,23 @@ define('UUID_UPGRADE_VAR', 'uuid_upgrade_in_progress');
 module_load_include('inc', 'uuid', 'uuid.entity');
 
 /**
- * Implements of hook_schema_alter().
+ * Helper function that returns a schema field definition for UUID fields.
+ *
+ * @see uuid_schema_alter()
+ * @see uuid_install()
+ */
+function uuid_schema_field_definition() {
+  return array(
+    'type' => 'char',
+    'length' => 36,
+    'not null' => TRUE,
+    'default' => '',
+    'description' => 'The Universally Unique Identifier.',
+  );
+}
+
+/**
+ * Implements hook_schema_alter().
  */
 function uuid_schema_alter(&$schema = array()) {
   $field = uuid_schema_field_definition();
@@ -29,6 +45,18 @@ function uuid_schema_alter(&$schema = array()) {
  * Implements hook_install().
  */
 function uuid_install() {
+  _uuid_install_uuid_fields();
+  uuid_sync_all();
+}
+
+/**
+ * Install the 'uuid' and 'vuuid' fields into Drupal core entity tables where needed.
+ *
+ * IMPORTANT:  This function is called both at install and update time.  If this method
+ * is modified to add additional fields in the future, the update strategy must be
+ * considered.  See the comment in uuid_update_7102.
+ */
+function _uuid_install_uuid_fields() {
   $field = uuid_schema_field_definition();
   foreach (uuid_get_core_entity_info() as $entity_type => $info) {
     if (!db_field_exists($info['base table'], $info['entity keys']['uuid'])) {
@@ -42,7 +70,6 @@ function uuid_install() {
       }
     }
   }
-  uuid_sync_all();
 }
 
 /**
@@ -182,4 +209,62 @@ function uuid_update_7100() {
  */
 function uuid_update_7101() {
   drupal_flush_all_caches();
+}
+
+/**
+ * Insure that the uuid and vuuid fields are added where needed.
+ *
+ * Note that update 7102 calls _uuid_install_uuid_fields(), which is an
+ * idempotent function.  If _uuid_install_uuid_fields() is changed at some
+ * point in the future (but remains idempotent), then some uuid users
+ * will have run update 7102, and some will not.  A new uuid_update_7103()
+ * function would would therefore be necessary to update all users to
+ * the latest schema.  At the same time, uuid_update_7102() could become
+ * an empty function, as it would not be necessary to call _uuid_install_uuid_fields()
+ * twice.
+ */
+function uuid_update_7102() {
+  // If the user have disabled the UUID module during upgrade (as UPGRADE.txt
+  // instructs), some functions will be missing. So include the module file.
+  module_load_include('module', 'uuid', 'uuid');
+  _uuid_install_uuid_fields();
+  uuid_sync_all();
+}
+
+/**
+ * Modify the labels of all example entities created by the now removed
+ * uuid_default_entities_example.module to make it clear they're examples.
+ * Also remove the administrator role of any example user.
+ */
+function uuid_update_7103() {
+  // These are UUIDs of all the example entities that might exist after having
+  // installed uuid_default_entities_example.module.
+  $uuids = array(
+    'taxonomy_term' => array(
+      'bcb92ce8-2236-e264-65c8-0c163ae716d1',
+      '4293a15c-531a-6164-7d1b-668ed019a6bd',
+      'af738a46-f278-cf84-d94d-9e03879fd71e',
+    ),
+    'node' => array(
+      'b0558664-c94b-3674-d9df-3e1696b2e471',
+      '5e3d8bbe-a1f2-f2d4-fdc0-71e6c23aa837',
+    ),
+    'user' => array(
+      '7cf875e6-dc15-4404-f190-5a7c3e91d14c',
+    ),
+  );
+  foreach (array_keys($uuids) as $entity_type) {
+    $info = entity_get_info($entity_type);
+    $entity_ids = entity_get_id_by_uuid($entity_type, $uuids[$entity_type]);
+    $entities = entity_load($entity_type, $entity_ids);
+    foreach ($entities as $entity) {
+      // Update the label to make it clear this is example content.
+      $entity->{$info['entity keys']['label']} = $entity->{$info['entity keys']['label']} . ' (UUID example)';
+      // Remove the administrator role from any user.
+      if ($entity_type == 'user' && $rid = array_search('administrator', $entity->roles)) {
+        unset($entity->roles[$rid]);
+      }
+      entity_save($entity);
+    }
+  }
 }

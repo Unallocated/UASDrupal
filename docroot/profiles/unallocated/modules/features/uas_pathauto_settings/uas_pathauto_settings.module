@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the UAS Pathauto settings feature.
+ */
+
+include_once 'uas_pathauto_settings.features.inc';

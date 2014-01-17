@@ -27,6 +27,7 @@ function unallocated_install() {
     'uas_announcements_view',
     'uas_site_configuration',
     'uas_pathauto_settings',
+    'uas_default_content',
   );
   module_enable($features);
 
@@ -160,6 +161,7 @@ function unallocated_update_7010() {
     'date_views',
     'date_all_day',
     'content_type_events',
+    ''
   );
 
   module_enable($modules);
@@ -178,7 +180,7 @@ function unallocated_update_7011() {
 }
 
 /**
- * 7011 - Enable node export modules and features
+ * 7012 - Enable pathauto settings
  */
 function unallocated_update_7012() {
   $modules = array(
@@ -186,4 +188,13 @@ function unallocated_update_7012() {
   );
 
   module_enable($modules);
+}
+
+/**
+ * 7013 - Enable
+ */
+function unallocated_update_7013() {
+  $modules = array(
+
+  );
 }

@@ -1,0 +1,17 @@
+name = uas_contact_form
+core = 7.x
+package = UAS Pages
+php = 5.2.4
+version = 7.x-1.0
+project = uas_contact_form
+dependencies[] = conditional_fields
+dependencies[] = entityform
+dependencies[] = features
+dependencies[] = list
+features[entityform_type][] = contact_form
+features[features_api][] = api:1
+features[field][] = entityform-contact_form-field_agency_or_entity_represent
+features[field][] = entityform-contact_form-field_contact_email
+features[field][] = entityform-contact_form-field_contact_inquiry
+features[field][] = entityform-contact_form-field_contact_name
+features[field][] = entityform-contact_form-field_contact_type_of_inquiry

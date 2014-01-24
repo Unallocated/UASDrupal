@@ -28,6 +28,7 @@ function unallocated_install() {
     'uas_site_configuration',
     'uas_pathauto_settings',
     'uas_default_content',
+    'uas_contact_form',
   );
   module_enable($features);
 
@@ -191,10 +192,13 @@ function unallocated_update_7012() {
 }
 
 /**
- * 7013 - Enable
+ * 7013 - Enable default content module and contact form.
  */
 function unallocated_update_7013() {
   $modules = array(
-
+    'uas_default_content',
+    'uas_contact_form',
   );
+
+  module_enable($modules);
 }

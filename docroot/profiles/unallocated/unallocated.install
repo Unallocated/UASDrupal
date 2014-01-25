@@ -29,6 +29,7 @@ function unallocated_install() {
     'uas_pathauto_settings',
     'uas_default_content',
     'uas_contact_form',
+    'uas_main_nav'
   );
   module_enable($features);
 
@@ -195,6 +196,18 @@ function unallocated_update_7012() {
  * 7013 - Enable default content module and contact form.
  */
 function unallocated_update_7013() {
+  $modules = array(
+    'uas_default_content',
+    'uas_contact_form',
+  );
+
+  module_enable($modules);
+}
+
+/**
+ * 7014 - Enable main navigation feature.
+ */
+function unallocated_update_7014() {
   $modules = array(
     'uas_default_content',
     'uas_contact_form',

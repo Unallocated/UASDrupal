@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the uas_contact_form feature.
+ */
+
+include_once 'uas_contact_form.features.inc';

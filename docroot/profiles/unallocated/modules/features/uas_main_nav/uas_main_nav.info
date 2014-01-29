@@ -13,3 +13,7 @@ features[menu_links][] = main-menu:<front>
 features[menu_links][] = main-menu:eform/submit/contact-form
 features[menu_links][] = main-menu:node/1
 features[menu_links][] = main-menu:node/2
+features[menu_links][] = main-menu:node/3
+features[menu_links][] = main-menu:node/4
+features[menu_links][] = main-menu:node/5
+features[menu_links][] = main-menu:node/6

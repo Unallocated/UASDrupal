@@ -1,6 +1,7 @@
 name = UAS Events
 core = 7.x
 package = UAS Pages
+php = 5.2.4
 version = 7.x-1.0
 project = uas_events
 dependencies[] = fullcalendar

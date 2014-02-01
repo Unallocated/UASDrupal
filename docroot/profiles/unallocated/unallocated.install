@@ -19,6 +19,7 @@ function unallocated_install() {
     'content_type_article',
     'content_type_download',
     'content_type_event',
+    'content_type_group',
     'frontpage_slideshow',
     'home_page_anonymous_context',
     'box_front_page_know_more',
@@ -38,6 +39,7 @@ function unallocated_install() {
     'uas_event_context',
     'uas_project_context',
     'uas_video_context',
+    'uas_group_context',
   );
   module_enable($features);
 
@@ -247,6 +249,18 @@ function unallocated_update_7016() {
     'uas_event_context',
     'uas_project_context',
     'uas_video_context',
+  );
+
+  module_enable($modules);
+}
+
+/**
+ * 7017 - Enable main navigation feature.
+ */
+function unallocated_update_7017() {
+  $modules = array(
+    'content_type_group',
+    'uas_group_context',
   );
 
   module_enable($modules);

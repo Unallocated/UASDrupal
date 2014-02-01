@@ -44,7 +44,7 @@ dependencies[] = date_all_day
 dependencies[] = node_export
 dependencies[] = node_export_features
 dependencies[] = fullcalendar
-dependencies[] = fullcalendar_color
+dependencies[] = fullcalendar_colors
 
 ; Development modules (remove before final version)
 dependencies[] = views_ui

@@ -30,7 +30,14 @@ function unallocated_install() {
     'uas_default_content',
     'uas_contact_form',
     'uas_main_nav',
-    'uas_events'
+    'uas_events',
+    'uas_announcements_context',
+    'uas_article_context',
+    'uas_basic_page_context',
+    'uas_download_context',
+    'uas_event_context',
+    'uas_project_context',
+    'uas_video_context',
   );
   module_enable($features);
 
@@ -223,6 +230,23 @@ function unallocated_update_7014() {
 function unallocated_update_7015() {
   $modules = array(
     'uas_events'
+  );
+
+  module_enable($modules);
+}
+
+/**
+ * 7016 - Enable main navigation feature.
+ */
+function unallocated_update_7016() {
+  $modules = array(
+    'uas_announcements_context',
+    'uas_article_context',
+    'uas_basic_page_context',
+    'uas_download_context',
+    'uas_event_context',
+    'uas_project_context',
+    'uas_video_context',
   );
 
   module_enable($modules);

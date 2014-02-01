@@ -1,0 +1,14 @@
+name = UAS Event Context
+core = 7.x
+package = UAS Content Types
+version = 7.x-1.0
+project = uas_event_context
+dependencies[] = content_type_event
+dependencies[] = context
+dependencies[] = ctools
+dependencies[] = menu_block
+dependencies[] = system
+dependencies[] = uas_checkin
+features[context][] = uas-event
+features[ctools][] = context:context:3
+features[features_api][] = api:1

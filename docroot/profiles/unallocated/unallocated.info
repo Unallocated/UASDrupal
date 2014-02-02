@@ -45,6 +45,8 @@ dependencies[] = node_export
 dependencies[] = node_export_features
 dependencies[] = fullcalendar
 dependencies[] = fullcalendar_colors
+dependencies[] = og_extras
+dependencies[] = entityreference_prepopulate
 
 ; Development modules (remove before final version)
 dependencies[] = views_ui

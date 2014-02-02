@@ -219,15 +219,14 @@ function unallocated_update_7013() {
  */
 function unallocated_update_7014() {
   $modules = array(
-    'uas_default_content',
-    'uas_contact_form',
+    'uas_main_nav'
   );
 
   module_enable($modules);
 }
 
 /**
- * 7015 - Enable main navigation feature.
+ * 7015 - Enable events content type
  */
 function unallocated_update_7015() {
   $modules = array(
@@ -238,7 +237,7 @@ function unallocated_update_7015() {
 }
 
 /**
- * 7016 - Enable main navigation feature.
+ * 7016 - Enable content type contexts and place blocks
  */
 function unallocated_update_7016() {
   $modules = array(
@@ -255,12 +254,24 @@ function unallocated_update_7016() {
 }
 
 /**
- * 7017 - Enable main navigation feature.
+ * 7017 - Enable group and group context settings
  */
 function unallocated_update_7017() {
   $modules = array(
     'content_type_group',
     'uas_group_context',
+  );
+
+  module_enable($modules);
+}
+
+/**
+ * 7018 - Enable the og_extras and entityreference_prepopulate modules
+ */
+function unallocated_update_7017() {
+  $modules = array(
+    'og_extras',
+    'entityreference_prepopulate',
   );
 
   module_enable($modules);

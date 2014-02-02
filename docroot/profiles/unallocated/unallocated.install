@@ -268,7 +268,7 @@ function unallocated_update_7017() {
 /**
  * 7018 - Enable the og_extras and entityreference_prepopulate modules
  */
-function unallocated_update_7017() {
+function unallocated_update_7018() {
   $modules = array(
     'og_extras',
     'entityreference_prepopulate',

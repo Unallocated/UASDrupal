@@ -19,6 +19,7 @@ function unallocated_install() {
     'content_type_article',
     'content_type_download',
     'content_type_event',
+    'content_type_group',
     'frontpage_slideshow',
     'home_page_anonymous_context',
     'box_front_page_know_more',
@@ -38,6 +39,8 @@ function unallocated_install() {
     'uas_event_context',
     'uas_project_context',
     'uas_video_context',
+    'uas_group_context',
+    'uas_groups_dashboard',
   );
   module_enable($features);
 
@@ -217,15 +220,14 @@ function unallocated_update_7013() {
  */
 function unallocated_update_7014() {
   $modules = array(
-    'uas_default_content',
-    'uas_contact_form',
+    'uas_main_nav'
   );
 
   module_enable($modules);
 }
 
 /**
- * 7015 - Enable main navigation feature.
+ * 7015 - Enable events content type
  */
 function unallocated_update_7015() {
   $modules = array(
@@ -236,7 +238,7 @@ function unallocated_update_7015() {
 }
 
 /**
- * 7016 - Enable main navigation feature.
+ * 7016 - Enable content type contexts and place blocks
  */
 function unallocated_update_7016() {
   $modules = array(
@@ -247,6 +249,41 @@ function unallocated_update_7016() {
     'uas_event_context',
     'uas_project_context',
     'uas_video_context',
+  );
+
+  module_enable($modules);
+}
+
+/**
+ * 7017 - Enable group and group context settings
+ */
+function unallocated_update_7017() {
+  $modules = array(
+    'content_type_group',
+    'uas_group_context',
+  );
+
+  module_enable($modules);
+}
+
+/**
+ * 7018 - Enable the og_extras and entityreference_prepopulate modules
+ */
+function unallocated_update_7018() {
+  $modules = array(
+    'og_extras',
+    'entityreference_prepopulate',
+  );
+
+  module_enable($modules);
+}
+
+/**
+ * 7019 - Set default view state for og_extra_groups and provide alternate
+ */
+function unallocated_update_7019() {
+  $modules = array(
+    'uas_groups_dashboard',
   );
 
   module_enable($modules);

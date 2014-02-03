@@ -9,6 +9,7 @@ dependencies[] = context
 dependencies[] = ctools
 dependencies[] = menu_block
 dependencies[] = uas_checkin
+dependencies[] = uas_maintenance
 features[context][] = uas-article
 features[ctools][] = context:context:3
 features[features_api][] = api:1

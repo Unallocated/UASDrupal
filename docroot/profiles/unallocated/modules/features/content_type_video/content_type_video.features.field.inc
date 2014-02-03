@@ -118,6 +118,7 @@ function content_type_video_field_default_fields() {
       'settings' => array(
         'display_default' => 0,
         'display_field' => 0,
+        'profile2_private' => FALSE,
         'uri_scheme' => 'public',
       ),
       'translatable' => '0',
@@ -151,32 +152,149 @@ function content_type_video_field_default_fields() {
       'entity_type' => 'node',
       'field_name' => 'field_video',
       'label' => 'Video',
-      'required' => FALSE,
+      'required' => 0,
       'settings' => array(
         'description_field' => 0,
-        'file_directory' => '',
+        'file_directory' => 'videos',
         'file_extensions' => 'txt',
         'max_filesize' => '',
         'user_register_form' => FALSE,
       ),
       'widget' => array(
-        'module' => 'file',
+        'active' => 1,
+        'module' => 'media',
         'settings' => array(
-          'filefield_sources' => array(
-            'filefield_sources' => array(),
-            'source_attach' => array(
-              'absolute' => 0,
-              'attach_mode' => 'move',
-              'path' => 'file_attach',
-            ),
-            'source_reference' => array(
-              'autocomplete' => '0',
-            ),
+          'allowed_schemes' => array(
+            'public' => 'public',
+            'vimeo' => 'vimeo',
+            'youtube' => 'youtube',
+          ),
+          'allowed_types' => array(
+            'audio' => 'audio',
+            'default' => 0,
+            'image' => 'image',
+            'video' => 'video',
           ),
           'progress_indicator' => 'throbber',
         ),
-        'type' => 'file_generic',
+        'type' => 'media_generic',
         'weight' => '32',
+      ),
+    ),
+  );
+
+  // Exported field: 'node-video-og_group_ref'.
+  $fields['node-video-og_group_ref'] = array(
+    'field_config' => array(
+      'active' => '1',
+      'cardinality' => '-1',
+      'deleted' => '0',
+      'entity_types' => array(),
+      'field_name' => 'og_group_ref',
+      'foreign keys' => array(
+        'node' => array(
+          'columns' => array(
+            'target_id' => 'nid',
+          ),
+          'table' => 'node',
+        ),
+      ),
+      'indexes' => array(
+        'target_id' => array(
+          0 => 'target_id',
+        ),
+      ),
+      'locked' => '0',
+      'module' => 'entityreference',
+      'settings' => array(
+        'handler' => 'og',
+        'handler_settings' => array(
+          'behaviors' => array(
+            'og_behavior' => array(
+              'status' => TRUE,
+            ),
+            'views-select-list' => array(
+              'status' => 0,
+            ),
+          ),
+          'membership_type' => 'og_membership_type_default',
+          'sort' => array(
+            'type' => 'none',
+          ),
+          'target_bundles' => array(),
+        ),
+        'handler_submit' => 'Change handler',
+        'target_type' => 'node',
+      ),
+      'target_type' => 'node',
+      'translatable' => '0',
+      'type' => 'entityreference',
+    ),
+    'field_instance' => array(
+      'bundle' => 'video',
+      'default_value' => NULL,
+      'default_value_function' => 'entityreference_prepopulate_field_default_value',
+      'deleted' => '0',
+      'description' => '',
+      'display' => array(
+        'default' => array(
+          'label' => 'above',
+          'module' => 'og_ui',
+          'settings' => array(),
+          'type' => 'og_list_default',
+          'weight' => 2,
+        ),
+        'teaser' => array(
+          'label' => 'above',
+          'settings' => array(),
+          'type' => 'hidden',
+          'weight' => 0,
+        ),
+      ),
+      'entity_type' => 'node',
+      'field_name' => 'og_group_ref',
+      'label' => 'Groups audience',
+      'required' => 0,
+      'settings' => array(
+        'behaviors' => array(
+          'og_widget' => array(
+            'admin' => array(
+              'widget_type' => 'entityreference_autocomplete',
+            ),
+            'default' => array(
+              'widget_type' => 'options_select',
+            ),
+            'status' => TRUE,
+          ),
+          'prepopulate' => array(
+            'action' => 'hide',
+            'action_on_edit' => 0,
+            'fallback' => 'none',
+            'og_context' => 0,
+            'skip_perm' => '0',
+            'status' => 1,
+          ),
+        ),
+        'user_register_form' => FALSE,
+      ),
+      'view modes' => array(
+        'full' => array(
+          'custom settings' => FALSE,
+          'label' => 'Full',
+          'type' => 'og_list_default',
+        ),
+        'teaser' => array(
+          'custom settings' => FALSE,
+          'label' => 'Teaser',
+          'type' => 'og_list_default',
+        ),
+      ),
+      'widget' => array(
+        'active' => 0,
+        'module' => 'og',
+        'settings' => array(),
+        'type' => 'og_complex',
+        'weight' => 33,
       ),
     ),
   );
@@ -184,6 +302,7 @@ function content_type_video_field_default_fields() {
   // Translatables
   // Included for use with string extractors like potx.
   t('Description');
+  t('Groups audience');
   t('Video');
 
   return $fields;

@@ -1,0 +1,4 @@
+name = UAS Maintenance
+description = Maintenance and deployment fixes for the UAS
+core = 7.x
+package = UAS

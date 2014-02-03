@@ -30,7 +30,8 @@ sample content appropriate for the site and for development:
 ####Using Drush####
 1. Generate content for the site (~100 nodes)
 ```
-drush generate-content 100 4 --types=announcement,article,page,download,project,video,event
+drush generate-content 150 4 --types=announcement,article,page,download,project,video,event,group --verbose
+
 ```
 1. Enable the Nodequeue Generate module
 ```

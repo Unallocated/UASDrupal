@@ -35,9 +35,9 @@ function uas_announcements_context_context_default_contexts() {
           'region' => 'content',
           'weight' => '-10',
         ),
-        'menu_block-1' => array(
+        'menu_block-primary_navigation-1' => array(
           'module' => 'menu_block',
-          'delta' => '1',
+          'delta' => 'primary_navigation-1',
           'region' => 'sidebar_first',
           'weight' => '-10',
         ),

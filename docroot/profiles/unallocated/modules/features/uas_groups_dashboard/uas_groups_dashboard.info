@@ -1,0 +1,13 @@
+name = UAS Groups Dashboard
+core = 7.x
+package = UAS Pages
+version = 7.x-1.0
+project = uas_groups_dashboard
+dependencies[] = ctools
+dependencies[] = strongarm
+dependencies[] = views
+features[ctools][] = strongarm:strongarm:1
+features[ctools][] = views:views_default:3.0
+features[features_api][] = api:1
+features[variable][] = views_defaults
+features[views_view][] = groups

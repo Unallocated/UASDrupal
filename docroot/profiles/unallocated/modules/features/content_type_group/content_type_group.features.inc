@@ -13,20 +13,3 @@ function content_type_group_ctools_plugin_api() {
     return array("version" => "1");
   }
 }
-
-/**
- * Implements hook_node_info().
- */
-function content_type_group_node_info() {
-  $items = array(
-    'group' => array(
-      'name' => t('Group'),
-      'base' => 'node_content',
-      'description' => t('User created groups'),
-      'has_title' => '1',
-      'title_label' => t('Title'),
-      'help' => '',
-    ),
-  );
-  return $items;
-}

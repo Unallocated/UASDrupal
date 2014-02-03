@@ -38,6 +38,25 @@ function uas_main_nav_menu_default_menu_links() {
     'expanded' => '0',
     'weight' => '-48',
   );
+  // Exported menu link: main-menu:groups
+  $menu_links['main-menu:groups'] = array(
+    'menu_name' => 'main-menu',
+    'link_path' => 'groups',
+    'router_path' => 'groups',
+    'link_title' => 'Groups',
+    'options' => array(
+      'attributes' => array(
+        'title' => '',
+      ),
+    ),
+    'module' => 'menu',
+    'hidden' => '0',
+    'external' => '0',
+    'has_children' => '0',
+    'expanded' => '0',
+    'weight' => '-50',
+    'parent_path' => 'node/1',
+  );
   // Exported menu link: main-menu:node/1
   $menu_links['main-menu:node/1'] = array(
     'menu_name' => 'main-menu',
@@ -131,6 +150,7 @@ function uas_main_nav_menu_default_menu_links() {
   t('Contact');
   t('Donations');
   t('Get Involved');
+  t('Groups');
   t('Home');
   t('IRC');
   t('Mailing List');

@@ -35,6 +35,12 @@ function uas_basic_page_context_context_default_contexts() {
           'region' => 'content',
           'weight' => '-10',
         ),
+        'menu_block-primary_navigation-1' => array(
+          'module' => 'menu_block',
+          'delta' => 'primary_navigation-1',
+          'region' => 'sidebar_first',
+          'weight' => '-10',
+        ),
         'uas_checkin-uas_checkin_status' => array(
           'module' => 'uas_checkin',
           'delta' => 'uas_checkin_status',

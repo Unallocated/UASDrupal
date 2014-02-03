@@ -47,6 +47,7 @@ dependencies[] = fullcalendar
 dependencies[] = fullcalendar_colors
 dependencies[] = og_extras
 dependencies[] = entityreference_prepopulate
+dependencies[] = eva
 
 ; Development modules (remove before final version)
 dependencies[] = views_ui

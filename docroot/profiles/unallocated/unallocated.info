@@ -49,6 +49,9 @@ dependencies[] = og_extras
 dependencies[] = entityreference_prepopulate
 dependencies[] = eva
 
+; Custom modules
+dependencies[] = uas_maintenance
+
 ; Development modules (remove before final version)
 dependencies[] = views_ui
 dependencies[] = context_ui

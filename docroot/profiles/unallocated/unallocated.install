@@ -42,6 +42,7 @@ function unallocated_install() {
     'uas_group_context',
     'disable_default_groups_view',
     'uas_groups_dashboard',
+    'primary_navigation',
   );
   module_enable($features);
 
@@ -286,6 +287,7 @@ function unallocated_update_7019() {
   $modules = array(
     'disable_default_groups_view',
     'uas_groups_dashboard',
+    'primary_navigation'
   );
 
   module_enable($modules);

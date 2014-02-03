@@ -35,17 +35,23 @@ function uas_group_context_context_default_contexts() {
           'region' => 'content',
           'weight' => '-10',
         ),
-        'menu_block-1' => array(
-          'module' => 'menu_block',
-          'delta' => '1',
-          'region' => 'sidebar_first',
-          'weight' => '-10',
-        ),
-        'uas_checkin-uas_checkin_status' => array(
-          'module' => 'uas_checkin',
-          'delta' => 'uas_checkin_status',
+        'og_extras-group_info' => array(
+          'module' => 'og_extras',
+          'delta' => 'group_info',
           'region' => 'sidebar_second',
           'weight' => '-10',
+        ),
+        'og_extras-node_links' => array(
+          'module' => 'og_extras',
+          'delta' => 'node_links',
+          'region' => 'sidebar_second',
+          'weight' => '-9',
+        ),
+        'views-og_extras_members-block_1' => array(
+          'module' => 'views',
+          'delta' => 'og_extras_members-block_1',
+          'region' => 'sidebar_second',
+          'weight' => '-8',
         ),
       ),
     ),

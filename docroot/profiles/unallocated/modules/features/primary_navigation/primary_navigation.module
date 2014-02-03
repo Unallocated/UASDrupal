@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Primary Navigation feature.
+ */
+
+include_once 'primary_navigation.features.inc';

@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Disable default Groups view feature.
+ */
+
+include_once 'disable_default_groups_view.features.inc';

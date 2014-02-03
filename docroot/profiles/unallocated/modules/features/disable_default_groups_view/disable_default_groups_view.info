@@ -1,0 +1,11 @@
+name = Disable default Groups view
+description = This should store the disabled state og_extras default groups view page
+core = 7.x
+package = UAS Views
+version = 7.x-1.0
+project = disable_default_groups_view
+dependencies[] = ctools
+dependencies[] = og_extras
+dependencies[] = views
+features[ctools][] = views:views_default:3.0
+features[features_api][] = api:1

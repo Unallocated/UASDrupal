@@ -18,3 +18,4 @@ features[menu_links][] = main-menu:node/3
 features[menu_links][] = main-menu:node/4
 features[menu_links][] = main-menu:node/5
 features[menu_links][] = main-menu:node/6
+features[menu_links][] = main-menu:projects

@@ -41,6 +41,7 @@ function unallocated_install() {
     'uas_video_context',
     'uas_group_context',
     'uas_groups_dashboard',
+    'uas_project_dashboard',
   );
   module_enable($features);
 
@@ -284,6 +285,17 @@ function unallocated_update_7018() {
 function unallocated_update_7019() {
   $modules = array(
     'uas_groups_dashboard',
+  );
+
+  module_enable($modules);
+}
+
+/**
+ * 7020 - Set default view state for og_extra_groups and provide alternate
+ */
+function unallocated_update_7020() {
+  $modules = array(
+    'uas_project_dashboard',
   );
 
   module_enable($modules);

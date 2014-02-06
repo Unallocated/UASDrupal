@@ -145,6 +145,25 @@ function uas_main_nav_menu_default_menu_links() {
     'weight' => '-47',
     'parent_path' => 'eform/submit/contact-form',
   );
+  // Exported menu link: main-menu:projects
+  $menu_links['main-menu:projects'] = array(
+    'menu_name' => 'main-menu',
+    'link_path' => 'projects',
+    'router_path' => 'projects',
+    'link_title' => 'Projects',
+    'options' => array(
+      'attributes' => array(
+        'title' => '',
+      ),
+    ),
+    'module' => 'menu',
+    'hidden' => '0',
+    'external' => '0',
+    'has_children' => '0',
+    'expanded' => '0',
+    'weight' => '-49',
+    'parent_path' => 'node/1',
+  );
   // Translatables
   // Included for use with string extractors like potx.
   t('Contact');
@@ -155,6 +174,7 @@ function uas_main_nav_menu_default_menu_links() {
   t('IRC');
   t('Mailing List');
   t('Meetup');
+  t('Projects');
   t('Social');
 
 

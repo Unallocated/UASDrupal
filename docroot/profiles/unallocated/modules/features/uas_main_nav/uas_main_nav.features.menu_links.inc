@@ -24,6 +24,25 @@ function uas_main_nav_menu_default_menu_links() {
     'expanded' => '0',
     'weight' => '-50',
   );
+  // Exported menu link: main-menu:Events
+  $menu_links['main-menu:Events'] = array(
+    'menu_name' => 'main-menu',
+    'link_path' => 'Events',
+    'router_path' => 'events',
+    'link_title' => 'Events and Classes',
+    'options' => array(
+      'attributes' => array(
+        'title' => '',
+      ),
+    ),
+    'module' => 'menu',
+    'hidden' => '0',
+    'external' => '0',
+    'has_children' => '0',
+    'expanded' => '0',
+    'weight' => '-49',
+    'parent_path' => 'node/1',
+  );
   // Exported menu link: main-menu:eform/submit/contact-form
   $menu_links['main-menu:eform/submit/contact-form'] = array(
     'menu_name' => 'main-menu',
@@ -161,13 +180,14 @@ function uas_main_nav_menu_default_menu_links() {
     'external' => '0',
     'has_children' => '0',
     'expanded' => '0',
-    'weight' => '-49',
+    'weight' => '-48',
     'parent_path' => 'node/1',
   );
   // Translatables
   // Included for use with string extractors like potx.
   t('Contact');
   t('Donations');
+  t('Events and Classes');
   t('Get Involved');
   t('Groups');
   t('Home');

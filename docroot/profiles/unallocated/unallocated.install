@@ -41,7 +41,7 @@ function unallocated_install() {
     'uas_video_context',
     'uas_group_context',
     'uas_groups_dashboard',
-    'uas_projects_dashboard',
+    'uas_project_dashboard',
   );
   module_enable($features);
 
@@ -295,7 +295,7 @@ function unallocated_update_7019() {
  */
 function unallocated_update_7020() {
   $modules = array(
-    'uas_projects_dashboard',
+    'uas_project_dashboard',
   );
 
   module_enable($modules);

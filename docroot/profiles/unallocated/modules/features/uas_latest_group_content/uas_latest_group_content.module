@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the UAS Latest Group Content feature.
+ */
+
+include_once 'uas_latest_group_content.features.inc';

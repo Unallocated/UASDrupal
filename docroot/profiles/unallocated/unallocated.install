@@ -42,6 +42,7 @@ function unallocated_install() {
     'uas_group_context',
     'uas_groups_dashboard',
     'uas_project_dashboard',
+    'uas_my_projects_view',
   );
   module_enable($features);
 
@@ -296,6 +297,17 @@ function unallocated_update_7019() {
 function unallocated_update_7020() {
   $modules = array(
     'uas_project_dashboard',
+  );
+
+  module_enable($modules);
+}
+
+/**
+ * 7021 - Added the 'My Projects' view
+ */
+function unallocated_update_7021() {
+  $modules = array(
+    'uas_my_projects_view',
   );
 
   module_enable($modules);

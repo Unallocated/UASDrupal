@@ -48,6 +48,7 @@ dependencies[] = fullcalendar_colors
 dependencies[] = og_extras
 dependencies[] = entityreference_prepopulate
 dependencies[] = eva
+depnedencies[] = front
 
 ; Custom modules
 dependencies[] = uas_maintenance

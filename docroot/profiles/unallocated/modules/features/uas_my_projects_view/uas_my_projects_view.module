@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the UAS My Projects View feature.
+ */
+
+include_once 'uas_my_projects_view.features.inc';

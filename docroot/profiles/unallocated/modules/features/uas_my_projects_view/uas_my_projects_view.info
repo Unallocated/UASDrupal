@@ -1,0 +1,10 @@
+name = UAS My Projects View
+core = 7.x
+package = UAS Pages
+version = 7.x-1.0
+project = uas_my_projects_view
+dependencies[] = ctools
+dependencies[] = views
+features[ctools][] = views:views_default:3.0
+features[features_api][] = api:1
+features[views_view][] = user_projects

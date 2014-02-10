@@ -43,6 +43,7 @@ function unallocated_install() {
     'uas_groups_dashboard',
     'uas_project_dashboard',
     'uas_my_projects_view',
+    'uas_my_groups_view',
   );
   module_enable($features);
 
@@ -308,6 +309,17 @@ function unallocated_update_7020() {
 function unallocated_update_7021() {
   $modules = array(
     'uas_my_projects_view',
+  );
+
+  module_enable($modules);
+}
+
+/**
+ * 7022 - Added the 'My groups' view
+ */
+function unallocated_update_7022() {
+  $modules = array(
+    'uas_my_groups_view',
   );
 
   module_enable($modules);

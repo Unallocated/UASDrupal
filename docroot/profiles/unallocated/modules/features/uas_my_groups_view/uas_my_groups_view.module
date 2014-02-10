@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the UAS My Groups View feature.
+ */
+
+include_once 'uas_my_groups_view.features.inc';

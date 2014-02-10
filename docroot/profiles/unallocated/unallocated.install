@@ -46,6 +46,7 @@ function unallocated_install() {
     'uas_my_groups_view',
     'uas_latest_group_content',
     'uas_front_page_settings',
+    'uas_authenticated_frontpage_delta',
   );
 
   module_enable($features);
@@ -384,7 +385,7 @@ function unallocated_update_7023() {
 }
 
 /**
- * 7023 - Set up frontpage settings.
+ * 7024 - Set up frontpage settings.
  */
 function unallocated_update_7024() {
   // Set front-page settings.
@@ -408,6 +409,17 @@ function unallocated_update_7024() {
 
   $modules = array(
     'uas_front_page_settings',
+  );
+
+  module_enable($modules);
+}
+
+/**
+ * 7025 - Enable the authenticated frontpage delta
+ */
+function unallocated_update_7025() {
+  $modules = array(
+    'uas_authenticated_frontpage_delta',
   );
 
   module_enable($modules);

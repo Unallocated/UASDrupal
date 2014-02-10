@@ -47,6 +47,8 @@ function unallocated_install() {
     'uas_latest_group_content',
     'uas_front_page_settings',
     'uas_authenticated_frontpage_delta',
+    'content_type_tutorial',
+    'uas_tutorial_context',
   );
 
   module_enable($features);
@@ -420,6 +422,18 @@ function unallocated_update_7024() {
 function unallocated_update_7025() {
   $modules = array(
     'uas_authenticated_frontpage_delta',
+  );
+
+  module_enable($modules);
+}
+
+/**
+ * 7026 - Enable the tutorial content type
+ */
+function unallocated_update_7026() {
+  $modules = array(
+    'content_type_tutorial',
+    'uas_tutorial_context',
   );
 
   module_enable($modules);

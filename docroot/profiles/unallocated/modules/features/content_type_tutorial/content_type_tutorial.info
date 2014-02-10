@@ -1,0 +1,17 @@
+name = Content Type: Tutorial
+description = Tutorial content type
+core = 7.x
+package = UAS Content Types
+php = 5.2.4
+version = 7.x-1.0
+project = content_type_tutorial
+dependencies[] = ctools
+dependencies[] = entityreference
+dependencies[] = features
+dependencies[] = field_collection
+dependencies[] = og
+dependencies[] = og_ui
+dependencies[] = strongarm
+dependencies[] = uas_tutorial_context
+features[ctools][] = strongarm:strongarm:1
+features[features_api][] = api:1

@@ -37,3 +37,70 @@ function uas_admin_landing_page() {
 	return "This is a test and it's working";
 	
 }
+
+function uas_theme() {
+  return array(
+    'uas_groups_block' => array(
+      'variables' => array(
+        'latest_content_block' => NULL,
+        'latest_content_block_title' => NULL,
+        'my_groups_block' => NULL,
+        'my_groups_block_title' => NULL,
+        'my_projects_block' => NULL,
+        'my_projects_block_title' => NULL,
+      ),
+      'template' => 'uas_groups',
+      'path' => drupal_get_path('module', 'uas').'/templates'
+    )
+  );
+}
+
+function uas_block_info() {
+  return array(
+    'uas_groups_block' => array(
+      'info' => t('UAS Groups Content')
+    )
+  );
+}
+
+function uas_block_view($delta) {
+  $block = array();
+  switch ($delta) {
+    case 'uas_groups_block':
+
+      $block['content'] = array(
+        '#theme' => 'uas_groups_block',
+      );
+
+      $views = array(
+        'latest_group_content' => array(
+          'target' => '#latest_content_block',
+          'display_id' => 'block',
+        ),
+        'user_groups' => array(
+          'target' => '#my_groups_block',
+          'display_id' => 'block_1',
+        ),
+        'user_projects' => array(
+          'target' => '#my_projects_block',
+          'display_id' => 'block_1'
+        ),
+      );
+
+      foreach($views as $view_name => $target_view) {
+        $view = views_get_view($view_name);
+
+        if(!$view || $view->access($target_view['display_id'])) {
+          $block['content'][$target_view['target'] . "_title"] = '';
+          $block['content'][$target_view['target']] = '';
+        }
+
+        $block['content'][$target_view['target'] . "_title"] = $view->get_title();
+        $block['content'][$target_view['target']] = $view->preview($target_view['display_id']);
+      }
+
+      break;
+  }
+
+  return $block;
+}

@@ -222,7 +222,7 @@ function content_type_group_field_default_fields() {
       ),
       'entity_type' => 'node',
       'field_name' => 'field_tags',
-      'label' => 'Tags',
+      'label' => 'Related Interests',
       'required' => 0,
       'settings' => array(
         'user_register_form' => FALSE,
@@ -331,7 +331,7 @@ function content_type_group_field_default_fields() {
   t('Group');
   t('Group Description');
   t('Group Image');
-  t('Tags');
+  t('Related Interests');
   t('Using concise and relevant keywords for your group to allow users with similar interests find you.');
 
   return $fields;

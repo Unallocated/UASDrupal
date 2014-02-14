@@ -1,6 +1,7 @@
 name = Content Type: Event
 core = 7.x
 package = UAS Content Types
+php = 5.2.4
 version = 7.x-1.0
 project = content_type_event
 dependencies[] = content_type_article

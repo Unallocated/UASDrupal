@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the UAS User feature.
+ */
+
+include_once 'uas_user.features.inc';

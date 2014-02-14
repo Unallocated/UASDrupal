@@ -50,6 +50,7 @@ dependencies[] = entityreference_prepopulate
 dependencies[] = eva
 dependencies[] = front_page
 dependencies[] = login_destination
+dependencies[] = profile2
 
 ; Custom modules
 dependencies[] = uas_maintenance

@@ -1,13 +1,13 @@
 <?php
 /**
  * @file
- * uas_tutorial_context.context.inc
+ * content_type_tutorial.context.inc
  */
 
 /**
  * Implements hook_context_default_contexts().
  */
-function uas_tutorial_context_context_default_contexts() {
+function content_type_tutorial_context_default_contexts() {
   $export = array();
 
   $context = new stdClass();

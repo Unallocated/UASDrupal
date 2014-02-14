@@ -276,8 +276,14 @@ function content_type_event_field_default_fields() {
             'og_behavior' => array(
               'status' => TRUE,
             ),
+            'views-select-list' => array(
+              'status' => 0,
+            ),
           ),
           'membership_type' => 'og_membership_type_default',
+          'sort' => array(
+            'type' => 'none',
+          ),
           'target_bundles' => array(),
         ),
         'handler_submit' => 'Change handler',

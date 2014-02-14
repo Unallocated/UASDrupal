@@ -1,7 +1,6 @@
 name = Content Type: Group
 core = 7.x
 package = UAS Content Types
-php = 5.2.4
 version = 7.x-1.0
 project = content_type_group
 dependencies[] = content_type_article
@@ -19,3 +18,8 @@ dependencies[] = text
 dependencies[] = uas_group_context
 features[ctools][] = strongarm:strongarm:1
 features[features_api][] = api:1
+features[field][] = node-group-body
+features[field][] = node-group-field_group_image
+features[field][] = node-group-field_tags
+features[field][] = node-group-group_group
+features[node][] = group

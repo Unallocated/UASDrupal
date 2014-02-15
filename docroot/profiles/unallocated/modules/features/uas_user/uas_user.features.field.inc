@@ -10,8 +10,8 @@
 function uas_user_field_default_fields() {
   $fields = array();
 
-  // Exported field: 'profile2-main-field_biography'.
-  $fields['profile2-main-field_biography'] = array(
+  // Exported field: 'user-user-field_biography'.
+  $fields['user-user-field_biography'] = array(
     'field_config' => array(
       'active' => '1',
       'cardinality' => '1',
@@ -34,13 +34,13 @@ function uas_user_field_default_fields() {
       'locked' => '0',
       'module' => 'text',
       'settings' => array(
-        'profile2_private' => 0,
+        'profile2_private' => FALSE,
       ),
       'translatable' => '0',
       'type' => 'text_long',
     ),
     'field_instance' => array(
-      'bundle' => 'main',
+      'bundle' => 'user',
       'default_value' => NULL,
       'deleted' => '0',
       'description' => 'Tell us a little about yourself here.',
@@ -50,16 +50,16 @@ function uas_user_field_default_fields() {
           'module' => 'text',
           'settings' => array(),
           'type' => 'text_default',
-          'weight' => 0,
+          'weight' => 2,
         ),
       ),
-      'entity_type' => 'profile2',
+      'entity_type' => 'user',
       'field_name' => 'field_biography',
       'label' => 'Biography',
       'required' => 0,
       'settings' => array(
         'text_processing' => '0',
-        'user_register_form' => FALSE,
+        'user_register_form' => 1,
       ),
       'widget' => array(
         'active' => 1,
@@ -68,13 +68,13 @@ function uas_user_field_default_fields() {
           'rows' => '5',
         ),
         'type' => 'text_textarea',
-        'weight' => '2',
+        'weight' => '5',
       ),
     ),
   );
 
-  // Exported field: 'profile2-main-field_interests'.
-  $fields['profile2-main-field_interests'] = array(
+  // Exported field: 'user-user-field_interests'.
+  $fields['user-user-field_interests'] = array(
     'field_config' => array(
       'active' => '1',
       'cardinality' => '-1',
@@ -103,31 +103,31 @@ function uas_user_field_default_fields() {
             'parent' => '0',
           ),
         ),
-        'profile2_private' => 0,
+        'profile2_private' => FALSE,
       ),
       'translatable' => '0',
       'type' => 'taxonomy_term_reference',
     ),
     'field_instance' => array(
-      'bundle' => 'main',
+      'bundle' => 'user',
       'default_value' => NULL,
       'deleted' => '0',
-      'description' => 'Skills that you would be interested in learning more about. (e.g. electrical engineering, web development, inforomation security). Separate multiple values with a comma.',
+      'description' => 'Skills that you would be interested in learning more about. (e.g. electrical engineering, web development, inforomation security). Separate multiple values with',
       'display' => array(
         'default' => array(
           'label' => 'above',
           'module' => 'taxonomy',
           'settings' => array(),
           'type' => 'taxonomy_term_reference_link',
-          'weight' => 3,
+          'weight' => 4,
         ),
       ),
-      'entity_type' => 'profile2',
+      'entity_type' => 'user',
       'field_name' => 'field_interests',
       'label' => 'Interests',
       'required' => 0,
       'settings' => array(
-        'user_register_form' => FALSE,
+        'user_register_form' => 1,
       ),
       'widget' => array(
         'active' => 0,
@@ -137,13 +137,13 @@ function uas_user_field_default_fields() {
           'size' => 60,
         ),
         'type' => 'taxonomy_autocomplete',
-        'weight' => '4',
+        'weight' => '7',
       ),
     ),
   );
 
-  // Exported field: 'profile2-main-field_real_name'.
-  $fields['profile2-main-field_real_name'] = array(
+  // Exported field: 'user-user-field_real_name'.
+  $fields['user-user-field_real_name'] = array(
     'field_config' => array(
       'active' => '1',
       'cardinality' => '1',
@@ -167,16 +167,16 @@ function uas_user_field_default_fields() {
       'module' => 'text',
       'settings' => array(
         'max_length' => '255',
-        'profile2_private' => 0,
+        'profile2_private' => FALSE,
       ),
       'translatable' => '0',
       'type' => 'text',
     ),
     'field_instance' => array(
-      'bundle' => 'main',
+      'bundle' => 'user',
       'default_value' => NULL,
       'deleted' => '0',
-      'description' => 'This is definitely not required. Whatever you put here will replace your username on your profile page. Some folks like to use their handle, some like to use their real names.',
+      'description' => 'Skills that you would be interested in learning more about. (e.g. electrical engineering, web development, inforomation security). Separate multiple values with a comma.',
       'display' => array(
         'default' => array(
           'label' => 'above',
@@ -186,13 +186,13 @@ function uas_user_field_default_fields() {
           'weight' => 1,
         ),
       ),
-      'entity_type' => 'profile2',
+      'entity_type' => 'user',
       'field_name' => 'field_real_name',
       'label' => 'Real Name',
       'required' => 0,
       'settings' => array(
         'text_processing' => '0',
-        'user_register_form' => FALSE,
+        'user_register_form' => 1,
       ),
       'widget' => array(
         'active' => 1,
@@ -201,13 +201,13 @@ function uas_user_field_default_fields() {
           'size' => '60',
         ),
         'type' => 'text_textfield',
-        'weight' => '1',
+        'weight' => '4',
       ),
     ),
   );
 
-  // Exported field: 'profile2-main-field_skills'.
-  $fields['profile2-main-field_skills'] = array(
+  // Exported field: 'user-user-field_skills'.
+  $fields['user-user-field_skills'] = array(
     'field_config' => array(
       'active' => '1',
       'cardinality' => '1',
@@ -236,13 +236,13 @@ function uas_user_field_default_fields() {
             'parent' => '0',
           ),
         ),
-        'profile2_private' => 0,
+        'profile2_private' => FALSE,
       ),
       'translatable' => '0',
       'type' => 'taxonomy_term_reference',
     ),
     'field_instance' => array(
-      'bundle' => 'main',
+      'bundle' => 'user',
       'default_value' => NULL,
       'deleted' => '0',
       'description' => 'Skills that you possess that would be interesting to other members. These don\'t have to be technical skills. This will help people find and interact with you.',
@@ -252,15 +252,15 @@ function uas_user_field_default_fields() {
           'module' => 'taxonomy',
           'settings' => array(),
           'type' => 'taxonomy_term_reference_link',
-          'weight' => 2,
+          'weight' => 3,
         ),
       ),
-      'entity_type' => 'profile2',
+      'entity_type' => 'user',
       'field_name' => 'field_skills',
       'label' => 'Skills',
       'required' => 0,
       'settings' => array(
-        'user_register_form' => FALSE,
+        'user_register_form' => 0,
       ),
       'widget' => array(
         'active' => 0,
@@ -270,13 +270,13 @@ function uas_user_field_default_fields() {
           'size' => 60,
         ),
         'type' => 'taxonomy_autocomplete',
-        'weight' => '3',
+        'weight' => '6',
       ),
     ),
   );
 
-  // Exported field: 'profile2-main-field_user_picture'.
-  $fields['profile2-main-field_user_picture'] = array(
+  // Exported field: 'user-user-field_user_picture'.
+  $fields['user-user-field_user_picture'] = array(
     'field_config' => array(
       'active' => '1',
       'cardinality' => '1',
@@ -299,7 +299,7 @@ function uas_user_field_default_fields() {
       'locked' => '0',
       'module' => 'image',
       'settings' => array(
-        'default_image' => 0,
+        'default_image' => '91',
         'profile2_private' => FALSE,
         'uri_scheme' => 'public',
       ),
@@ -307,7 +307,7 @@ function uas_user_field_default_fields() {
       'type' => 'image',
     ),
     'field_instance' => array(
-      'bundle' => 'main',
+      'bundle' => 'user',
       'deleted' => '0',
       'description' => '',
       'display' => array(
@@ -319,23 +319,23 @@ function uas_user_field_default_fields() {
             'image_style' => '',
           ),
           'type' => 'image',
-          'weight' => 4,
+          'weight' => 5,
         ),
       ),
-      'entity_type' => 'profile2',
+      'entity_type' => 'user',
       'field_name' => 'field_user_picture',
       'label' => 'User Picture',
       'required' => 0,
       'settings' => array(
         'alt_field' => 0,
-        'default_image' => '65',
+        'default_image' => '90',
         'file_directory' => 'user_pictures',
         'file_extensions' => 'png gif jpg jpeg',
         'max_filesize' => '',
         'max_resolution' => '',
         'min_resolution' => '',
         'title_field' => 0,
-        'user_register_form' => FALSE,
+        'user_register_form' => 1,
       ),
       'widget' => array(
         'active' => 1,
@@ -345,7 +345,7 @@ function uas_user_field_default_fields() {
           'progress_indicator' => 'throbber',
         ),
         'type' => 'image_image',
-        'weight' => '0',
+        'weight' => '3',
       ),
     ),
   );
@@ -357,9 +357,9 @@ function uas_user_field_default_fields() {
   t('Real Name');
   t('Skills');
   t('Skills that you possess that would be interesting to other members. These don\'t have to be technical skills. This will help people find and interact with you.');
+  t('Skills that you would be interested in learning more about. (e.g. electrical engineering, web development, inforomation security). Separate multiple values with');
   t('Skills that you would be interested in learning more about. (e.g. electrical engineering, web development, inforomation security). Separate multiple values with a comma.');
   t('Tell us a little about yourself here.');
-  t('This is definitely not required. Whatever you put here will replace your username on your profile page. Some folks like to use their handle, some like to use their real names.');
   t('User Picture');
 
   return $fields;

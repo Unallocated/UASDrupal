@@ -15,3 +15,4 @@ features[field][] = user-user-field_interests
 features[field][] = user-user-field_real_name
 features[field][] = user-user-field_skills
 features[field][] = user-user-field_user_picture
+features[image][] = user_profile_picture

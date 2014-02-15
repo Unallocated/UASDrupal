@@ -1,0 +1,10 @@
+name = Field as Block
+description = "Display fields of the current entity as blocks."
+core = 7.x
+
+; Information added by drupal.org packaging script on 2013-05-10
+version = "7.x-1.2"
+core = "7.x"
+project = "fieldblock"
+datestamp = "1368221111"
+

@@ -59,7 +59,7 @@ function uas_user_field_default_fields() {
       'required' => 0,
       'settings' => array(
         'text_processing' => '0',
-        'user_register_form' => 0,
+        'user_register_form' => 1,
       ),
       'widget' => array(
         'active' => 1,

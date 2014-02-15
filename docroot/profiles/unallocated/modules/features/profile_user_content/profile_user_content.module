@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Profile User Content feature.
+ */
+
+include_once 'profile_user_content.features.inc';

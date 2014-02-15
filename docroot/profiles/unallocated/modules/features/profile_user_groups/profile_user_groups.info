@@ -1,0 +1,10 @@
+name = Profile User Groups
+core = 7.x
+package = UAS Blocks
+version = 7.x-1.0
+project = profile_user_groups
+dependencies[] = ctools
+dependencies[] = views
+features[ctools][] = views:views_default:3.0
+features[features_api][] = api:1
+features[views_view][] = profile_user_groups

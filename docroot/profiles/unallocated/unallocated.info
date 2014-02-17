@@ -51,6 +51,8 @@ dependencies[] = eva
 dependencies[] = front_page
 dependencies[] = login_destination
 dependencies[] = profile2
+dependencies[] = media_gallery
+dependencies[] = plupload
 
 ; Custom modules
 dependencies[] = uas_maintenance

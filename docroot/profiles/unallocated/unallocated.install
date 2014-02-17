@@ -50,6 +50,9 @@ function unallocated_install() {
     'content_type_tutorial',
     'uas_tutorial_context',
     'uas_user',
+    'home_page_authenticated',
+    'related_users_block',
+    'uas_resources_page',
   );
 
   module_enable($features);
@@ -446,6 +449,21 @@ function unallocated_update_7026() {
 function unallocated_update_7027() {
   $modules = array(
     'uas_user',
+  );
+
+  module_enable($modules);
+}
+
+/**
+ * 7028 - Enable contextual block and front page modules
+ */
+function unallocated_update_7028() {
+  $modules = array(
+    'uas_user',
+    'home_page_authenticated',
+    'related_users_block',
+    'uas_resources_page',
+    'media_gallery'
   );
 
   module_enable($modules);

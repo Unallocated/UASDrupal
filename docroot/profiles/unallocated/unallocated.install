@@ -463,7 +463,8 @@ function unallocated_update_7028() {
     'home_page_authenticated',
     'related_users_block',
     'uas_resources_page',
-    'media_gallery'
+    'media_gallery',
+    'plupload',
   );
 
   module_enable($modules);

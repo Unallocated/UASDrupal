@@ -41,6 +41,12 @@ function uas_user_context_default_contexts() {
           'region' => 'sidebar_second',
           'weight' => '-10',
         ),
+        'views-related_users-block_1' => array(
+          'module' => 'views',
+          'delta' => 'related_users-block_1',
+          'region' => 'sidebar_second',
+          'weight' => '-9',
+        ),
         'views-user_content-block_1' => array(
           'module' => 'views',
           'delta' => 'user_content-block_1',

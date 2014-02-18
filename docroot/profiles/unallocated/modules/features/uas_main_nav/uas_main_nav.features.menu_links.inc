@@ -182,13 +182,17 @@ function uas_main_nav_menu_default_menu_links() {
     'expanded' => '0',
     'weight' => '-48',
   );
-  // Exported menu link: main-menu:taxonomy/term/9
-  $menu_links['main-menu:taxonomy/term/9'] = array(
+  // Exported menu link: main-menu:resources/articles
+  $menu_links['main-menu:resources/articles'] = array(
     'menu_name' => 'main-menu',
-    'link_path' => 'taxonomy/term/9',
-    'router_path' => 'taxonomy/term/%',
-    'link_title' => 'Taxonomy term',
-    'options' => array(),
+    'link_path' => 'resources/articles',
+    'router_path' => 'resources/articles',
+    'link_title' => 'Articles',
+    'options' => array(
+      'attributes' => array(
+        'title' => '',
+      ),
+    ),
     'module' => 'menu',
     'hidden' => '0',
     'external' => '0',
@@ -199,6 +203,7 @@ function uas_main_nav_menu_default_menu_links() {
   );
   // Translatables
   // Included for use with string extractors like potx.
+  t('Articles');
   t('Contact');
   t('Donations');
   t('Get Involved');
@@ -210,7 +215,6 @@ function uas_main_nav_menu_default_menu_links() {
   t('Projects');
   t('Resources');
   t('Social');
-  t('Taxonomy term');
 
 
   return $menu_links;

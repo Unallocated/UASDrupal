@@ -52,6 +52,7 @@ function unallocated_install() {
     'home_page_authenticated',
     'related_users_block',
     'uas_resources_page',
+    'uas_articles',
   );
 
   module_enable($features);
@@ -467,6 +468,17 @@ function unallocated_update_7028() {
     'uas_resources_page',
     'media_gallery',
     'plupload',
+  );
+
+  module_enable($modules);
+}
+
+/**
+ * 7029 - Added "Articles" page
+ */
+function unallocated_update_7029() {
+  $modules = array(
+    'uas_articles',
   );
 
   module_enable($modules);

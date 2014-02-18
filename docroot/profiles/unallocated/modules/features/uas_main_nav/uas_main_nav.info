@@ -20,4 +20,4 @@ features[menu_links][] = main-menu:node/5
 features[menu_links][] = main-menu:node/6
 features[menu_links][] = main-menu:projects
 features[menu_links][] = main-menu:resources
-features[menu_links][] = main-menu:taxonomy/term/9
+features[menu_links][] = main-menu:resources/articles

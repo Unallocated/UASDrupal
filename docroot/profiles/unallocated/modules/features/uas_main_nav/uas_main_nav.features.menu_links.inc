@@ -57,6 +57,25 @@ function uas_main_nav_menu_default_menu_links() {
     'weight' => '-49',
     'parent_path' => 'node/1',
   );
+  // Exported menu link: main-menu:http://www.unallocatedspace.org/wiki/Main_Page
+  $menu_links['main-menu:http://www.unallocatedspace.org/wiki/Main_Page'] = array(
+    'menu_name' => 'main-menu',
+    'link_path' => 'http://www.unallocatedspace.org/wiki/Main_Page',
+    'router_path' => '',
+    'link_title' => 'Wiki',
+    'options' => array(
+      'attributes' => array(
+        'title' => '',
+      ),
+    ),
+    'module' => 'menu',
+    'hidden' => '0',
+    'external' => '1',
+    'has_children' => '0',
+    'expanded' => '0',
+    'weight' => '-46',
+    'parent_path' => 'resources',
+  );
   // Exported menu link: main-menu:node/1
   $menu_links['main-menu:node/1'] = array(
     'menu_name' => 'main-menu',
@@ -217,7 +236,7 @@ function uas_main_nav_menu_default_menu_links() {
     'external' => '0',
     'has_children' => '0',
     'expanded' => '0',
-    'weight' => '-46',
+    'weight' => '-45',
     'parent_path' => 'resources',
   );
   // Exported menu link: main-menu:resources/tutorials
@@ -255,7 +274,7 @@ function uas_main_nav_menu_default_menu_links() {
     'external' => '0',
     'has_children' => '0',
     'expanded' => '0',
-    'weight' => '-48',
+    'weight' => '-47',
     'parent_path' => 'resources',
   );
   // Translatables
@@ -275,6 +294,7 @@ function uas_main_nav_menu_default_menu_links() {
   t('Social');
   t('Tutorials');
   t('Videos');
+  t('Wiki');
 
 
   return $menu_links;

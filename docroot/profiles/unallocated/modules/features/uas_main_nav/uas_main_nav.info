@@ -12,6 +12,7 @@ features[menu_custom][] = main-menu
 features[menu_links][] = main-menu:<front>
 features[menu_links][] = main-menu:eform/submit/contact-form
 features[menu_links][] = main-menu:groups
+features[menu_links][] = main-menu:http://www.unallocatedspace.org/wiki/Main_Page
 features[menu_links][] = main-menu:node/1
 features[menu_links][] = main-menu:node/2
 features[menu_links][] = main-menu:node/3

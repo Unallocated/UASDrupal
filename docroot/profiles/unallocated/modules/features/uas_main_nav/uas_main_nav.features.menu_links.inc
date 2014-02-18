@@ -201,6 +201,25 @@ function uas_main_nav_menu_default_menu_links() {
     'weight' => '-49',
     'parent_path' => 'resources',
   );
+  // Exported menu link: main-menu:resources/downloads
+  $menu_links['main-menu:resources/downloads'] = array(
+    'menu_name' => 'main-menu',
+    'link_path' => 'resources/downloads',
+    'router_path' => 'resources/downloads',
+    'link_title' => 'Downloads',
+    'options' => array(
+      'attributes' => array(
+        'title' => '',
+      ),
+    ),
+    'module' => 'menu',
+    'hidden' => '0',
+    'external' => '0',
+    'has_children' => '0',
+    'expanded' => '0',
+    'weight' => '-47',
+    'parent_path' => 'resources',
+  );
   // Exported menu link: main-menu:resources/tutorials
   $menu_links['main-menu:resources/tutorials'] = array(
     'menu_name' => 'main-menu',
@@ -225,6 +244,7 @@ function uas_main_nav_menu_default_menu_links() {
   t('Articles');
   t('Contact');
   t('Donations');
+  t('Downloads');
   t('Get Involved');
   t('Groups');
   t('Home');

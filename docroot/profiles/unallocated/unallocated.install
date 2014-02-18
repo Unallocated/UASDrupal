@@ -53,6 +53,9 @@ function unallocated_install() {
     'related_users_block',
     'uas_resources_page',
     'uas_articles',
+    'uas_videos',
+    'uas_tutorials',
+    'uas_downloads',
   );
 
   module_enable($features);
@@ -479,6 +482,9 @@ function unallocated_update_7028() {
 function unallocated_update_7029() {
   $modules = array(
     'uas_articles',
+    'uas_videos',
+    'uas_tutorials',
+    'uas_downloads',
   );
 
   module_enable($modules);

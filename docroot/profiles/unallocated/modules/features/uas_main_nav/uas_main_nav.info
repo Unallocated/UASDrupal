@@ -23,3 +23,4 @@ features[menu_links][] = main-menu:resources
 features[menu_links][] = main-menu:resources/articles
 features[menu_links][] = main-menu:resources/downloads
 features[menu_links][] = main-menu:resources/tutorials
+features[menu_links][] = main-menu:resources/videos

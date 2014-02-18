@@ -89,7 +89,7 @@ function uas_resources_page_views_default_views() {
   $handler->display->display_options['empty']['view']['empty'] = TRUE;
   $handler->display->display_options['empty']['view']['view_to_insert'] = 'resources:block_2';
   $handler->display->display_options['defaults']['relationships'] = FALSE;
-  /* Relationship: Content: Tags (field_tags) */
+  /* Relationship: Field: Tags (field_tags) */
   $handler->display->display_options['relationships']['field_tags_tid']['id'] = 'field_tags_tid';
   $handler->display->display_options['relationships']['field_tags_tid']['table'] = 'field_data_field_tags';
   $handler->display->display_options['relationships']['field_tags_tid']['field'] = 'field_tags_tid';
@@ -106,7 +106,7 @@ function uas_resources_page_views_default_views() {
   $handler->display->display_options['fields']['title']['label'] = '';
   $handler->display->display_options['fields']['title']['alter']['word_boundary'] = FALSE;
   $handler->display->display_options['fields']['title']['alter']['ellipsis'] = FALSE;
-  /* Field: Content: Tags */
+  /* Field: Field: Tags */
   $handler->display->display_options['fields']['field_tags']['id'] = 'field_tags';
   $handler->display->display_options['fields']['field_tags']['table'] = 'field_data_field_tags';
   $handler->display->display_options['fields']['field_tags']['field'] = 'field_tags';

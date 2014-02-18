@@ -198,6 +198,25 @@ function uas_main_nav_menu_default_menu_links() {
     'external' => '0',
     'has_children' => '0',
     'expanded' => '0',
+    'weight' => '-49',
+    'parent_path' => 'resources',
+  );
+  // Exported menu link: main-menu:resources/tutorials
+  $menu_links['main-menu:resources/tutorials'] = array(
+    'menu_name' => 'main-menu',
+    'link_path' => 'resources/tutorials',
+    'router_path' => 'resources',
+    'link_title' => 'Tutorials',
+    'options' => array(
+      'attributes' => array(
+        'title' => '',
+      ),
+    ),
+    'module' => 'menu',
+    'hidden' => '0',
+    'external' => '0',
+    'has_children' => '0',
+    'expanded' => '0',
     'weight' => '-50',
     'parent_path' => 'resources',
   );
@@ -215,6 +234,7 @@ function uas_main_nav_menu_default_menu_links() {
   t('Projects');
   t('Resources');
   t('Social');
+  t('Tutorials');
 
 
   return $menu_links;

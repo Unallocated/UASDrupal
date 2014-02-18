@@ -217,7 +217,7 @@ function uas_main_nav_menu_default_menu_links() {
     'external' => '0',
     'has_children' => '0',
     'expanded' => '0',
-    'weight' => '-47',
+    'weight' => '-46',
     'parent_path' => 'resources',
   );
   // Exported menu link: main-menu:resources/tutorials
@@ -239,6 +239,25 @@ function uas_main_nav_menu_default_menu_links() {
     'weight' => '-50',
     'parent_path' => 'resources',
   );
+  // Exported menu link: main-menu:resources/videos
+  $menu_links['main-menu:resources/videos'] = array(
+    'menu_name' => 'main-menu',
+    'link_path' => 'resources/videos',
+    'router_path' => 'resources/videos',
+    'link_title' => 'Videos',
+    'options' => array(
+      'attributes' => array(
+        'title' => '',
+      ),
+    ),
+    'module' => 'menu',
+    'hidden' => '0',
+    'external' => '0',
+    'has_children' => '0',
+    'expanded' => '0',
+    'weight' => '-48',
+    'parent_path' => 'resources',
+  );
   // Translatables
   // Included for use with string extractors like potx.
   t('Articles');
@@ -255,6 +274,7 @@ function uas_main_nav_menu_default_menu_links() {
   t('Resources');
   t('Social');
   t('Tutorials');
+  t('Videos');
 
 
   return $menu_links;

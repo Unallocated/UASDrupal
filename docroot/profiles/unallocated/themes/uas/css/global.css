@@ -39,7 +39,12 @@ a:hover {
 /**
  * 	Main menu
  */
-.primary-nav ul li {
+
+.navigation {
+    float: left;
+}
+
+.navigation ul li {
 	list-style: none;
 	font-size: 1.5em;
 	float: left;
@@ -47,21 +52,21 @@ a:hover {
 	padding: 0;
 }
 
-.primary-nav ul li a {
+.navigation ul li a {
 	display: block;
 	padding: 0 15px;
 }
 
-.primary-nav ul li.first a{
+.navigation ul li.first a{
 	padding-left: 0px;
 }
 
-.primary-nav ul li.active a {
+.navigation ul li.active a {
 	color: #ff4500;
 	text-decoration: none;
 }
 
-.primary-nav ul li a:hover {
+.navigation ul li a:hover {
 	color: #FFFFFF;
 	text-decoration: none;
 }
@@ -138,10 +143,6 @@ a:hover {
 	padding-bottom: 1px;
 	box-shadow: 0 10px 30px -10px #FFFFFF;
 	margin-bottom: 10px;
-}
-
-#block-search-form {
-	float: right;
 }
 
 #zone-menu-inner-wrapper {

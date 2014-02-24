@@ -10,3 +10,22 @@
  * for your subtheme grows. Please read the README.txt in the /preprocess and /process subfolders
  * for more information on this topic.
  */
+
+function uas_preprocess_views_exposed_form(&$vars, $hook) {
+
+  if ($vars['form']['#id'] == 'views-exposed-form-search-page') {
+
+    $vars['form']['search_api_views_fulltext']['#default_value'] = t('Search'); // Set a default value for the textfield
+    $vars['form']['search_api_views_fulltext']['#attributes']['onblur'] = "if (this.value == '') {this.value = 'Search';}";
+    $vars['form']['search_api_views_fulltext']['#attributes']['onfocus'] = "if (this.value == 'Search') {this.value = '';}";
+
+    unset($vars['form']['search_api_views_fulltext']['#printed']);
+    $vars['widgets']['filter-search_api_views_fulltext']->widget = drupal_render($vars['form']['search_api_views_fulltext']);
+
+
+    $vars['form']['submit']['#value'] = t('Search');
+    $vars['form']['submit'] = array('#type' => 'image_button', '#src' => base_path() . path_to_theme() . '/images/icons/search-icon.png');
+    unset($vars['form']['submit']['#printed']);
+    $vars['button'] = drupal_render($vars['form']['submit']);
+  }
+}

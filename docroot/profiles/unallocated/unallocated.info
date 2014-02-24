@@ -52,6 +52,15 @@ dependencies[] = front_page
 dependencies[] = login_destination
 dependencies[] = profile2
 dependencies[] = plupload
+dependencies[] = date_facets
+dependencies[] = search_api
+dependencies[] = search_api_solr
+dependencies[] = facetapi
+dependencies[] = facetapi_bonus
+dependencies[] = facetapi_collapsible
+dependencies[] = facetapi_pretty_paths
+dependencies[] = search_api_views
+dependencies[] = search_api_facetapi
 
 ; Custom modules
 dependencies[] = uas_maintenance

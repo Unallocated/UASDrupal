@@ -62,6 +62,7 @@ function unallocated_install() {
     'profile_user_content',
     'profile_user_groups',
     'uas_user_login_block',
+    'content_filters',
   );
 
   module_enable($features);
@@ -527,9 +528,23 @@ function unallocated_update_7031() {
   module_enable($modules);
 }
 
+/**
+ * 7032 - Added project page context
+ */
 function unallocated_update_7032() {
   $modules = array(
     'uas_projects_page'
+  );
+
+  module_enable($modules);
+}
+
+/**
+ * 7033 - Added project page context
+ */
+function unallocated_update_7033() {
+  $modules = array(
+    'context_filters'
   );
 
   module_enable($modules);

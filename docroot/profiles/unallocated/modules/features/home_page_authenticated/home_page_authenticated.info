@@ -1,6 +1,7 @@
 name = Home Page Authenticated
 core = 7.x
 package = UAS Pages
+php = 5.2.4
 version = 7.x-1.0
 project = home_page_authenticated
 dependencies[] = context

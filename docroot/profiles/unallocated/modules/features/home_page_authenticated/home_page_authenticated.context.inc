@@ -43,6 +43,18 @@ function home_page_authenticated_context_default_contexts() {
           'region' => 'content',
           'weight' => '-9',
         ),
+        'system-user-menu' => array(
+          'module' => 'system',
+          'delta' => 'user-menu',
+          'region' => 'user_first',
+          'weight' => '-10',
+        ),
+        'views--exp-search-page' => array(
+          'module' => 'views',
+          'delta' => '-exp-search-page',
+          'region' => 'menu',
+          'weight' => '-10',
+        ),
         'uas_checkin-uas_checkin_status' => array(
           'module' => 'uas_checkin',
           'delta' => 'uas_checkin_status',

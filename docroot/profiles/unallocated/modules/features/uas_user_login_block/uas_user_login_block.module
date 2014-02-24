@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the UAS User Login Block feature.
+ */
+
+include_once 'uas_user_login_block.features.inc';

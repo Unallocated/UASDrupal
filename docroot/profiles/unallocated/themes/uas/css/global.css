@@ -75,6 +75,19 @@ a:hover {
  * 	User menu
  */
 
+.block-system-user-menu {
+    float: right;
+    margin-bottom: 5px;
+}
+.block-system-user-menu .block-title {
+    display: none;
+}
+
+.block-system-user-menu .menu li {
+    float: left;
+    list-style: none;
+}
+
 #zone-user .region-inner {
 	padding-top: 10px;
 }
@@ -92,6 +105,10 @@ a:hover {
 	padding: 10px;
 	border: 2px solid #222222;
 	border-top: none;
+}
+
+.block-user-login .block-title {
+    display: none;
 }
 
 .block-logintoboggan {

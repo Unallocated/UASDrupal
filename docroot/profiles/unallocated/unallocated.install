@@ -57,6 +57,8 @@ function unallocated_install() {
     'uas_tutorials',
     'uas_downloads',
     'uas_search',
+    'uas_main_context',
+    ''
   );
 
   module_enable($features);
@@ -509,4 +511,15 @@ function unallocated_update_7030() {
 
   module_enable($modules);
 
+}
+
+/**
+ * 7031 - Added main context to set page defaults.
+ */
+function unallocated_update_7031() {
+  $modules = array(
+    'uas_main_context'
+  );
+
+  module_enable($modules);
 }

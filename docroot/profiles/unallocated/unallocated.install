@@ -58,7 +58,10 @@ function unallocated_install() {
     'uas_downloads',
     'uas_search',
     'uas_main_context',
-    'uas_projects_page'
+    'uas_projects_page',
+    'profile_user_content',
+    'profile_user_groups',
+    'uas_user_login_block',
   );
 
   module_enable($features);

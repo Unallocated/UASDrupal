@@ -31,6 +31,24 @@ function home_page_anonymous_context_context_default_contexts() {
   $context->reactions = array(
     'block' => array(
       'blocks' => array(
+        'user-login' => array(
+          'module' => 'user',
+          'delta' => 'login',
+          'region' => 'user_first',
+          'weight' => '-10',
+        ),
+        'system-user-menu' => array(
+          'module' => 'system',
+          'delta' => 'user-menu',
+          'region' => 'user_first',
+          'weight' => '-9',
+        ),
+        'views--exp-search-page' => array(
+          'module' => 'views',
+          'delta' => '-exp-search-page',
+          'region' => 'menu',
+          'weight' => '-10',
+        ),
         'views-announcements-block_1' => array(
           'module' => 'views',
           'delta' => 'announcements-block_1',

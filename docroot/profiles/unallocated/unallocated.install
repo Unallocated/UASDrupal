@@ -63,6 +63,7 @@ function unallocated_install() {
     'profile_user_groups',
     'uas_user_login_block',
     'content_filters',
+    'uas_roles_and_permissions',
   );
 
   module_enable($features);
@@ -545,6 +546,17 @@ function unallocated_update_7032() {
 function unallocated_update_7033() {
   $modules = array(
     'context_filters'
+  );
+
+  module_enable($modules);
+}
+
+/**
+ * 7034 - Added project page context
+ */
+function unallocated_update_7034() {
+  $modules = array(
+    'uas_roles_and_permissions'
   );
 
   module_enable($modules);

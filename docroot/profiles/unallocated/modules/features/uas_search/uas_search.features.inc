@@ -133,22 +133,10 @@ function uas_search_default_search_api_index() {
         "author" : { "type" : "integer", "entity_type" : "user" },
         "comment_count" : { "type" : "integer" },
         "field_tags" : { "type" : "list\\u003Cinteger\\u003E", "entity_type" : "taxonomy_term" },
-        "og_group_ref" : { "type" : "list\\u003Cinteger\\u003E", "entity_type" : "node" },
         "field_author" : { "type" : "text" },
-        "field_download" : {
-          "type" : "list\\u003Cinteger\\u003E",
-          "entity_type" : "field_collection_item"
-        },
-        "field_project_materials" : {
-          "type" : "list\\u003Cinteger\\u003E",
-          "entity_type" : "field_collection_item"
-        },
         "field_status_notes" : { "type" : "text" },
-        "field_tutorial_steps" : {
-          "type" : "list\\u003Cinteger\\u003E",
-          "entity_type" : "field_collection_item"
-        },
         "search_api_language" : { "type" : "string" },
+        "author:name" : { "type" : "text" },
         "body:value" : { "type" : "text" }
       }
     },

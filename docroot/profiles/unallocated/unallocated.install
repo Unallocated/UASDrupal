@@ -56,6 +56,7 @@ function unallocated_install() {
     'uas_videos',
     'uas_tutorials',
     'uas_downloads',
+    'uas_search',
   );
 
   module_enable($features);

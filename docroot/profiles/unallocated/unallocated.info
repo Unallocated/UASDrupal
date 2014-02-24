@@ -52,6 +52,8 @@ dependencies[] = front_page
 dependencies[] = login_destination
 dependencies[] = profile2
 dependencies[] = plupload
+dependencies[] = date_facet
+dependencies[] = search_api_
 
 ; Custom modules
 dependencies[] = uas_maintenance

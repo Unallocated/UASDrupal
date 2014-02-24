@@ -61,6 +61,7 @@ function unallocated_install() {
     'uas_projects_page',
     'profile_user_content',
     'profile_user_groups',
+    'uas_user_login_block',
   );
 
   module_enable($features);

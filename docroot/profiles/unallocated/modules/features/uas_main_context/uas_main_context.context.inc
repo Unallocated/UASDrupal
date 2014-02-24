@@ -32,6 +32,18 @@ function uas_main_context_context_default_contexts() {
           'region' => 'content',
           'weight' => '-10',
         ),
+        'user-login' => array(
+          'module' => 'user',
+          'delta' => 'login',
+          'region' => 'user_first',
+          'weight' => '-10',
+        ),
+        'system-user-menu' => array(
+          'module' => 'system',
+          'delta' => 'user-menu',
+          'region' => 'user_first',
+          'weight' => '-9',
+        ),
         'views--exp-search-page' => array(
           'module' => 'views',
           'delta' => '-exp-search-page',

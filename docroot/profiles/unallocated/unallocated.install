@@ -58,7 +58,7 @@ function unallocated_install() {
     'uas_downloads',
     'uas_search',
     'uas_main_context',
-    ''
+    'uas_projects_page'
   );
 
   module_enable($features);
@@ -519,6 +519,14 @@ function unallocated_update_7030() {
 function unallocated_update_7031() {
   $modules = array(
     'uas_main_context'
+  );
+
+  module_enable($modules);
+}
+
+function unallocated_update_7032() {
+  $modules = array(
+    'uas_projects_page'
   );
 
   module_enable($modules);

@@ -490,3 +490,21 @@ function unallocated_update_7029() {
 
   module_enable($modules);
 }
+
+/**
+ * 7030 - Added the dependency modules for the search features
+ */
+function unallocated_update_7030() {
+  $modules = array(
+    'facetapi',
+    'date_facet',
+    'search_api',
+    'search_api_solr',
+    'facetapi_collapsible',
+    'facetapi_pretty_paths',
+    'uas_search',
+  );
+
+  module_enable($modules);
+
+}

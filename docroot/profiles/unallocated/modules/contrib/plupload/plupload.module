@@ -116,6 +116,10 @@ function plupload_element_info() {
  */
 function plupload_element_value(&$element, $input = FALSE, $form_state = NULL) {
   $id = $element['#id'];
+  // If a unique identifier added with '--', we need to exclude it
+  if(preg_match('/(.*)(--[0-9]+)$/', $id, $reg)) {
+    $id = $reg[1];
+  }
   $files = array();
   foreach ($form_state['input'] as $key => $value) {
     if (preg_match('/' . $id . '_([0-9]+)_(.*)/', $key, $reg)) {
@@ -163,7 +167,7 @@ function plupload_element_value(&$element, $input = FALSE, $form_state = NULL) {
         // be intended for public://subdirectory rather than public://, and we
         // don't want an attacker to be able to get them back into the top
         // level of public:// in that case).
-        $value = rtrim(basename($value), '.');
+        $value = rtrim(drupal_basename($value), '.');
 
 
         // Based on the same feture from file_save_upload().
@@ -189,7 +193,7 @@ function plupload_element_value(&$element, $input = FALSE, $form_state = NULL) {
         $files[$i]['tmppath'] = variable_get('plupload_temporary_uri', 'temporary://') . $value;
       }
       elseif ($key == 'name') {
-        if (module_exists('transliteration')) {
+        if (module_exists('transliteration') && variable_get('transliteration_file_uploads', TRUE)) {
           $value = transliteration_clean_filename($value);
         }
       }
@@ -223,15 +227,18 @@ function plupload_element_process($element) {
  */
 function plupload_element_validate($element, &$form_state) {
   foreach ($element['#value'] as $file_info) {
-    // @todo Here we create a $file object for a file that doesn't exist yet,
-    //   because saving the file to its destination is done in a submit handler.
-    //   Need more investigation into what else is needed for it to be okay to
-    //   call file_validate(). For example, file_validate_size() will not have
-    //   access to a meaningful $file->filesize unless we set that here. For
-    //   now, we can at least rely on file_validate_extensions() running
-    //   successfully.
+    // Here we create a $file object for a file that doesn't exist yet,
+    // because saving the file to its destination is done in a submit handler.
+    // Using tmp path will give validators access to the actual file on disk and
+    // filesize information. We manually modify filename and mime to allow
+    // extension checks.
+    $file = plupload_file_uri_to_object($file_info['tmppath']);
+
     $destination = variable_get('file_default_scheme', 'public') . '://' . $file_info['name'];
-    $file = plupload_file_uri_to_object($destination);
+    $destination = file_stream_wrapper_uri_normalize($destination);
+    $file->filename = drupal_basename($destination);
+    $file->filemime = file_get_mimetype($destination);
+
     foreach (file_validate($file, $element['#upload_validators']) as $error_message) {
       $message = t('The specified file %name could not be uploaded.', array('%name' => $file->filename));
       form_error($element, $message . ' ' . $error_message);
@@ -257,6 +264,25 @@ function plupload_element_pre_render($element) {
       'title' => t('Allowed files'),
       'extensions' => str_replace(' ', ',', $element['#upload_validators']['file_validate_extensions'][0]),
     );
+  }
+  // Check for autoupload and autosubmit settings and add appropriate callback.
+  if (!empty($element['#autoupload'])) {
+    $settings['init']['FilesAdded'] = 'Drupal.plupload.filesAddedCallback';
+    if (!empty($element['#autosubmit'])) {
+      $settings['init']['UploadComplete'] = 'Drupal.plupload.uploadCompleteCallback';
+    }
+  }
+  // Add a specific submit element that we want to click if one is specified.
+  if (!empty($element['#submit_element'])) {
+    $settings['submit_element'] = $element['#submit_element'];
+  }
+  // Check if there are event callbacks and append them to current ones, if any.
+  if (!empty($element['#event_callbacks'])) {
+    // array_merge() only accepts parameters of type array.
+    if (!isset($settings['init'])) {
+      $settings['init'] = array();
+    }
+    $settings['init'] = array_merge($settings['init'], $element['#event_callbacks']);
   }
 
   if (empty($element['#description'])) {
@@ -457,7 +483,7 @@ function plupload_file_uri_to_object($uri) {
   $wrapper = file_stream_wrapper_get_instance_by_uri($uri);
   $file = new StdClass();
   $file->uid = $user->uid;
-  $file->filename = basename($uri);
+  $file->filename = drupal_basename($uri);
   $file->uri = $uri;
   $file->filemime = file_get_mimetype($uri);
   // This is gagged because some uris will not support it.

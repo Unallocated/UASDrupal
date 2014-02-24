@@ -23,7 +23,9 @@ function uas_checkin_menu() {
  */
 function uas_checkin_permission() {
 	return array(
-		'administer uas checkin settings'
+		'administer uas checkin settings' => array(
+      'title' => t('Administer UAS Checkin Settings'),
+    ),
 	);
 }
 

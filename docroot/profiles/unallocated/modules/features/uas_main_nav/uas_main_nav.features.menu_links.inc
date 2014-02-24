@@ -38,6 +38,25 @@ function uas_main_nav_menu_default_menu_links() {
     'expanded' => '0',
     'weight' => '-47',
   );
+  // Exported menu link: main-menu:events
+  $menu_links['main-menu:events'] = array(
+    'menu_name' => 'main-menu',
+    'link_path' => 'events',
+    'router_path' => 'events',
+    'link_title' => 'Events and Classes',
+    'options' => array(
+      'attributes' => array(
+        'title' => '',
+      ),
+    ),
+    'module' => 'menu',
+    'hidden' => '0',
+    'external' => '0',
+    'has_children' => '0',
+    'expanded' => '0',
+    'weight' => '-50',
+    'parent_path' => 'node/1',
+  );
   // Exported menu link: main-menu:groups
   $menu_links['main-menu:groups'] = array(
     'menu_name' => 'main-menu',
@@ -277,12 +296,28 @@ function uas_main_nav_menu_default_menu_links() {
     'weight' => '-47',
     'parent_path' => 'resources',
   );
+  // Exported menu link: main-menu:taxonomy/term/1
+  $menu_links['main-menu:taxonomy/term/1'] = array(
+    'menu_name' => 'main-menu',
+    'link_path' => 'taxonomy/term/1',
+    'router_path' => 'taxonomy/term/%',
+    'link_title' => 'Taxonomy term',
+    'options' => array(),
+    'module' => 'menu',
+    'hidden' => '0',
+    'external' => '0',
+    'has_children' => '0',
+    'expanded' => '0',
+    'weight' => '-48',
+    'parent_path' => 'resources',
+  );
   // Translatables
   // Included for use with string extractors like potx.
   t('Articles');
   t('Contact');
   t('Donations');
   t('Downloads');
+  t('Events and Classes');
   t('Get Involved');
   t('Groups');
   t('Home');
@@ -292,6 +327,7 @@ function uas_main_nav_menu_default_menu_links() {
   t('Projects');
   t('Resources');
   t('Social');
+  t('Taxonomy term');
   t('Tutorials');
   t('Videos');
   t('Wiki');

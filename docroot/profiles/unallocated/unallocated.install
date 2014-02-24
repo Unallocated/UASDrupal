@@ -503,6 +503,8 @@ function unallocated_update_7030() {
     'facetapi_collapsible',
     'facetapi_pretty_paths',
     'uas_search',
+    'search_api_views',
+    'search_api_facetapi',
   );
 
   module_enable($modules);

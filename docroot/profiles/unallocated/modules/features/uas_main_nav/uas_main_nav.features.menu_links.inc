@@ -119,7 +119,11 @@ function uas_main_nav_menu_default_menu_links() {
     'link_path' => 'node/1',
     'router_path' => 'node/%',
     'link_title' => 'Get Involved',
-    'options' => array(),
+    'options' => array(
+      'attributes' => array(
+        'title' => '',
+      ),
+    ),
     'module' => 'menu',
     'hidden' => '0',
     'external' => '0',
@@ -146,6 +150,44 @@ function uas_main_nav_menu_default_menu_links() {
     'weight' => '-50',
     'parent_path' => 'members',
   );
+  // Exported menu link: main-menu:node/158
+  $menu_links['main-menu:node/158'] = array(
+    'menu_name' => 'main-menu',
+    'link_path' => 'node/158',
+    'router_path' => 'node/%',
+    'link_title' => 'IRC',
+    'options' => array(
+      'attributes' => array(
+        'title' => '',
+      ),
+    ),
+    'module' => 'menu',
+    'hidden' => '0',
+    'external' => '0',
+    'has_children' => '0',
+    'expanded' => '0',
+    'weight' => '-49',
+    'parent_path' => 'eform/submit/contact-form',
+  );
+  // Exported menu link: main-menu:node/159
+  $menu_links['main-menu:node/159'] = array(
+    'menu_name' => 'main-menu',
+    'link_path' => 'node/159',
+    'router_path' => 'node/%',
+    'link_title' => 'Social',
+    'options' => array(
+      'attributes' => array(
+        'title' => '',
+      ),
+    ),
+    'module' => 'menu',
+    'hidden' => '0',
+    'external' => '0',
+    'has_children' => '0',
+    'expanded' => '0',
+    'weight' => '-50',
+    'parent_path' => 'eform/submit/contact-form',
+  );
   // Exported menu link: main-menu:node/2
   $menu_links['main-menu:node/2'] = array(
     'menu_name' => 'main-menu',
@@ -159,66 +201,6 @@ function uas_main_nav_menu_default_menu_links() {
     'has_children' => '0',
     'expanded' => '0',
     'weight' => '-45',
-  );
-  // Exported menu link: main-menu:node/3
-  $menu_links['main-menu:node/3'] = array(
-    'menu_name' => 'main-menu',
-    'link_path' => 'node/3',
-    'router_path' => 'node/%',
-    'link_title' => 'Mailing List',
-    'options' => array(),
-    'module' => 'menu',
-    'hidden' => '0',
-    'external' => '0',
-    'has_children' => '0',
-    'expanded' => '0',
-    'weight' => '-50',
-    'parent_path' => 'eform/submit/contact-form',
-  );
-  // Exported menu link: main-menu:node/4
-  $menu_links['main-menu:node/4'] = array(
-    'menu_name' => 'main-menu',
-    'link_path' => 'node/4',
-    'router_path' => 'node/%',
-    'link_title' => 'Meetup',
-    'options' => array(),
-    'module' => 'menu',
-    'hidden' => '0',
-    'external' => '0',
-    'has_children' => '0',
-    'expanded' => '0',
-    'weight' => '-49',
-    'parent_path' => 'eform/submit/contact-form',
-  );
-  // Exported menu link: main-menu:node/5
-  $menu_links['main-menu:node/5'] = array(
-    'menu_name' => 'main-menu',
-    'link_path' => 'node/5',
-    'router_path' => 'node/%',
-    'link_title' => 'IRC',
-    'options' => array(),
-    'module' => 'menu',
-    'hidden' => '0',
-    'external' => '0',
-    'has_children' => '0',
-    'expanded' => '0',
-    'weight' => '-48',
-    'parent_path' => 'eform/submit/contact-form',
-  );
-  // Exported menu link: main-menu:node/6
-  $menu_links['main-menu:node/6'] = array(
-    'menu_name' => 'main-menu',
-    'link_path' => 'node/6',
-    'router_path' => 'node/%',
-    'link_title' => 'Social',
-    'options' => array(),
-    'module' => 'menu',
-    'hidden' => '0',
-    'external' => '0',
-    'has_children' => '0',
-    'expanded' => '0',
-    'weight' => '-47',
-    'parent_path' => 'eform/submit/contact-form',
   );
   // Exported menu link: main-menu:projects
   $menu_links['main-menu:projects'] = array(
@@ -359,8 +341,6 @@ function uas_main_nav_menu_default_menu_links() {
   t('Groups');
   t('Home');
   t('IRC');
-  t('Mailing List');
-  t('Meetup');
   t('Members');
   t('Membership');
   t('Projects');

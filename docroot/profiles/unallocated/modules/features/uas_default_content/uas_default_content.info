@@ -19,6 +19,7 @@ features[node_export_features][] = 69a50418-2186-4d14-bc59-bc851d8d342b
 features[node_export_features][] = 8a753a1d-b52f-4aea-8e8e-a02bb6cc64a8
 features[node_export_features][] = c3ec71ef-7047-48f9-86e6-cda8e0ebbf35
 features[node_export_features][] = ccc7b83c-109a-45e5-911e-52c2f0a9ef1c
+features[node_export_features][] = d70565fd-539a-413f-8321-8cf6cc68b8e1
 features[variable][] = comment_page
 features[variable][] = node_options_page
 features[variable][] = node_submitted_page

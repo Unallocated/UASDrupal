@@ -85,6 +85,12 @@ function uas_members_directory_views_default_views() {
     4 => 0,
     5 => 0,
   );
+  /* Filter criterion: Indexed User: User ID */
+  $handler->display->display_options['filters']['uid']['id'] = 'uid';
+  $handler->display->display_options['filters']['uid']['table'] = 'search_api_index_user_server_index';
+  $handler->display->display_options['filters']['uid']['field'] = 'uid';
+  $handler->display->display_options['filters']['uid']['operator'] = '<>';
+  $handler->display->display_options['filters']['uid']['value'] = '1';
 
   /* Display: Page */
   $handler = $view->new_display('page', 'Page', 'page');

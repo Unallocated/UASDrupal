@@ -64,6 +64,7 @@ function unallocated_install() {
     'uas_user_login_block',
     'content_filters',
     'uas_roles_and_permissions',
+    'uas_members_directory',
   );
 
   module_enable($features);
@@ -557,6 +558,17 @@ function unallocated_update_7033() {
 function unallocated_update_7034() {
   $modules = array(
     'uas_roles_and_permissions'
+  );
+
+  module_enable($modules);
+}
+
+/**
+ * 7035 - Added members directory and supporting functionality
+ */
+function unallocated_update_7035() {
+  $modules = array(
+    'uas_members_directory'
   );
 
   module_enable($modules);

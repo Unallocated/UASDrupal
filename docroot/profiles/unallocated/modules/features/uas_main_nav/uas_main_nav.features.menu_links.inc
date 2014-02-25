@@ -95,6 +95,24 @@ function uas_main_nav_menu_default_menu_links() {
     'weight' => '-46',
     'parent_path' => 'resources',
   );
+  // Exported menu link: main-menu:members
+  $menu_links['main-menu:members'] = array(
+    'menu_name' => 'main-menu',
+    'link_path' => 'members',
+    'router_path' => 'members',
+    'link_title' => 'Members',
+    'options' => array(
+      'attributes' => array(
+        'title' => '',
+      ),
+    ),
+    'module' => 'menu',
+    'hidden' => '0',
+    'external' => '0',
+    'has_children' => '1',
+    'expanded' => '0',
+    'weight' => '-46',
+  );
   // Exported menu link: main-menu:node/1
   $menu_links['main-menu:node/1'] = array(
     'menu_name' => 'main-menu',
@@ -109,6 +127,25 @@ function uas_main_nav_menu_default_menu_links() {
     'expanded' => '0',
     'weight' => '-49',
   );
+  // Exported menu link: main-menu:node/157
+  $menu_links['main-menu:node/157'] = array(
+    'menu_name' => 'main-menu',
+    'link_path' => 'node/157',
+    'router_path' => 'node/%',
+    'link_title' => 'Membership',
+    'options' => array(
+      'attributes' => array(
+        'title' => '',
+      ),
+    ),
+    'module' => 'menu',
+    'hidden' => '0',
+    'external' => '0',
+    'has_children' => '0',
+    'expanded' => '0',
+    'weight' => '-50',
+    'parent_path' => 'members',
+  );
   // Exported menu link: main-menu:node/2
   $menu_links['main-menu:node/2'] = array(
     'menu_name' => 'main-menu',
@@ -121,7 +158,7 @@ function uas_main_nav_menu_default_menu_links() {
     'external' => '0',
     'has_children' => '0',
     'expanded' => '0',
-    'weight' => '-46',
+    'weight' => '-45',
   );
   // Exported menu link: main-menu:node/3
   $menu_links['main-menu:node/3'] = array(
@@ -262,7 +299,7 @@ function uas_main_nav_menu_default_menu_links() {
   $menu_links['main-menu:resources/tutorials'] = array(
     'menu_name' => 'main-menu',
     'link_path' => 'resources/tutorials',
-    'router_path' => 'resources',
+    'router_path' => 'resources/tutorials',
     'link_title' => 'Tutorials',
     'options' => array(
       'attributes' => array(
@@ -324,6 +361,8 @@ function uas_main_nav_menu_default_menu_links() {
   t('IRC');
   t('Mailing List');
   t('Meetup');
+  t('Members');
+  t('Membership');
   t('Projects');
   t('Resources');
   t('Social');

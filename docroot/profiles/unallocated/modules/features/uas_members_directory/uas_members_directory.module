@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the UAS Members Directory feature.
+ */
+
+include_once 'uas_members_directory.features.inc';

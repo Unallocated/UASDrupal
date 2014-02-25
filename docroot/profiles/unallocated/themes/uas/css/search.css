@@ -9,10 +9,11 @@
     border: 2px solid #888888;
 }
 
+#block-views-exp-members-page input.form-text,
 #block-views-exp-search-page--2 input.form-text {
     width: 200px;
 }
-
+#block-views-exp-members-page input.form-submit,
 #block-views-exp-search-page--2 input.form-submit {
     margin: 3px 0 0 0;
 }
@@ -41,12 +42,27 @@
    color: #FF9900;
 }
 
+.view-members .views-row,
 .view-search .views-row {
     padding-bottom: 10px;
     margin-bottom: 10px;
     border-bottom: 1px solid #444444;
 }
 
+.view-members .views-row-last,
 .view-search .views-row-last {
     border-bottom: none;
+}
+
+/**
+ * Members Search
+ */
+.view-members .views-field-name a {
+    font-size: 1.4em;
+    color: #FFFFFF;
+}
+
+.view-members .views-field-field-interests,
+.view-members .views-label-field-skills {
+    color: #666666;
 }

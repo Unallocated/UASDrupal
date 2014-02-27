@@ -1,0 +1,12 @@
+name = Footer Follow Us Menu
+core = 7.x
+package = UAS Blocks
+version = 7.x-1.0
+project = footer_follow_us_menu
+dependencies[] = features
+dependencies[] = menu
+features[features_api][] = api:1
+features[menu_custom][] = menu-follow-unallocated
+features[menu_links][] = menu-follow-unallocated:https://twitter.com/Unallocated
+features[menu_links][] = menu-follow-unallocated:https://www.facebook.com/Unallocated
+features[menu_links][] = menu-follow-unallocated:https://www.youtube.com/theunallocated

@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the UAS Address Box feature.
+ */
+
+include_once 'uas_address_box.features.inc';

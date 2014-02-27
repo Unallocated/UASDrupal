@@ -83,9 +83,9 @@ function footer_navigate_menu_menu_default_menu_links() {
     'weight' => '-49',
   );
   // Exported menu link: menu-footer-navigate:node/15
-  $menu_links['menu-footer-navigate:node/15'] = array(
+  $menu_links['menu-footer-navigate:about'] = array(
     'menu_name' => 'menu-footer-navigate',
-    'link_path' => 'node/15',
+    'link_path' => 'about',
     'router_path' => 'node/%',
     'link_title' => 'About',
     'options' => array(

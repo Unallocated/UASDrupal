@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the UAS Footer Context feature.
+ */
+
+include_once 'uas_footer_context.features.inc';

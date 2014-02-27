@@ -65,6 +65,7 @@ function unallocated_install() {
     'content_filters',
     'uas_roles_and_permissions',
     'uas_members_directory',
+    'uas_footer_context',
   );
 
   module_enable($features);
@@ -569,6 +570,17 @@ function unallocated_update_7034() {
 function unallocated_update_7035() {
   $modules = array(
     'uas_members_directory'
+  );
+
+  module_enable($modules);
+}
+
+/**
+ * 7036 - Added footer
+ */
+function unallocated_update_7036() {
+  $modules = array(
+    'uas_footer_context'
   );
 
   module_enable($modules);

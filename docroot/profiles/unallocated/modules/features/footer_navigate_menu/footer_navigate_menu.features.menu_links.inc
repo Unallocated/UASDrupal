@@ -82,10 +82,10 @@ function footer_navigate_menu_menu_default_menu_links() {
     'expanded' => '0',
     'weight' => '-49',
   );
-  // Exported menu link: menu-footer-navigate:node/15
-  $menu_links['menu-footer-navigate:about'] = array(
+  // Exported menu link: menu-footer-navigate:node/8
+  $menu_links['menu-footer-navigate:node/8'] = array(
     'menu_name' => 'menu-footer-navigate',
-    'link_path' => 'about',
+    'link_path' => 'node/8',
     'router_path' => 'node/%',
     'link_title' => 'About',
     'options' => array(
@@ -98,7 +98,7 @@ function footer_navigate_menu_menu_default_menu_links() {
     'external' => '0',
     'has_children' => '0',
     'expanded' => '0',
-    'weight' => '-46',
+    'weight' => '0',
   );
   // Translatables
   // Included for use with string extractors like potx.

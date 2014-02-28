@@ -585,3 +585,15 @@ function unallocated_update_7036() {
 
   module_enable($modules);
 }
+
+/**
+ * 7037 - Added footer
+ */
+function unallocated_update_7037() {
+  $modules = array(
+    'smtp',
+    'memcache'
+  );
+
+  module_enable($modules);
+}

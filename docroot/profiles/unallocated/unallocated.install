@@ -592,7 +592,7 @@ function unallocated_update_7036() {
 function unallocated_update_7037() {
   $modules = array(
     'mandrill',
-    'mailsystem'
+    'mailsystem',
     'memcache'
   );
 

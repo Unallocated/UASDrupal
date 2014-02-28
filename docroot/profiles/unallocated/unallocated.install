@@ -587,11 +587,12 @@ function unallocated_update_7036() {
 }
 
 /**
- * 7037 - Added footer
+ * 7037 - Added mailhandling utility.
  */
 function unallocated_update_7037() {
   $modules = array(
-    'smtp',
+    'mandrill',
+    'mailsystem'
     'memcache'
   );
 

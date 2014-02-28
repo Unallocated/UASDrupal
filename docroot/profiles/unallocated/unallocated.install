@@ -585,3 +585,16 @@ function unallocated_update_7036() {
 
   module_enable($modules);
 }
+
+/**
+ * 7037 - Added mailhandling utility.
+ */
+function unallocated_update_7037() {
+  $modules = array(
+    'mandrill',
+    'mailsystem'
+    'memcache'
+  );
+
+  module_enable($modules);
+}

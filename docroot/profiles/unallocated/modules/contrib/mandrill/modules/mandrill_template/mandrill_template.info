@@ -1,0 +1,19 @@
+name = Mandrill Template
+description = "Use Mandrill templates for messages sent through Mandrill."
+core = 7.x
+package = MailChimp
+
+configure = admin/config/services/mandrill/templates
+
+dependencies[] = entity (>=1.0)
+dependencies[] = mandrill
+
+files[] = lib/mandrill_template_map.entity.inc
+files[] = lib/mandrill_template_map.ui_controller.inc
+
+; Information added by drupal.org packaging script on 2013-10-16
+version = "7.x-1.5"
+core = "7.x"
+project = "mandrill"
+datestamp = "1381955508"
+

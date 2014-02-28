@@ -1,0 +1,15 @@
+name = Footer Navigate Menu
+core = 7.x
+package = UAS Blocks
+php = 5.2.4
+version = 7.x-1.0
+project = footer_navigate_menu
+dependencies[] = features
+dependencies[] = menu
+features[features_api][] = api:1
+features[menu_custom][] = menu-footer-navigate
+features[menu_links][] = menu-footer-navigate:<front>
+features[menu_links][] = menu-footer-navigate:events
+features[menu_links][] = menu-footer-navigate:http://www.unallocatedspace.org/wiki/Main_Page
+features[menu_links][] = menu-footer-navigate:members/membership
+features[menu_links][] = menu-footer-navigate:node/8

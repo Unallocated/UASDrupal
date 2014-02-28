@@ -39,7 +39,6 @@ a:hover {
 /**
  * 	Main menu
  */
-
 .navigation {
     float: left;
 }
@@ -260,4 +259,54 @@ a:hover {
 
 .flex-text-title {
     font-size: 1.5em;
+}
+
+/**
+ * Footer
+ */
+
+#section-footer {
+    background: #222222;
+    padding-top: 75px;
+    padding-bottom: 50px;
+    margin-bottom: 30px;
+}
+
+
+#boxes-box-uas_address_box {
+    background: url('../images/uas_logo_inverted.png') no-repeat center top;
+    padding-top: 130px;
+    text-align: center;
+}
+
+#boxes-box-uas_address_box .copyright-notice {
+    color: #888888;
+}
+
+#section-footer .block-menu {
+    text-align: right;
+}
+
+#section-footer ul.menu {
+    text-align: right;
+    list-style: none;
+    font-size: 1.2em;
+}
+
+#section-footer ul.menu li {
+    list-style-image: none;
+    list-style-type: none;
+}
+#section-footer ul.menu li a {
+    color: #FFFFFF;
+    display: block;
+}
+
+#section-footer ul.menu li a:hover {
+    color: #eba713;
+    text-decoration: none;
+}
+
+#section-footer ul.menu li a.active {
+    color: #ff4500;
 }

@@ -1,0 +1,14 @@
+name = UAS Footer Context
+core = 7.x
+package = UAS Pages
+version = 7.x-1.0
+project = uas_footer_context
+dependencies[] = context
+dependencies[] = footer_communicate_menu
+dependencies[] = footer_follow_us_menu
+dependencies[] = footer_navigate_menu
+dependencies[] = menu
+dependencies[] = uas_address_box
+features[context][] = uas-footer-section
+features[ctools][] = context:context:3
+features[features_api][] = api:1

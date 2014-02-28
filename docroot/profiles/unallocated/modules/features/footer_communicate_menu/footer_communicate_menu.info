@@ -1,0 +1,12 @@
+name = Footer Communicate Menu
+core = 7.x
+package = UAS Blocks
+version = 7.x-1.0
+project = footer_communicate_menu
+dependencies[] = features
+dependencies[] = menu
+features[features_api][] = api:1
+features[menu_custom][] = menu-communicate
+features[menu_links][] = menu-communicate:eform/submit/contact-form
+features[menu_links][] = menu-communicate:node/3
+features[menu_links][] = menu-communicate:node/7

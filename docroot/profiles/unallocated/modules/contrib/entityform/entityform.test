@@ -31,6 +31,7 @@ class EntityformTestCase extends DrupalWebTestCase {
     $this->createUsers();
     $this->entityform_submission_count = 0;
 
+
   }
   protected function entityformSubmit($machine_name, $user, $submit_text = NULL) {
     $this->drupalLogin($user);
@@ -45,11 +46,14 @@ class EntityformTestCase extends DrupalWebTestCase {
     $edit = array();
     $edit['field_text[und][0][value]'] = $submit_text;
     $this->drupalPost($form_url, $edit, t(ENTITYFORM_TEST_SUBMIT_TEXT));
-    if ($this->assertText(t(ENTITYFORM_TEST_SUBMISSION_TITLE), 'Authenicated user can submit.')) {
-      $this->entityform_submission_count++;
-      return TRUE;
+    $entityform_type = entityform_type_load($machine_name);
+    if ($entityform_type->data['redirect_path'] == '') {
+      if ($this->assertText(t(ENTITYFORM_TEST_SUBMISSION_TITLE), 'Authenicated user can submit.')) {
+        $this->entityform_submission_count++;
+        return TRUE;
+      }
+      return FALSE;
     }
-    return FALSE;
   }
 }
 /**
@@ -124,9 +128,25 @@ class EntityformCRUDTestCase extends EntityformTestCase {
     $this->entityformSubmit('test_form', $this->user_edit);
     $this->entityformValidatePerms('test_form', $this->user_edit);
 
+    // Check that form is redirected on submit
+    $data = array(
+      'redirect_path' => 'node?uid=[current-user:uid]',
+    );
+    $this->updateEntityformType('test_form', NULL, $data);
+    $this->entityformSubmit('test_form', $this->user_edit);
+    $url_options = drupal_parse_url($this->url);
+    $path_parts = explode('/', $url_options['path']);
+    $system_path = array_pop($path_parts);
+    $this->assertEqual($system_path, 'node', t('Submit is redirected'));
+    // Check that query string in redirect_path works and tokens replaced
+    if ($this->assertTrue(array_key_exists('uid', $url_options['query']), t('Query String redirect exists.'))) {
+      $this->assertEqual($url_options['query']['uid'], $this->loggedInUser->uid, t('Tokens replaced in Redirect Path'));
+    }
+
 
     $data = array(
         'roles' => array(DRUPAL_ANONYMOUS_RID => DRUPAL_ANONYMOUS_RID),
+        'redirect_path' => '',
     );
     $this->updateEntityformType('test_form', NULL, $data);
     // Check that anonymous cannot submit test_form
@@ -141,6 +161,8 @@ class EntityformCRUDTestCase extends EntityformTestCase {
     $edit['field_text[und][0][value]'] = 'Test Text';
     $this->drupalPost('eform/submit/test-form', $edit, t(ENTITYFORM_TEST_SUBMIT_TEXT));
     $this->assertText(t(ENTITYFORM_TEST_SUBMISSION_TITLE), 'Anynomous user  can submit.');
+
+
 
   }
   private function updateEntityformType($machine_name, $properties, $data) {

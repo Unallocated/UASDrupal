@@ -49,7 +49,7 @@ function entityform_type_form($form, &$form_state, $entityform_type, $op = 'edit
     // Clear so most defaults.  Allows entityform type to use defaults.
     $entityform_type->clear_text_props();
   }
-  $form = _entityform_type_setttings_elements($entityform_type, $op);
+  $form = _entityform_type_settings_elements($entityform_type, $op);
   entityform_type_prepare_edit($entityform_type);
   $form['#entityform_type'] = $entityform_type;
   $form['label'] = array(
@@ -180,7 +180,9 @@ function entityform_type_form($form, &$form_state, $entityform_type, $op = 'edit
       '#description' => t('Menu links with smaller weights are displayed before links with larger weights.'),
     );
   }
-  _entityform_remove_fieldsets_from_tree($form['data'], array('data'));
+  // Register #process function so the fieldsets aren't save in form values.
+  $form['data']['#force_parents'] = array('data');
+  $form['data']['#process'][] = '_entityform_remove_fieldsets_from_tree';
 
   $form['actions'] = array('#type' => 'actions');
   $form['actions']['submit'] = array(
@@ -210,7 +212,7 @@ function entityform_type_form($form, &$form_state, $entityform_type, $op = 'edit
         '#title' => check_plain($path_type['title']),
         '#default_value' => isset($entityform_type->paths[$key]) ? $entityform_type->paths[$key]['alias'] : '',
         '#maxlength' => 255,
-        '#description' => t('Optionally specify an alternative URL by which this content can be accessed. For example, type "about" when writing an about page. Use a relative path and don\'t add a trailing slash or the URL alias won\'t work.'),
+        '#description' => t($path_type['description']),
       );
     }
     $form['additional_settings'] = array(
@@ -236,6 +238,7 @@ function entityform_type_form($form, &$form_state, $entityform_type, $op = 'edit
       '#markup' => '<p>' . t('Enable the <a href="@drupal-token">Token module</a> to view the available token browser.', array('@drupal-token' => 'http://drupal.org/project/token')) . '</p>',
     );
   }
+
   return $form;
 }
 
@@ -278,7 +281,7 @@ function entityform_type_prepare_edit(&$entityform_type) {
 function entityform_settings($form, &$form_state) {
   //choose the default View for viewing for submissions
   $defaults = entity_get_controller('entityform_type')->create(array(), TRUE);
-  $form = _entityform_type_setttings_elements($defaults, 'defaults');
+  $form = _entityform_type_settings_elements($defaults, 'defaults');
   $form['#entityform_type'] = $defaults;
 
   // Call Drupal.menu_update_parent_list() to filter the list of
@@ -291,10 +294,13 @@ function entityform_settings($form, &$form_state) {
   $form['entityform_type_defaults']['#tree'] = TRUE;
   $form['entityform_type_defaults']['#type'] = 'value';
   unset($form['data']);
-  _entityform_remove_fieldsets_from_tree($form['entityform_type_defaults']['data'], array(
+
+  // Register #process function so the fieldsets aren't save in form values.
+  $form['entityform_type_defaults']['data']['#process'][] = '_entityform_remove_fieldsets_from_tree';
+  $form['entityform_type_defaults']['data']['#force_parents'] = array(
     'entityform_type_defaults',
-    'data'
-  ));
+    'data',
+  );
   //collaspe all fieldsets
   foreach (element_children($form['entityform_type_defaults']['data']) as $key) {
     if (isset($form['entityform_type_defaults']['data'][$key]['#type']) && $form['entityform_type_defaults']['data'][$key]['#type'] == 'fieldset') {
@@ -312,7 +318,7 @@ function entityform_settings($form, &$form_state) {
  * @return array
  *   Form elements
  */
-function _entityform_type_setttings_elements($entityform_type, $op) {
+function _entityform_type_settings_elements($entityform_type, $op) {
   $default_value_message = $op != 'defaults' ? ' ' . ENTITYFORM_TYPE_DEFAULT_PROP_TEXT : '';
   //****************DRAFT FIELDSET SETTINGS *********************//
   $form['data']['draft_set'] = array(
@@ -327,6 +333,12 @@ function _entityform_type_setttings_elements($entityform_type, $op) {
     '#title' => t('Draftable'),
     '#default_value' => !empty($entityform_type->data['draftable']),
     '#description' => t('Should users be able to save a draft of this form?'),
+  );
+  $form['data']['draft_set']['draft_redirect_path'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Draft Redirect path'),
+    '#default_value' => empty($entityform_type->data['draft_redirect_path']) ? '' : $entityform_type->data['draft_redirect_path'],
+    '#description' => t('What relative path should the user be redirected to on draft submission?  Leave blank for default action.'),
   );
   $form['data']['draft_set']['draft_button_text'] = array(
     '#type' => 'textfield',

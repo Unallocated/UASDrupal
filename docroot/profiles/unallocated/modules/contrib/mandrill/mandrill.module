@@ -2,9 +2,9 @@
 
 /**
  * @file
- * Enables Drupal to send email directly through MailChimp STS.
+ * Enables Drupal to send email directly through Mandrill.
  *
- * Overriding mail handling in Drupal to make MailChimp STS the default
+ * Overriding mail handling in Drupal to make Mandrill the default
  * transport layer, requires to change the mail_system variable's
  * default value array('default-system' => 'DefaultMailSystem').
  * This module uses array('default-system' => 'MailChimpMandrillMailSystem').
@@ -149,6 +149,9 @@ function mandrill_mailsend($message, $function, $args = array()) {
     $params = array($message) + $args;
     $results = call_user_func_array($function, $params);
     foreach ($results as $result) {
+      // Allow other modules to react based on a send result.
+      module_invoke_all('mandrill_mailsend_result', $result);
+
       switch ($result['status']) {
         case "error":
         case "invalid":
@@ -165,7 +168,7 @@ function mandrill_mailsend($message, $function, $args = array()) {
             ),
             WATCHDOG_ERROR
           );
-          break;
+          return FALSE;
 
         case "queued":
           watchdog('mandrill', 'Email from %from to %to queued by Mandrill App.',
@@ -184,7 +187,7 @@ function mandrill_mailsend($message, $function, $args = array()) {
   catch (MandrillException $e) {
     watchdog('mandrill', 'Error sending email from %from to %to. @code: @message',
       array(
-        '%from' => $message['from'],
+        '%from' => $message['from_email'],
         '%to' => $message['to'],
         '@code' => $e->getCode(),
         '@message' => $e->getMessage(),
@@ -207,10 +210,16 @@ function mandrill_mailsend($message, $function, $args = array()) {
  * 
  * @return array
  *   Results of sending the message.
+ *
+ * @throws MandrillException
  */
 function mandrill_sender_plain($message) {
-  $mailer = mandrill_get_api_object();
-  return $mailer->messages_send($message);
+  if ($mailer = mandrill_get_api_object()) {
+    return $mailer->messages_send($message);
+  }
+  else {
+    throw new MandrillException('Missing API key.');
+  }
 }
 
 /**
@@ -218,6 +227,9 @@ function mandrill_sender_plain($message) {
  *
  * @param bool $reset
  *   Pass in TRUE to reset the statically cached object.
+ * @param string $classname
+ *   The Mandrill class to use for sending emails. Passing a parameter allows
+ *   the class used to be overridden, E.g., for tests.
  *
  * @throws MandrillException
  *
@@ -225,7 +237,7 @@ function mandrill_sender_plain($message) {
  *   Mandrill Object upon success
  *   FALSE if variable_get('mandrill_api_key') is unset
  */
-function mandrill_get_api_object($reset = FALSE) {
+function mandrill_get_api_object($reset = FALSE, $classname = 'DrupalMandrill') {
   $api =& drupal_static(__FUNCTION__, NULL);
 
   if ($api === NULL || $reset === TRUE) {
@@ -235,7 +247,7 @@ function mandrill_get_api_object($reset = FALSE) {
       return FALSE;
     }
 
-    $api = new Mandrill($api_key, $api_timeout);
+    $api = new $classname($api_key, $api_timeout);
   }
 
   return $api;
@@ -260,10 +272,7 @@ function mandrill_get_module_key_names() {
   $descriptions = array();
   foreach (system_rebuild_module_data() as $item) {
     if ($item->status) {
-      $descriptions[$item->name] = (
-      empty($item->info['package'])
-        ? '' : $item->info['package']
-      ) . ' » ' . t('!module module', array('!module' => $item->info['name']));
+      $descriptions[$item->name] = (empty($item->info['package']) ? '' : $item->info['package']) . ' » ' . t('!module module', array('!module' => $item->info['name']));
     }
   }
   asort($descriptions);
@@ -310,6 +319,23 @@ function mandrill_get_templates() {
     watchdog_exception('mandrill', $e);
   }
   return $templates;
+}
+
+/**
+ * Get a list of subaccounts.
+ */
+function mandrill_get_subaccounts() {
+  $subaccounts = array();
+  try {
+    $mandrill = mandrill_get_api_object();
+    $subaccounts = $mandrill->subaccounts();
+  }
+  catch (MandrillException $e) {
+    drupal_set_message(t('Mandrill: %message', array('%message' => check_plain($e->getMessage()))), 'error');
+    watchdog_exception('mandrill', $e);
+  }
+
+  return $subaccounts;
 }
 
 /**

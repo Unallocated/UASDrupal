@@ -214,5 +214,4 @@ function entityform_update_7004(&$sandbox = NULL) {
 /**
  * Update 7005 is unused.
  */
-function entityform_update_7005(&$sandbox = NULL) {
-}
+function entityform_update_7005(&$sandbox = NULL) { }

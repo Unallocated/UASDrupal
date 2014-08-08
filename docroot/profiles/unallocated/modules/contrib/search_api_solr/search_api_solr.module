@@ -71,15 +71,44 @@ function search_api_solr_help($path, array $arg = array()) {
  * day.
  */
 function search_api_solr_cron() {
-  if (REQUEST_TIME - variable_get('search_api_solr_last_optimize', 0) > 86400) {
+  $action = variable_get('search_api_solr_cron_action', 'spellcheck');
+  // We treat all unknown action settings as "none". However, we turn a blind
+  // eye for Britons and other people who can spell.
+  if (!in_array($action, array('spellcheck', 'optimize', 'optimise'))) {
+    return;
+  }
+  // 86400 seconds is one day. We use slightly less here to allow for some
+  // variation in the request time of the cron run, so that the time of day will
+  // (more or less) stay the same.
+  if (REQUEST_TIME - variable_get('search_api_solr_last_optimize', 0) > 86340) {
     variable_set('search_api_solr_last_optimize', REQUEST_TIME);
     $conditions = array('class' => 'search_api_solr_service', 'enabled' => TRUE);
+    $count = 0;
     foreach (search_api_server_load_multiple(FALSE, $conditions) as $server) {
       try {
-        $server->getSolrConnection()->optimize(FALSE);
+        $solr = $server->getSolrConnection();
+        if ($action != 'spellcheck') {
+          $solr->optimize(FALSE);
+        }
+        else {
+          $params['rows'] = 0;
+          $params['spellcheck'] = 'true';
+          $params['spellcheck.build'] = 'true';
+          $solr->search(NULL, $params);
+        }
+        ++$count;
       }
-      catch(Exception $e) {
+      catch(SearchApiException $e) {
         watchdog_exception('search_api_solr', $e, '%type while optimizing Solr server @server: !message in %function (line %line of %file).', array('@server' => $server->name));
+      }
+    }
+    if ($count) {
+      $vars['@count'] = $count;
+      if ($action != 'spellcheck') {
+        watchdog('search_api_solr', 'Optimized @count Solr server(s).', $vars, WATCHDOG_INFO);
+      }
+      else {
+        watchdog('search_api_solr', 'Rebuilt spellcheck dictionary on @count Solr server(s).', $vars, WATCHDOG_INFO);
       }
     }
   }
@@ -207,6 +236,25 @@ function search_api_solr_get_data_type_info($type = NULL) {
 }
 
 /**
+ * Returns a unique hash for the current site.
+ *
+ * This is used to identify Solr documents from different sites within a single
+ * Solr server.
+ *
+ * @return string
+ *   A unique site hash, containing only alphanumeric characters.
+ */
+function search_api_solr_site_hash() {
+  // Copied from apachesolr_site_hash().
+  if (!($hash = variable_get('search_api_solr_site_hash', FALSE))) {
+    global $base_url;
+    $hash = substr(base_convert(sha1(uniqid($base_url, TRUE)), 16, 36), 0, 6);
+    variable_set('search_api_solr_site_hash', $hash);
+  }
+  return $hash;
+}
+
+/**
  * Retrieves a list of all config files of a server.
  *
  * @param SearchApiServer $server
@@ -229,9 +277,17 @@ function search_api_solr_server_get_files(SearchApiServer $server, $dir_name = N
   // Search for directories and recursively merge directory files.
   $files_data = json_decode($response->data, TRUE);
   $files_list = $files_data['files'];
+  $dir_length = strlen($dir_name) + 1;
   $result = array('' => array());
 
   foreach ($files_list as $file_name => $file_info) {
+    // Annoyingly, Solr 4.7 changed the way the admin/file handler returns
+    // the file names when listing directory contents: the returned name is now
+    // only the base name, not the complete path from the config root directory.
+    // We therefore have to check for this case.
+    if ($dir_name && substr($file_name, 0, $dir_length) !== "$dir_name/") {
+      $file_name = "$dir_name/" . $file_name;
+    }
     if (empty($file_info['directory'])) {
       $result[''][$file_name] = $file_info;
     }
@@ -314,4 +370,36 @@ function _search_api_solr_switch_to_clean_ids(array $form, array &$form_state) {
     $msg = format_plural($count, '1 index was scheduled for re-indexing.', '@count indexes were scheduled for re-indexing.');
     drupal_set_message($msg);
   }
+}
+
+/**
+ * Switches a server to multi-site compatibility mode.
+ *
+ * Used as a submit callback in SearchApiSolrService::configurationForm().
+ */
+function _search_api_solr_switch_to_site_hash(array $form, array &$form_state) {
+  $server = $form_state['server'];
+
+  try {
+    $conditions['server'] = $server->machine_name;
+    $indexes = search_api_index_load_multiple(FALSE, $conditions);
+    if ($indexes) {
+      foreach ($indexes as $index) {
+        $index->reindex();
+      }
+      $msg = format_plural(count($indexes), '1 index was cleared.', '@count indexes were cleared.');
+      $server->deleteItems('index_id:(' . implode(' ', array_keys($indexes)) . ')');
+      drupal_set_message($msg);
+    }
+  }
+  catch (SearchApiException $e) {
+    $variables = array('@server' => $server->name);
+    watchdog_exception('search_api_solr', $e, '%type while attempting to enable multi-site compatibility mode for Solr server @server: !message in %function (line %line of %file).', $variables);
+    drupal_set_message(t('An error occured while attempting to enable multi-site compatibility mode for Solr server @server. Check the logs for details.', $variables), 'error');
+    return;
+  }
+
+  $server->options['site_hash'] = TRUE;
+  $server->save();
+  drupal_set_message(t('The Solr server was successfully switched to multi-site compatibility mode.'));
 }

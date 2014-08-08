@@ -12,9 +12,9 @@ class MandrillException extends Exception {
 }
 
 /**
- * Class Mandrill.
+ * Class DrupalMandrill.
  */
-class Mandrill {
+class DrupalMandrill {
   const API_VERSION = '1.0';
   const END_POINT = 'https://mandrillapp.com/api/';
 
@@ -32,6 +32,8 @@ class Mandrill {
    *   Mandrill API key.
    * @param int $timeout
    *   Server timeout.
+   *
+   * @throws MandrillException.
    */
   public function __construct($api_key, $timeout = 300) {
     if (empty($api_key)) {
@@ -72,6 +74,8 @@ class Mandrill {
    *
    * @return array
    *   Array on success.
+   *
+   * @throws MandrillException.
    */
   protected function request($method, $args = array(), $http = 'POST', $output = 'json') {
     if (!isset($args['key'])) {
@@ -125,8 +129,11 @@ class Mandrill {
       return $body;
     }
     else {
-      $message = isset($body['message']) ? $body['message'] : '';
-      throw new MandrillException($message . ' - ' . $body, $response_code);
+      $message = isset($body['message']) ? $body['message'] : $body;
+      if (is_array($message)) {
+        $message = "Unspecified Error";
+      }
+      throw new MandrillException($message, $response_code);
     }
   }
 
@@ -191,6 +198,15 @@ class Mandrill {
    */
   public function senders_time_series($email) {
     return $this->request('senders/time-series', array('address' => $email));
+  }
+  
+  /**
+   * @link https://mandrillapp.com/api/docs/subaccounts.html#method=method-list
+   *
+   * @return array|MandrillException
+   */
+  public function subaccounts() {
+    return $this->request('subaccounts/list');
   }
 
   /**
@@ -442,7 +458,7 @@ class Mandrill {
       }
 
       $mime_type = file_get_mimetype($path);
-      if (!Mandrill::isValidContentType($mime_type)) {
+      if (!DrupalMandrill::isValidContentType($mime_type)) {
         throw new Exception($mime_type . ' is not a valid content type (it should be ' . implode('*,', self::getValidContentTypes()) . ').');
       }
 

@@ -48,10 +48,7 @@ function uas_members_directory_default_search_api_index() {
         "name" : { "type" : "text" },
         "last_login" : { "type" : "date" },
         "created" : { "type" : "date" },
-        "field_biography" : { "type" : "text" },
-        "search_api_language" : { "type" : "string" },
-        "field_interests:name" : { "type" : "list\\u003Ctext\\u003E" },
-        "field_skills:name" : { "type" : "list\\u003Ctext\\u003E" }
+        "search_api_language" : { "type" : "string" }
       },
       "data_alter_callbacks" : {
         "search_api_alter_role_filter" : {

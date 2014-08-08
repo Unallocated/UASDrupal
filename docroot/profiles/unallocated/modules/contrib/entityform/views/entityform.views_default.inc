@@ -10,7 +10,7 @@
 function entityform_views_default_views() {
   $view = new view;
   $view->name = 'entityforms';
-  $view->description = 'A list of all entityforms submissions';
+  $view->description = 'A list of all entityforms submissions to be as an admin report';
   $view->tag = 'entityforms';
   $view->base_table = 'entityform';
   $view->human_name = 'Entityforms';
@@ -936,7 +936,7 @@ function entityform_views_default_views() {
 
   $view = new view;
   $view->name = 'user_entityforms';
-  $view->description = 'A list of all entityforms submissions';
+  $view->description = 'A list of all entityforms submissions to be displayed to the submitter.';
   $view->tag = 'entityforms';
   $view->base_table = 'entityform';
   $view->human_name = 'User Entityforms';

@@ -41,7 +41,7 @@ class MandrillMailSystem implements MailSystemInterface {
   public function mail(array $message) {
     // Optionally log mail keys not using Mandrill already. Helpful in
     // configuring Mandrill.
-    if (variable_get('mandrill_log_defaulted_sends')) {
+    if (variable_get('mandrill_log_defaulted_sends', FALSE)) {
       $systems = mailsystem_get();
       $registered = FALSE;
       foreach ($systems as $key => $system) {
@@ -102,6 +102,27 @@ class MandrillMailSystem implements MailSystemInterface {
       }
     }
 
+    // The Mime Mail module (mimemail) expects attachments as an array of file
+    // arrays in $message['params']['attachments']. As many modules assume you
+    // will be using Mime Mail to handle attachments, we need to parse this
+    // array as well.
+    if (isset($message['params']['attachments']) && !empty($message['params']['attachments'])) {
+      foreach ($message['params']['attachments'] as $attachment) {
+        $attachment_path = drupal_realpath($attachment['uri']);
+        if (is_file($attachment_path)) {
+          $struct = $mailer->getAttachmentStruct($attachment_path);
+          // Allow for customised filenames.
+          if (!empty($attachment['filename'])) {
+            $struct['name'] = $attachment['filename'];
+          }
+          $attachments[] = $struct;
+        }
+      }
+      // Remove the file objects from $message['params']['attachments'].
+      // (This prevents double-attaching in the drupal_alter hook below.)
+      unset($message['params']['attachments']);
+    }
+
     // Account for the plaintext parameter provided by the mimemail module.
     $plain_text = empty($message['params']['plaintext']) ? drupal_html_to_text($message['body']) : $message['params']['plaintext'];
 
@@ -130,7 +151,10 @@ class MandrillMailSystem implements MailSystemInterface {
       'view_content_link' => $view_content,
       'metadata' => $metadata,
     );
-
+    $subaccount = variable_get('mandrill_subaccount', FALSE);
+    if ($subaccount) {
+      $mandrill_message['subaccount'] = $subaccount;
+    }
     // Allow other modules to alter the Mandrill message, and sender/args.
     $mandrill_params = array(
       'message' => $mandrill_message,

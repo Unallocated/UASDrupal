@@ -16,8 +16,6 @@ function entityform_test_default_entityform_type() {
       "draftable" : 1,
       "draft_button_text" : "",
       "draft_save_text" : { "value" : "", "format" : "filtered_html" },
-      "notification_text" : "",
-      "notify_emails" : "",
       "submit_button_text" : "",
       "submission_page_title" : "",
       "submission_text" : { "value" : "", "format" : "filtered_html" },

@@ -59,8 +59,7 @@ Regarding third-party features, the following are supported:
 - search_api_data_type_location
   Introduced by module: search_api_location
   Lets you index, filter and sort on location fields. Note, however, that only
-  single-valued fields are currently supported for Solr 3.x, and that the option
-  isn't supported at all in Solr 1.4.
+  single-valued fields are currently supported for Solr 3.x.
 - search_api_grouping
   Introduced by module: search_api_grouping [5]
   Lets you group search results based on indexed fields. For further information
@@ -85,13 +84,6 @@ server you should therefore then disable all processors which handle such
 classic preprocessing tasks. Enabling the HTML filter can be useful, though, as
 the default config files included in this module don't handle stripping out HTML
 tags.
-
-Also, due to the way Solr works, using a single field for fulltext searching
-will result in the smallest index size and best search performance, as well as
-possibly having other advantages, too. Therefore, if you don't need to search
-different sets of fields in different searches on an index, it is adviced that
-you collect all fields that should be searchable into a single field using the
-“Aggregated fields” data alteration.
 
 Clean field identifiers:
   If your Solr server was created in a module version prior to 1.2, you will get
@@ -130,6 +122,25 @@ Hidden variables
   The maximum number of bytes that can be handled as an HTTP GET query when
   HTTP method is AUTO. Typically Solr can handle up to 65355 bytes, but Tomcat
   and Jetty will error at slightly less than 4096 bytes.
+- search_api_solr_cron_action (default: "spellcheck")
+  The Search API Solr Search module can automatically execute some upkeep
+  operations daily during cron runs. This variable determines what particular
+  operation is carried out.
+  - spellcheck: The "default" spellcheck dictionary used by Solr will be rebuilt
+  so that spellchecking reflects the latest index state.
+  - optimize: An "optimize" operation [8] is executed on the Solr server. As a
+  result of this, all spellcheck dictionaries (that have "buildOnOptimize" set
+  to "true") will be rebuilt, too.
+  - none: No action is executed.
+  If an unknown setting is encountered, it is interpreted as "none".
+- search_api_solr_site_hash (default: random)
+  A unique hash specific to the local site, created the first time it is needed.
+  Only change this if you want to display another server's results and you know
+  what you are doing. Old indexed items will be lost when the hash is changed
+  and all items will have to be reindexed. Can only contain alphanumeric
+  characters.
+
+[8] http://wiki.apache.org/solr/UpdateXmlMessages#A.22commit.22_and_.22optimize.22
 
 Customizing your Solr server
 ----------------------------
@@ -138,11 +149,11 @@ The schema.xml and solrconfig.xml files contain extensive comments on how to
 add additional features or modify behaviour, e.g., for adding a language-
 specific stemmer or a stopword list.
 If you are interested in further customizing your Solr server to your needs,
-see the Solr wiki at [8] for documentation. When editing the schema.xml and
+see the Solr wiki at [9] for documentation. When editing the schema.xml and
 solrconfig.xml files, please only edit the copies in the Solr configuration
 directory, not directly the ones provided with this module.
 
-[8] http://wiki.apache.org/solr/
+[9] http://wiki.apache.org/solr/
 
 You'll have to restart your Solr server after making such changes, for them to
 take effect.

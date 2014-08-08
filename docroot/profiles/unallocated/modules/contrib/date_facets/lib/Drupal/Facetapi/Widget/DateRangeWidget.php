@@ -33,21 +33,37 @@ class Drupal_Apachesolr_Facetapi_Widget_DateRangeWidget extends FacetapiWidgetLi
     $field_alias = rawurlencode($facet['field alias']);
     $value_start_pos = strlen($field_alias) + 1;
 
+    $processor = $this->facet->getAdapter()->getUrlProcessor();
+    $query_params = $processor->getParams();
+
     // Re-build query string for all date range facets.
     foreach ($element as &$item) {
 
       // Filters out all other values from the query string excluding the value
       // of the current item.
       if (!$item['#active']) {
-        foreach ($item['#query'][$filter_key] as $pos => $filter) {
+        foreach ($query_params[$filter_key] as $filter) {
           if (0 === strpos($filter, $field_alias . ':')) {
             $value = substr($filter, $value_start_pos);
             if ($value !== $item['#indexed_value']) {
-              unset($item['#query'][$filter_key][$pos]);
+              // FacetApi Pretty Paths url processor.
+              if (get_class($processor) == 'FacetapiUrlProcessorPrettyPaths') {
+                $facet_path_item = str_replace(':', '/', $filter);
+                $item['#path'] = str_replace("/$facet_path_item", '', $item['#path']);
+              }
+              // Default processor.
+              else {
+                $num = array_search($filter, $item['#query'][$filter_key]);
+                unset($item['#query'][$filter_key][$num]);
+                // Reset keys.
+                $item['#query'][$filter_key] = array_values($item['#query'][$filter_key]);
+              }
             }
           }
         }
       }
+      // Always display label for avoid problem from issue #2016601.
+      $item['#markup'] = $item['label'];
     }
 
     // Render the links.

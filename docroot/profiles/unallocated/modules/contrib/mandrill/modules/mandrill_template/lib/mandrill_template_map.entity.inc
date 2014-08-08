@@ -16,8 +16,6 @@ class MandrillTemplateMap extends Entity {
 
   /**
    * Return a new entity instance of type mandrill_template_map.
-   *
-   * @param array $values
    */
   public function __construct(array $values = array()) {
     parent::__construct($values, 'mandrill_template_map');

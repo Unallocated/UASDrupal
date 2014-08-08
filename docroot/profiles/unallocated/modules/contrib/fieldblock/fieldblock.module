@@ -52,7 +52,7 @@ function fieldblock_field_display_submit($form, &$form_state) {
 
   foreach ($form_state['values']['fields'] as $field_name => $field) {
     if (!empty($field['fieldblock'])) {
-      $settings[$field_name] = $field_name;
+      $settings[$field_name] = $form['fields'][$field_name]['human_name']['#markup'];
     }
   }
 
@@ -96,7 +96,6 @@ function fieldblock_get_block_list() {
   if (!isset($fieldblocks)) {
     $fieldblocks = array();
     $entities = entity_get_info();
-    $instances = field_info_instances();
     // Loop over the entity types.
     foreach ($entities as $entity_type => $entity_info) {
       // Loop over each entity type's bundles.
@@ -118,7 +117,7 @@ function fieldblock_get_block_list() {
             // Build the fieldblock info.
             $fieldblock_id = md5($variable_name .'-'. $field_name);
             $fieldblocks[$fieldblock_id] = t('@field field (from @type: @bundle: @view_mode)', array(
-              '@field' => $instances[$entity_type][$bundle][$field_name]['label'],
+              '@field' => $field_label,
               '@type' => $entity_type,
               '@bundle' => $bundle_info['label'],
               '@view_mode' => $view_mode,
@@ -144,7 +143,7 @@ function fieldblock_block_view($delta = '') {
     // If the field has a label, use it as block title and hide it on the
     // field itself.
     $block['subject'] = '';
-    if ($fieldblocks_storage[$delta]['#label_display'] != 'hidden') {
+    if (isset($fieldblocks_storage[$delta]['#label_display']) && $fieldblocks_storage[$delta]['#label_display'] != 'hidden') {
       $block['subject'] = $fieldblocks_storage[$delta]['#title'];
       $fieldblocks_storage[$delta]['#label_display'] = 'hidden';
     }
@@ -156,20 +155,20 @@ function fieldblock_block_view($delta = '') {
 }
 
 /**
- * Implements hook_field_attach_view_alter().
+ * Implements hook_entity_view_alter().
  * Stores fields attached to the current entity in a static cache, to be
  * retrieved in fieldblock_block_view, and hides the field from the renderable
  * array.
  */
-function fieldblock_field_attach_view_alter(&$output, $context) {
+function fieldblock_entity_view_alter(&$build, $type) {
   // Do nothing if essential information is missing.
-  if (!isset($output['#bundle'], $context['entity_type'], $context['view_mode'])) {
+  if (!isset($build['#bundle'], $build['#entity_type'], $build['#view_mode'])) {
     return;
   }
 
-  $entity_type = $context['entity_type'];
-  $bundle = $output['#bundle'];
-  $view_mode = $context['view_mode'];
+  $entity_type = $build['#entity_type'];
+  $bundle = $build['#bundle'];
+  $view_mode = $build['#view_mode'];
 
   // Check whether the view mode uses custom display settings or the 'default'
   // mode.
@@ -183,12 +182,12 @@ function fieldblock_field_attach_view_alter(&$output, $context) {
 
   // Loop over the fieldblocks for this entity + bundle + view mode combination
   // and store the field's render array for later use.
-  foreach ($fieldblock_settings as $field_name) {
-    if (isset($output[$field_name])) {
+  foreach ($fieldblock_settings as $field_name => $field_label) {
+    if (isset($build[$field_name])) {
       $fieldblock_name = $variable_name .'-'. $field_name;
       $fieldblock_id = md5($fieldblock_name);
-      $fieldblocks_storage[$fieldblock_id] = $output[$field_name];
-      hide($output[$field_name]);
+      $fieldblocks_storage[$fieldblock_id] = $build[$field_name];
+      hide($build[$field_name]);
       $fieldblocks_storage[$fieldblock_id]['fieldblock_name'] = $fieldblock_name;
     }
   }

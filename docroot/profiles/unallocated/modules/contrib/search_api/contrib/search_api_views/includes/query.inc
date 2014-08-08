@@ -342,7 +342,7 @@ class SearchApiViewsQuery extends views_plugin_query {
     catch (Exception $e) {
       $this->errors[] = $e->getMessage();
       // Recursion to get the same error behaviour as above.
-      return $this->execute($view);
+      $this->execute($view);
     }
   }
 
@@ -660,16 +660,18 @@ class SearchApiViewsQuery extends views_plugin_query {
     return $ret;
   }
 
-  public function getOption($name) {
+  public function getOption($name, $default = NULL) {
     if (!$this->errors) {
-      return $this->query->getOption($name);
+      return $this->query->getOption($name, $default);
     }
+    return $default;
   }
 
   public function setOption($name, $value) {
     if (!$this->errors) {
       return $this->query->setOption($name, $value);
     }
+    return NULL;
   }
 
   public function &getOptions() {

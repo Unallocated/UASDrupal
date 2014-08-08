@@ -118,9 +118,7 @@ function date_facets_get_ranges_render_arrays($ranges) {
   foreach ($ranges as $range_data) {
     $build[$range_data['machine_name']] = $range_data + array(
       '#count' => NULL,
-      '#markup' => check_plain(t($range_data['label'])),
-      // @todo Seems it's not used.
-      //'#weight' => $range_data['weight'],
+      '#markup' => t(check_plain($range_data['label'])),
     );
   }
 

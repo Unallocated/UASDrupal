@@ -187,6 +187,7 @@ function entityform_permission() {
     'administer entityform types' => array(
       'title' => t('Administer entityform types'),
       'description' => t('Create and delete fields for entityform types, and set their permissions.'),
+      'restrict access' => TRUE,
     ),
     'edit any entityform' => array(
       'title' => t('Edit any entityform submission'),
@@ -702,10 +703,11 @@ function template_preprocess_entityform_submittd_data(&$variables) {
 
   $variables['date'] = format_date($entityform->created);
   $variables['name'] = theme('username', array('account' => $entityform));
-
-  $uri = entity_uri('entityform', $entityform);
-  $uri['options']['absolute'] = TRUE;
-  $variables['url'] = url($uri['path'], $uri['options']);
+  if (!empty($entityform->entityform_id)) {
+    $uri = entity_uri('entityform', $entityform);
+    $uri['options']['absolute'] = TRUE;
+    $variables['url'] = url($uri['path'], $uri['options']);
+  }
 }
 
 /**
@@ -725,9 +727,9 @@ function entityform_draft_page($entityform_type) {
 
   drupal_alter(
     array(
-    'entityform_draft_page',
-    "entityform_{$entityform_type->type}_draft_page",
-  ),
+      'entityform_draft_page',
+      "entityform_{$entityform_type->type}_draft_page",
+    ),
     $render_array,
     $entityform_type,
     $args
@@ -762,9 +764,9 @@ function entityform_confirm_page($entityform_type) {
 
   drupal_alter(
     array(
-    'entityform_confirm_page',
-    "entityform_{$entityform_type->type}_confirm_page",
-  ),
+      'entityform_confirm_page',
+      "entityform_{$entityform_type->type}_confirm_page",
+    ),
     $render_array,
     $entityform_type,
     $entityform_id
@@ -827,16 +829,16 @@ function entityform_entity_presave($entity, $type) {
             $path['language'] = LANGUAGE_NONE;
             // Check to see if alias is exact same as original
             if (!empty($original_path['alias'])
-                && $original_path['alias'] == $path['alias'] && $path['source'] == $original_path['source']) {
+              && $original_path['alias'] == $path['alias'] && $path['source'] == $original_path['source']) {
               continue;
             }
 
             if (_entityform_alias_is_used($path)) {
               watchdog('entityform', "Could not create alias @alias for EntityformType entity '@type'",
                 array(
-                '@alias' => $path['alias'],
-                '@type' => $entity->type,
-              ),
+                  '@alias' => $path['alias'],
+                  '@type' => $entity->type,
+                ),
                 WATCHDOG_WARNING
               );
             }
@@ -994,11 +996,12 @@ function entityform_embed_view($name, $display_id = 'default') {
   }
 
   $view = views_get_view($name);
-  // This needed so VBO will work correctly.
-  $view->override_path = _entityform_get_submissions_view_path($display_id);
   if (!$view || !$view->access($display_id)) {
     return;
   }
+
+  // This needed so VBO will work correctly.
+  $view->override_path = _entityform_get_submissions_view_path($display_id);
 
   return $view->preview($display_id, $args);
 }
@@ -1050,9 +1053,9 @@ function _entityform_get_submit_info($entityform) {
   $account = user_load($entityform->uid);
   return t("Submitted by !name on !date",
     array(
-    '!name' => theme('username', array('account' => $account)),
-    '!date' => format_date($entityform->created),
-  )
+      '!name' => theme('username', array('account' => $account)),
+      '!date' => format_date($entityform->created),
+    )
   );
 }
 
@@ -1446,8 +1449,11 @@ function _entityform_type_get_path_types($type) {
  */
 function entityform_views_pre_view(&$view, &$display_id, &$args) {
   if ($view->base_table == 'entityform' && strpos($display_id, 'autofields_') === 0) {
-    $type = $view->args[0];
-    _entityform_view_add_all_fields($view, $display_id, $type);
+    if (empty($view->display[$display_id]->entityform_settings['autofields'])) {
+      $type = $view->args[0];
+      _entityform_view_add_all_fields($view, $display_id, $type);
+    }
+
   }
   return;
 }
@@ -1457,6 +1463,7 @@ function entityform_views_pre_view(&$view, &$display_id, &$args) {
  */
 function _entityform_view_add_all_fields(&$view, $display_id, $bundle_name) {
   $instances = field_info_instances('entityform', $bundle_name);
+  $view_mode_settings = field_view_mode_settings('entityform', $bundle_name);
   // when adding autofields to view let view modes determine which fields should be include and in what order
   switch ($display_id) {
     case 'autofields_csv':
@@ -1471,24 +1478,48 @@ function _entityform_view_add_all_fields(&$view, $display_id, $bundle_name) {
   }
   $autofields = array();
   foreach ($instances as $instance) {
-    $field_display = isset($instance['display'][$view_mode]) ? $instance['display'][$view_mode] : $instance['display']['default'];
+    if (!empty($view_mode_settings[$view_mode]['custom_settings']) && isset($instance['display'][$view_mode])) {
+      $field_display = $instance['display'][$view_mode];
+    }
+    else {
+      $field_display = $instance['display']['default'];
+    }
     // don't add to autofields if this field was hidden in the view mode
     if ($field_display['type'] != 'hidden') {
-      $autofields[] = array(
+      $autofield = array(
         'field_name' => $instance['field_name'],
         'options' => array(
           'type' => $field_display['type'],
           'settings' => $field_display['settings'],
+          'entityform_settings' => array(
+            'autofield' => TRUE,
+            'view_mode' => $view_mode,
+          ),
         ),
         'weight' => $field_display['weight'],
       );
+      // Use the field label for this instance of the field.
+      if (!empty($instance['label'])) {
+        $autofield['options']['label'] = t($instance['label']);
+      }
+      $autofields[] = $autofield;
     }
   }
-  // reorder fields to match view mode
-  uasort($autofields, 'drupal_sort_weight');
-  foreach ($autofields as $field) {
-    $view->add_item($display_id, 'field', "field_data_{$field['field_name']}", $field['field_name'], $field['options']);
+  if ($autofields) {
+    // Add settings to indicate the View has autofields added from Entitform
+    $view->display[$display_id]->entityform_settings = array(
+      'autofields' => TRUE,
+      'view_mode' => $view_mode,
+      'entityform_type' => $bundle_name,
+    );
+    // reorder fields to match view mode
+    uasort($autofields, 'drupal_sort_weight');
+    drupal_alter('entityform_views_autofields', $autofields, $view, $display_id);
+    foreach ($autofields as $field) {
+      $view->add_item($display_id, 'field', "field_data_{$field['field_name']}", $field['field_name'], $field['options']);
+    }
   }
+
 }
 
 /**
@@ -1512,7 +1543,7 @@ function entityform_help($path, $arg) {
       break;
     case 'admin/structure/entityform_types/manage/%/submissions':
       $display_id = $arg[6];
-      // Intentionally no "break" here. It should fall through.
+    // Intentionally no "break" here. It should fall through.
     case 'admin/reports/entityforms/submissions/%':
       if ($path == 'admin/reports/entityforms/submissions/%') {
         $display_id = $arg[5];
@@ -1638,7 +1669,7 @@ function _entityform_format_text($text_value, $token_types = array()) {
   }
   if ($token_types !== FALSE) {
     $token_types[] = 'global';
-    $text = token_replace($text, $token_types);
+    $text = token_replace($text, $token_types, array('clear' => TRUE));
   }
   if ($is_filtered) {
     $text = check_markup($text, $format);
@@ -1659,7 +1690,7 @@ function entityform_views_query_alter(&$view, &$query) {
   // 2. Base table is 'entityform'
   // 3. User doesn't have 'view any entityform'
   if (!empty($view->query->tags) && in_array('user_access', $view->query->tags)
-     && $view->base_table == 'entityform' && !user_access('view any entityform')
+    && $view->base_table == 'entityform' && !user_access('view any entityform')
   ) {
     // @todo user $query to make sure this is the alias
     $table_alias = 'entityform';

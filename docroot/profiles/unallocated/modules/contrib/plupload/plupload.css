@@ -50,16 +50,13 @@
   font-family:"Lucida Grande", Verdana, sans-serif;
 }
 
-.plupload_filelist {
-list-style:none;
-  margin:0;
-  padding:0;
-}
-
 .plupload_scroll .plupload_filelist {
   height:135px;
   overflow-y:scroll;
   background:none;
+  list-style:none;
+  margin:0;
+  padding:0;
 }
 
 .plupload_filelist li {

@@ -20,7 +20,8 @@ These are the steps you need to take in order to use this software. Order
 is important.
 
  1. Install the memcached binaries on your server and start the memcached
-    service.
+    service. Follow best practices for securing the service; for example,
+    lock it down so only your web servers can make connections.
  2. Install your chosen PECL memcache extension -- this is the memcache client
     library which will be used by the Drupal memcache module to interact with
     the memcached server(s). Generally PECL memcache (3.0.6+) is recommended,

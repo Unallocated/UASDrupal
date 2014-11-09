@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Services RESTful API v1 feature.
+ */
+
+include_once 'services_restful_api_v1.features.inc';

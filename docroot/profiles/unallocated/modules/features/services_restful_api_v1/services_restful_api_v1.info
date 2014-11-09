@@ -1,0 +1,13 @@
+name = Services RESTful API v1
+core = 7.x
+package = UAS Services
+version = 7.x-0.1-beta
+project = services_restful_api_v1
+dependencies[] = ctools
+dependencies[] = oauth_common
+dependencies[] = services
+features[ctools][] = oauth_common:oauth:1
+features[ctools][] = services:services:3
+features[features_api][] = api:1
+features[oauth_common_context][] = authentication
+features[services_endpoint][] = api_v1

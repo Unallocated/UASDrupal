@@ -337,19 +337,6 @@ function plupload_library() {
               'flash_swf_url' => file_create_url($library_path . '/js/plupload.flash.swf'),
               'silverlight_xap_url' => file_create_url($library_path . '/js/plupload.silverlight.xap'),
             ),
-            // The plupload.js integration file in the module folder can do
-            // additional browser checking to remove unsupported runtimes.
-            // This is in addition to what is done by the Plupload library.
-            '_requirements' => array(
-              'html5' => array(
-                // The Plupload library recognizes Firefox 3.5 as supporting
-                // HTML 5, but Firefox 3.5 does not support the HTML 5
-                // "multiple" attribute for file input controls. This makes the
-                // html5 runtime much less appealing, so we treat all Firefox
-                // versions less than 3.6 as ineligible for the html5 runtime.
-                'mozilla' => '1.9.2',
-              ),
-            ),
           ),
         ),
       ),

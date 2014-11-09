@@ -28,4 +28,6 @@
 <p><?php print render($field); ?></p>
 <?php endforeach; ?>
 
-<?php print t('The results of this submission may be viewed at: !url', array('!url' => $url)); ?>
+<?php if ($url): ?>
+  <?php print t('The results of this submission may be viewed at: !url', array('!url' => $url)); ?>
+<?php endif; ?>

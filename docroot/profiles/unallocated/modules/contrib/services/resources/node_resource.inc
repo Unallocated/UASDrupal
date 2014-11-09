@@ -3,119 +3,169 @@
 function _node_resource_definition() {
   $node_resource = array(
     'node' => array(
-      'retrieve' => array(
-        'file' => array('type' => 'inc', 'module' => 'services', 'name' => 'resources/node_resource'),
-        'callback' => '_node_resource_retrieve',
-        'args' => array(
-          array(
-            'name' => 'nid',
-            'optional' => FALSE,
-            'source' => array('path' => 0),
-            'type' => 'int',
-            'description' => 'The nid of the node to get',
+      'operations' => array(
+        'retrieve' => array(
+          'help' => 'Retrieve a node',
+          'file' => array('type' => 'inc', 'module' => 'services', 'name' => 'resources/node_resource'),
+          'callback' => '_node_resource_retrieve',
+          'args' => array(
+            array(
+              'name' => 'nid',
+              'optional' => FALSE,
+              'source' => array('path' => 0),
+              'type' => 'int',
+              'description' => 'The nid of the node to retrieve',
+            ),
           ),
+          'access callback' => '_node_resource_access',
+          'access arguments' => array('view'),
+          'access arguments append' => TRUE,
         ),
-        'access callback' => '_node_resource_access',
-        'access arguments' => array('view'),
-        'access arguments append' => TRUE,
+        'create' => array(
+          'help' => 'Create a node',
+          'file' => array('type' => 'inc', 'module' => 'services', 'name' => 'resources/node_resource'),
+          'callback' => '_node_resource_create',
+          'args' => array(
+            array(
+              'name' => 'node',
+              'optional' => FALSE,
+              'source' => 'data',
+              'description' => 'The node data to create',
+              'type' => 'array',
+            ),
+          ),
+          'access callback' => '_node_resource_access',
+          'access arguments' => array('create'),
+          'access arguments append' => TRUE,
+        ),
+        'update' => array(
+          'help' => 'Update a node',
+          'file' => array('type' => 'inc', 'module' => 'services', 'name' => 'resources/node_resource'),
+          'callback' => '_node_resource_update',
+          'args' => array(
+            array(
+              'name' => 'nid',
+              'optional' => FALSE,
+              'source' => array('path' => 0),
+              'type' => 'int',
+              'description' => 'The nid of the node to update',
+            ),
+            array(
+              'name' => 'node',
+              'optional' => FALSE,
+              'source' => 'data',
+              'description' => 'The node data to update',
+              'type' => 'array',
+            ),
+          ),
+          'access callback' => '_node_resource_access',
+          'access arguments' => array('update'),
+          'access arguments append' => TRUE,
+        ),
+        'delete' => array(
+          'help' => t('Delete a node'),
+          'file' => array('type' => 'inc', 'module' => 'services', 'name' => 'resources/node_resource'),
+          'callback' => '_node_resource_delete',
+          'args' => array(
+            array(
+              'name' => 'nid',
+              'optional' => FALSE,
+              'source' => array('path' => 0),
+              'type' => 'int',
+              'description' => 'The nid of the node to delete',
+            ),
+          ),
+          'access callback' => '_node_resource_access',
+          'access arguments' => array('delete'),
+          'access arguments append' => TRUE,
+        ),
+        'index' => array(
+          'help' => 'List all nodes',
+          'file' => array('type' => 'inc', 'module' => 'services', 'name' => 'resources/node_resource'),
+          'callback' => '_node_resource_index',
+          'args' => array(
+            array(
+              'name' => 'page',
+              'optional' => TRUE,
+              'type' => 'int',
+              'description' => 'The zero-based index of the page to get, defaults to 0.',
+              'default value' => 0,
+              'source' => array('param' => 'page'),
+            ),
+            array(
+              'name' => 'fields',
+              'optional' => TRUE,
+              'type' => 'string',
+              'description' => 'The fields to get.',
+              'default value' => '*',
+              'source' => array('param' => 'fields'),
+            ),
+            array(
+              'name' => 'parameters',
+              'optional' => TRUE,
+              'type' => 'array',
+              'description' => 'Parameters array',
+              'default value' => array(),
+              'source' => array('param' => 'parameters'),
+            ),
+            array(
+              'name' => 'pagesize',
+              'optional' => TRUE,
+              'type' => 'int',
+              'description' => 'Number of records to get per page.',
+              'default value' => variable_get('services_node_index_page_size', 20),
+              'source' => array('param' => 'pagesize'),
+            ),
+          ),
+          'access arguments' => array('access content'),
+        ),
       ),
-      'create' => array(
-        'file' => array('type' => 'inc', 'module' => 'services', 'name' => 'resources/node_resource'),
-        'callback' => '_node_resource_create',
-        'args' => array(
-          array(
-            'name' => 'node',
-            'optional' => FALSE,
-            'source' => 'data',
-            'description' => 'The node data to create',
-            'type' => 'array',
+      'targeted_actions' => array(
+        'attach_file' => array(
+          'help' => 'Upload and attach file(s) to a node. POST multipart/form-data to node/123/attach_file',
+          'file' => array('type' => 'inc', 'module' => 'services', 'name' => 'resources/node_resource'),
+          'callback' => '_node_resource_attach_file',
+          'access callback' => '_node_resource_access',
+          'access arguments' => array('update'),
+          'access arguments append' => TRUE,
+          'args' => array(
+            array(
+              'name' => 'nid',
+              'optional' => FALSE,
+              'source' => array('path' => 0),
+              'type' => 'int',
+              'description' => 'The nid of the node to attach a file to',
+            ),
+            array(
+              'name' => 'field_name',
+              'optional' => FALSE,
+              'source' => array('data' => 'field_name'),
+              'description' => 'The file field name',
+              'type' => 'string',
+            ),
+            array(
+              'name' => 'attach',
+              'optional' => TRUE,
+              'source' => array('data' => 'attach'),
+              'description' => 'Attach the file(s) to the node. If FALSE, this clears ALL files attached, and attaches the files',
+              'type' => 'int',
+              'default value' => TRUE,
+            ),
+            array(
+              'name' => 'field_values',
+              'optional' => TRUE,
+              'source' => array('data' => 'field_values'),
+              'description' => 'The extra field values',
+              'type' => 'array',
+              'default value' => array(),
+            ),
           ),
         ),
-        'access callback' => '_node_resource_access',
-        'access arguments' => array('create'),
-        'access arguments append' => TRUE,
-      ),
-      'update' => array(
-        'file' => array('type' => 'inc', 'module' => 'services', 'name' => 'resources/node_resource'),
-        'callback' => '_node_resource_update',
-        'args' => array(
-          array(
-            'name' => 'nid',
-            'optional' => FALSE,
-            'source' => array('path' => 0),
-            'type' => 'int',
-            'description' => 'The nid of the node to get',
-          ),
-          array(
-            'name' => 'node',
-            'optional' => FALSE,
-            'source' => 'data',
-            'description' => 'The node data to update',
-            'type' => 'array',
-          ),
-        ),
-        'access callback' => '_node_resource_access',
-        'access arguments' => array('update'),
-        'access arguments append' => TRUE,
-      ),
-      'delete' => array(
-        'file' => array('type' => 'inc', 'module' => 'services', 'name' => 'resources/node_resource'),
-        'callback' => '_node_resource_delete',
-        'args' => array(
-          array(
-            'name' => 'nid',
-            'optional' => FALSE,
-            'source' => array('path' => 0),
-            'type' => 'int',
-          ),
-        ),
-        'access callback' => '_node_resource_access',
-        'access arguments' => array('delete'),
-        'access arguments append' => TRUE,
-      ),
-      'index' => array(
-        'file' => array('type' => 'inc', 'module' => 'services', 'name' => 'resources/node_resource'),
-        'callback' => '_node_resource_index',
-        'args' => array(
-          array(
-            'name' => 'page',
-            'optional' => TRUE,
-            'type' => 'int',
-            'description' => 'The zero-based index of the page to get, defaults to 0.',
-            'default value' => 0,
-            'source' => array('param' => 'page'),
-          ),
-          array(
-            'name' => 'fields',
-            'optional' => TRUE,
-            'type' => 'string',
-            'description' => 'The fields to get.',
-            'default value' => '*',
-            'source' => array('param' => 'fields'),
-          ),
-          array(
-            'name' => 'parameters',
-            'optional' => TRUE,
-            'type' => 'array',
-            'description' => 'Parameters array',
-            'default value' => array(),
-            'source' => array('param' => 'parameters'),
-          ),
-          array(
-            'name' => 'pagesize',
-            'optional' => TRUE,
-            'type' => 'init',
-            'description' => 'Number of records to get per page.',
-            'default value' => variable_get('services_node_index_page_size', 20),
-            'source' => array('param' => 'pagesize'),
-          ),
-        ),
-        'access arguments' => array('access content'),
       ),
       'relationships' => array(
         'files' => array(
           'file' => array('type' => 'inc', 'module' => 'services', 'name' => 'resources/node_resource'),
-          'help'   => t('This method returns files associated with a node.'),
+          'help'   => 'This method returns files associated with a node.',
           'access callback' => '_node_resource_access',
           'access arguments' => array('view'),
           'access arguments append' => TRUE,
@@ -141,6 +191,7 @@ function _node_resource_definition() {
               'type'         => 'int',
               'description'  => t('To return image styles or not.'),
               'source'       => array('path' => 3),
+              'optional'     => TRUE,
               'default value' => FALSE,
             ),
           ),
@@ -151,7 +202,7 @@ function _node_resource_definition() {
   if (module_exists('comment')) {
     $comments = array(
       'file'                    => array('type' => 'inc', 'module' => 'services', 'name' => 'resources/node_resource'),
-      'help'                    => t('This method returns the number of new comments on a given node.'),
+      'help'                    => 'This method returns the number of new comments on a given node.',
       'access callback'         => 'user_access',
       'access arguments'        => array('access comments'),
       'access arguments append' => FALSE,
@@ -214,7 +265,7 @@ function _node_resource_retrieve($nid) {
 /**
  * Creates a new node based on submitted values.
  *
- * Note that this function uses drupal_execute() to create new nodes,
+ * Note that this function uses drupal_form_submit() to create new nodes,
  * which may require very specific formatting. The full implications of this
  * are beyond the scope of this comment block. The Googles are your friend.
  *
@@ -224,23 +275,26 @@ function _node_resource_retrieve($nid) {
  *   An associative array contained the new node's nid and, if applicable,
  *   the fully qualified URI to this resource.
  *
- * @see drupal_execute()
+ * @see drupal_form_submit()
  */
 function _node_resource_create($node) {
+  global $user;
   // Adds backwards compatability with regression fixed in #1083242
   $node = _services_arg_value($node, 'node');
-
   if (!isset($node['name'])) {
     // Assign username to the node from $user created at auth step.
-    global $user;
-    $node['name'] = $user->name;
+    if (isset($user->name)) {
+      $node['name'] = $user->name;
+    }
   }
-
+  if(!isset($node['language'])) {
+    $node['language'] = LANGUAGE_NONE;
+  }
   // Validate the node. If there is validation error Exception will be thrown
   // so code below won't be executed.
   _node_resource_validate_type($node);
 
-  // Load the required includes for drupal_execute
+  // Load the required includes for drupal_form_submit
   module_load_include('inc', 'node', 'node.pages');
 
   $node_type = $node['type'];
@@ -249,8 +303,22 @@ function _node_resource_create($node) {
   $form_state = array();
   $form_state['values'] = $node;
   $form_state['values']['op'] = variable_get('services_node_save_button_' . $node_type . '_resource_create', t('Save'));
+  $form_state['programmed_bypass_access_check'] = FALSE;
 
-  drupal_form_submit($node_type . '_node_form', $form_state, (object)$node);
+  // Build a stub node object for the form in a similar way as node_add() does,
+  // but always make the node author default to the current user (if the user
+  // has permission to change it, $form_state['values'] will override this
+  // default when the form is submitted).
+  $stub_node = (object) array_intersect_key($node, array_flip(array('type', 'language')));
+  $stub_node->name = $user->name;
+
+  // Contributed modules may check the triggering element in the form state.
+  // The triggering element is usually set from the browser's POST request, so
+  // we'll automatically set it as the submit action from here.
+  $stub_form = drupal_get_form($node_type . '_node_form', (object) $stub_node);
+  $form_state['triggering_element'] = $stub_form['actions']['submit'];
+
+  drupal_form_submit($node_type . '_node_form', $form_state, (object)$stub_node);
 
   if ($errors = form_get_errors()) {
     return services_error(implode(" ", $errors), 406, array('form_errors' => $errors));
@@ -291,7 +359,7 @@ function _node_resource_validate_type($node) {
 /**
  * Updates a new node based on submitted values.
  *
- * Note that this function uses drupal_execute() to create new nodes,
+ * Note that this function uses drupal_form_submit() to create new nodes,
  * which may require very specific formatting. The full implications of this
  * are beyond the scope of this comment block. The Googles are your friend.
  *
@@ -302,7 +370,7 @@ function _node_resource_validate_type($node) {
  * @return
  *   The node's nid.
  *
- * @see drupal_execute()
+ * @see drupal_form_submit()
  */
 function _node_resource_update($nid, $node) {
   // Adds backwards compatability with regression fixed in #1083242
@@ -311,36 +379,46 @@ function _node_resource_update($nid, $node) {
   $node['nid'] = $nid;
 
   $old_node = node_load($nid);
-  node_object_prepare($old_node);
+  if (empty($old_node->nid)) {
+    return services_error(t('Node @nid not found', array('@nid' => $old_node->nid)), 404);
+  }
+
+  // If no type is provided use the existing node type.
+  if (empty($node['type'])) {
+    $node['type'] = $old_node->type;
+  }
+  elseif ($node['type'] != $old_node->type) {
+    // Node types cannot be changed once they are created.
+    return services_error(t('Node type cannot be changed'), 406);
+  }
 
   // Validate the node. If there is validation error Exception will be thrown
   // so code below won't be executed.
   _node_resource_validate_type($node);
 
-  if ($old_node->nid) {
-    // Node types cannot be changed once they are created.
-    if (isset($node['type']) && $node['type'] != $old_node->type) {
-      return services_error(t('Node type cannot be changed'), 406);
-    }
+  // Load the required includes for drupal_form_submit
+  module_load_include('inc', 'node', 'node.pages');
 
-    // Load the required includes for drupal_execute
-    module_load_include('inc', 'node', 'node.pages');
+  $node_type = $node['type'];
+  node_object_prepare($old_node);
 
-    $node_type = $node['type'];
+  // Setup form_state.
+  $form_state = array();
+  $form_state['values'] = $node;
+  $form_state['values']['op'] = variable_get('services_node_save_button_' . $node_type . '_resource_update', t('Save'));
+  $form_state['node'] = $old_node;
+  $form_state['programmed_bypass_access_check'] = FALSE;
 
-    // Setup form_state.
-    $form_state = array();
-    $form_state['values'] = $node;
-    $form_state['values']['op'] = variable_get('services_node_save_button_' . $node_type . '_resource_update', t('Save'));
-    $form_state['node'] = $old_node;
-    drupal_form_submit($node_type . '_node_form', $form_state, $old_node);
+  // Contributed modules may check the triggering element in the form state.
+  // The triggering element is usually set from the browser's POST request, so
+  // we'll automatically set it as the submit action from here.
+  $stub_form = drupal_get_form($node_type . '_node_form', (object) $old_node);
+  $form_state['triggering_element'] = $stub_form['actions']['submit'];
 
-    if ($errors = form_get_errors()) {
-      return services_error(implode(" ", $errors), 406, array('form_errors' => $errors));
-    }
-  }
-  else {
-    return services_error(t('Node @nid not found', array('@nid' => $old_node->nid)), 404);
+  drupal_form_submit($node_type . '_node_form', $form_state, $old_node);
+
+  if ($errors = form_get_errors()) {
+    return services_error(implode(" ", $errors), 406, array('form_errors' => $errors));
   }
 
   $node = array('nid' => $nid);
@@ -353,10 +431,10 @@ function _node_resource_update($nid, $node) {
 /**
  * Delete a node given its nid.
  *
- * @param $nid
+ * @param int $nid
  *   Node ID of the node we're deleting.
- * @return
- *   The node's nid.
+ * @return bool
+ *   Always returns true.
  */
 function _node_resource_delete($nid) {
   node_delete($nid);
@@ -528,4 +606,174 @@ function _node_resource_load_node_comments($nid, $count = 0, $start = 0) {
   }
 
   return !empty($cids) ? comment_load_multiple($cids) : array();
+}
+
+/**
+ * Attaches or overwrites file(s) to an existing node.
+ *
+ * Example form element used to post files to attach_file:
+ * <form action="site.com/endpoint/node/1234/attach_file" method="post"
+ * enctype="multipart/form-data">
+ * <input name="files[anything1]" type="file" />
+ * <input name="files[anything2]" type="file" />
+ * <input name="field_name" type="text" value="field_image" />
+ * <input name="attach" type="text" value="0" />
+ *
+ * The name="files[anything]" format is required to use file_save_upload().
+ *
+ * @param $nid
+ *   Node ID of the node the file(s) is being attached to.
+ * @param $field_name
+ *   Machine name of the field that is attached to the node.
+ * @param $attach
+ *   Optional. Defaults to true. This means that files will be attached to the
+ *   node, alongside existing files. If the maximum number of files have already
+ *   been uploaded to this node an error is given.
+ *   If false, it removes the files, and attaches the new files uploaded.
+ * @return
+ *   An array of files that were attached in the form:
+ *   array(
+ *     array(
+ *       fid => N,
+ *       uri => http://site.com/endpoint/file/N
+ *     ),
+ *     ...
+ *   )
+ *
+ * @see file_save_upload()
+ * @see file
+ */
+function _node_resource_attach_file($nid, $field_name, $attach, $field_values) {
+  $node = node_load($nid);
+  $node_type=$node->type;
+
+  if (empty($node->{$field_name}[LANGUAGE_NONE] )) {
+    $node->{$field_name}[LANGUAGE_NONE] = array();
+  }
+
+  // Validate whether field instance exists and this node type can be edited.
+  _node_resource_validate_node_type_field_name('update', array($node_type, $field_name));
+
+  $counter = 0;
+  if ($attach) {
+    $counter = count($node->{$field_name}[LANGUAGE_NONE]);
+  }
+  else {
+    $node->{$field_name}[LANGUAGE_NONE] = array();
+  }
+
+  $options = array('attach' => $attach, 'file_count' => $counter);
+
+  list($files, $file_objs) = _node_resource_file_save_upload($node_type, $field_name, $options);
+  // Retrieve the field settings.
+  $field = field_info_field($field_name);
+
+  foreach ($file_objs as $key => $file_obj) {
+    if (isset($field_values[$key])) {
+      foreach ($field_values[$key] as $key => $value) {
+        $file_obj->$key = $value;
+      }
+    }
+
+    $node->{$field_name}[LANGUAGE_NONE][$counter] = (array)$file_obj;
+    // Check the field display settings.
+    if (isset($field['settings']['display_field'])) {
+      // Set the display option.
+      $node->{$field_name}[LANGUAGE_NONE][$counter]['display'] = $field['settings']['display_field'];
+    }
+    $counter++;
+  }
+
+  node_save($node);
+
+  return $files;
+}
+
+/**
+ * Services wrapper for file_save_upload.
+ *
+ * @see file_save_upload()
+ * @see file_managed_file_save_upload()
+ */
+function _node_resource_file_save_upload($node_type, $field_name, $options= array() ) {
+  // The field_name on node_type should be checked in the access callback.
+  $instance = field_info_instance('node', $field_name, $node_type);
+  $field = field_read_field($field_name);
+  $cardinality = $field['cardinality'];
+
+  // If cardinality is not unlimited check the how many 'slots' we have left.
+  if (($cardinality > 0) && isset($options['file_count'])) {
+    // Already uploaded files
+    $file_already_uploaded_count = $options['file_count'];
+    // How many files we are going to upload.
+    $file_upload_count = count($_FILES['files']['name']);
+           // If we add new files and not replace already uploaded.
+    if (   (isset($options['attach']) && ($options['attach']) && ($file_already_uploaded_count + $file_upload_count > $cardinality))
+           // If we replace existing files.
+        || ((!isset($options['attach']) || !$options['attach']) && $file_upload_count > $cardinality)) {
+      return services_error(t('You cannot upload so many files.'));
+    }
+  }
+
+  $destination = file_field_widget_uri($field, $instance );
+  if (isset($destination) && !file_prepare_directory($destination, FILE_CREATE_DIRECTORY)) {
+    return services_error(t('The upload directory %directory for the file field !name could not be created or is not accessible. A newly uploaded file could not be saved in this directory as a consequence, and the upload was canceled.', array('%directory' => $destination, '!name' => $field_name)));
+  }
+
+  $validators = array(
+    'file_validate_extensions' =>  (array)$instance['settings']['file_extensions'],
+    'file_validate_size' => array(0 => parse_size($instance['settings']['max_filesize'])),
+  );
+
+  $files = $file_objs = array();
+
+  foreach ($_FILES['files']['name'] as $key => $val) {
+
+    // Let the file module handle the upload and moving.
+    if (!$file = file_save_upload($key, $validators, $destination, FILE_EXISTS_RENAME) ) {
+      return services_error(t('Failed to upload file. @upload', array('@upload' => $key)), 406);
+    }
+
+    if ($file->fid) {
+      // Add info to the array that will be returned/encdoed to xml/json.
+      $files[] = array(
+        'fid' => $file->fid,
+        'uri' => services_resource_uri(array('file', $file->fid)),
+      );
+      $file_objs[] = $file;
+    }
+    else {
+      return services_error(t('An unknown error occurred'), 500);
+    }
+  }
+
+  return array($files, $file_objs);
+}
+
+/**
+ * Helper function to validate data.
+ *
+ * @param $op
+ *   Array representing the attributes a node edit form would submit.
+ * @param $args
+ *   Resource arguments passed through from the original request (node_type,
+ *   field_name).
+ *
+ * @return bool
+ *   TRUE/FALSE based on access.
+ */
+function _node_resource_validate_node_type_field_name($op = 'create', $args = array()) {
+  $node_type = $args[0];
+  $field_name = $args[1];
+
+  $temp_node= array('type' => $node_type);
+
+  // An invalid node type throws an exception, and stops before the return below.
+  _node_resource_validate_type($temp_node);
+
+  if (!field_info_instance('node', $field_name, $node_type)) {
+    return services_error(t('Field name \'@field_name\' not found on node type \'@node_type\'', array('@field_name' => $field_name, '@node_type' => $node_type)), 406);
+  }
+
+  return TRUE;
 }

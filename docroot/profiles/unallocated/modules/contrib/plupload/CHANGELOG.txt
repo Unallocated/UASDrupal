@@ -1,5 +1,12 @@
 CHANGELOG for Plupload integration for Drupal 7
 
+Plupload integration 7.x-1.7
+=================================
+- #2370889 by znerol: Fixed Extra margin on file list due to insufficient specificity of CSS selector.
+- #2190007 by slashrsm | hswong3i: Kill Firefox 3.6 check and entire _requirements checks section. 
+- #2241523 by K. Tadesse, si.mon: Add some more strings to i18n.js.
+- #2088143 by hswong3i, Chris Charlton | lsolesen: Add make file so dependencies are downloaded automatically.
+
 Plupload integration 7.x-1.6
 =================================
 - #2171575 by slashrsm | kreatIL: Plupload library not found (version 1.5.8).

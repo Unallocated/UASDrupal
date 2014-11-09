@@ -11,11 +11,12 @@ function _system_resource_definition() {
       'actions' => array(
         'connect' => array(
           'access callback' => 'services_access_menu',
+          'help' => 'Returns the details of currently logged in user.',
           'file' => array('type' => 'inc', 'module' => 'services', 'name' => 'resources/system_resource'),
           'callback' => '_system_resource_connect',
         ),
         'get_variable' => array(
-          'help'   => t('Returns the value of a system variable using variable_get().'),
+          'help'   => 'Returns the value of a system variable using variable_get().',
           'file' => array('type' => 'inc', 'module' => 'services', 'name' => 'resources/system_resource'),
           'callback' => 'variable_get',
           'access arguments' => array('get a system variable'),
@@ -38,7 +39,7 @@ function _system_resource_definition() {
           ),
         ),
         'set_variable' => array(
-          'help'   => t('Sets the value of a system variable using variable_set().'),
+          'help'   => 'Sets the value of a system variable using variable_set().',
           'file' => array('type' => 'inc', 'module' => 'services', 'name' => 'resources/system_resource'),
           'callback' => 'variable_set',
           'access arguments' => array('set a system variable'),
@@ -61,7 +62,7 @@ function _system_resource_definition() {
           ),
         ),
         'del_variable' => array(
-          'help'   => t('Deletes a system variable using variable_del().'),
+          'help'   => 'Deletes a system variable using variable_del().',
           'file' => array('type' => 'inc', 'module' => 'services', 'name' => 'resources/system_resource'),
           'callback' => 'variable_del',
           'access arguments' => array('set a system variable'),
@@ -82,20 +83,19 @@ function _system_resource_definition() {
 }
 
 /**
- * Return the details of a new anonymous session.
+ * Returns the details of currently logged in user.
  *
  * @return
- *   An object with an active anonymous session name and id.
+ *   object with session id, session name and a user object.
  */
 function _system_resource_connect() {
   global $user;
+  services_remove_user_data($user);
 
   $return = new stdClass();
   $return->sessid = session_id();
+  $return->session_name = session_name();
   $return->user = $user;
-  
-  services_remove_user_data($account);
 
   return $return;
 }
-

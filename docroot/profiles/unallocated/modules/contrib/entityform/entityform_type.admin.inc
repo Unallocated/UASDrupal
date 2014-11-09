@@ -75,6 +75,8 @@ function entityform_type_form($form, &$form_state, $entityform_type, $op = 'edit
     ),
     '#weight' => -49,
     '#description' => t('A unique machine-readable name for this entityform type. It must only contain lowercase letters, numbers, and underscores.'),
+    // Don't allow changing machine name.
+    '#access' => empty($entityform_type->type),
   );
   $form['data']['#tree'] = TRUE;
 

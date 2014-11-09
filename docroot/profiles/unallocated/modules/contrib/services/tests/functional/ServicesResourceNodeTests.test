@@ -6,6 +6,10 @@
  *
  */
 
+define("SERVICES_NODE_TYPE_INCLUDE", 1);
+define("SERVICES_NODE_TYPE_EMPTY", 2);
+define("SERVICES_NODE_TYPE_REMOVED", 3);
+
 /**
  * Run test cases for the endpoint with no authentication turned on.
  *
@@ -35,9 +39,9 @@ class ServicesResourceNodetests extends ServicesWebTestCase {
    */
   public static function getInfo() {
     return array(
-      'name' => t('Resource Node'),
-      'description' => t('Test the resource Node methods and actions.'),
-      'group' => t('Services'),
+      'name' => 'Resource Node',
+      'description' => 'Test the resource Node methods and actions.',
+      'group' => 'Services',
     );
   }
 
@@ -66,16 +70,16 @@ class ServicesResourceNodetests extends ServicesWebTestCase {
     $retrieved_nodes = array();
     for ($page = 0; $page < $page_count; $page++) {
       $responseArray = $this->servicesGet($this->endpoint->path . '/node', array('page' => $page, 'fields' => 'nid,title'));
-      $this->assertTrue(count($responseArray['body']) <= 20, t('Correct number of items returned'));
+      $this->assertTrue(count($responseArray['body']) <= 20, 'Correct number of items returned');
 
       // Store the returned node IDs.
       foreach ($responseArray['body'] as $node) {
         if (isset($retrieved_nodes[$node->nid])) {
-          $this->fail(t('Duplicate node @nid returned.', array('@nid' => $node->nid)));
+          $this->fail(format_string('Duplicate node @nid returned.', array('@nid' => $node->nid)));
         }
         $retrieved_nodes[$node->nid] = TRUE;
 
-        $this->assertTrue($nodes[$node->nid]->title == $node->title, t('Successfully received Node info'), 'NodeResource: Index');
+        $this->assertTrue($nodes[$node->nid]->title == $node->title, 'Successfully received Node info', 'NodeResource: Index');
       }
     }
 
@@ -84,15 +88,15 @@ class ServicesResourceNodetests extends ServicesWebTestCase {
     sort($expected_nids);
     $retrieved_nids = array_keys($retrieved_nodes);
     sort($retrieved_nids);
-    $this->assertEqual($expected_nids, $retrieved_nids, t('Retrieved all nodes'));
+    $this->assertEqual($expected_nids, $retrieved_nids, 'Retrieved all nodes');
 
     // The n+1 page should be empty.
     $responseArray = $this->servicesGet($this->endpoint->path . '/node', array('page' => $page_count + 1));
-    $this->assertEqual(count($responseArray['body']), 0, t('The n+1 page is empty'));
+    $this->assertEqual(count($responseArray['body']), 0, 'The n+1 page is empty');
 
     // Adjust the pager size.
     $responseArray = $this->servicesGet($this->endpoint->path . '/node', array('fields' => 'nid,title', 'pagesize' => 40));
-    $this->assertTrue(count($responseArray['body']) == 40, t('Correct number of items returned'));
+    $this->assertTrue(count($responseArray['body']) == 40, 'Correct number of items returned');
 
     // Swap to user that can only use the default pager size.
     $this->lessPrivilegedUser = $this->drupalCreateUser(array(
@@ -100,7 +104,7 @@ class ServicesResourceNodetests extends ServicesWebTestCase {
     ));
     $this->drupalLogin($this->lessPrivilegedUser);
     $responseArray = $this->servicesGet($this->endpoint->path . '/node', array('fields' => 'nid,title', 'pagesize' => 40));
-    $this->assertTrue(count($responseArray['body']) == 20, t('Correct number of items returned'));
+    $this->assertTrue(count($responseArray['body']) == 20, 'Correct number of items returned');
   }
 
   /**
@@ -114,11 +118,12 @@ class ServicesResourceNodetests extends ServicesWebTestCase {
     $this->drupalLogin($this->privilegedUser);
     $node = $this->drupalCreateNode();
     $responseArray = $this->servicesGet($this->endpoint->path . '/node/' . $node->nid);
-    $this->assertTrue($node->title == $responseArray['body']->title, t('Successfully received Node info'), 'NodeResource: Retrieve');
+    $this->assertTrue($node->title == $responseArray['body']->title,
+      'Successfully received Node info', 'NodeResource: Retrieve');
     //Verify node not found.
     unset($node);
     $responseArray = $this->servicesGet($this->endpoint->path . '/node/99');
-    $this->assertTrue($responseArray['code'] == '404', t('Successfully was rejected to non existent node'), 'NodeResource: Retrieve');
+    $this->assertTrue($responseArray['code'] == '404', 'Successfully was rejected to non existent node', 'NodeResource: Retrieve');
   }
 
   /**
@@ -150,14 +155,15 @@ class ServicesResourceNodetests extends ServicesWebTestCase {
 
     // Load all comments of the first node.
     $response = $this->servicesGet($path . '/node/'. $nid .'/comments');
-    $this->assertEqual($comments, $response['body'], t('Received all 15 comments.'), 'NodeResource: comments');
+    $this->assertEqual($comments, $response['body'], 'Received all 15 comments.', 'NodeResource: comments');
 
     // Load only 5 comments of the first node.
     $response = $this->servicesGet($path . '/node/'. $nid .'/comments', array('count' => 5));
-    $this->assertEqual(array_slice($comments, 0, 5), array_slice($response['body'], 0, 5), t('Received last 5 comments.'), 'NodeResource: comments');
+    $this->assertEqual(array_slice($comments, 0, 5), array_slice($response['body'], 0, 5), 'Received last 5 comments.', 'NodeResource: comments');
     // Load only 5 comments of the first node starting from fifth comment.
     $response = $this->servicesGet($path . '/node/'. $nid .'/comments', array('count' => 5, 'offset' => 5));
-    $this->assertEqual(array_slice($comments, 5, 5), array_merge(array(),$response['body']), t('Received 5 comments starting from fifth comment.'), 'NodeResource: comments');
+    $this->assertEqual(array_slice($comments, 5, 5), array_merge(array(),$response['body']),
+      'Received 5 comments starting from fifth comment.', 'NodeResource: comments');
   }
 
   /**
@@ -181,10 +187,10 @@ class ServicesResourceNodetests extends ServicesWebTestCase {
     $responseArray = $this->servicesPost($this->endpoint->path . '/node', $node);
     $nodeResourceCreateReturn = $responseArray['body'];
 
-    $this->assertTrue(isset($nodeResourceCreateReturn['nid']), t('Node was successfully created'), 'NodeResource: Create');
+    $this->assertTrue(isset($nodeResourceCreateReturn['nid']), 'Node was successfully created', 'NodeResource: Create');
     $newNode = node_load($nodeResourceCreateReturn['nid']);
-    $this->assertTrue($newNode->title = $node['title'], t('Title was the same'), 'NodeResource: Create');
-    $this->assertTrue($newNode->body = $node['body'], t('Body was the same'), 'NodeResource: Create');
+    $this->assertTrue($newNode->title = $node['title'], 'Title was the same', 'NodeResource: Create');
+    $this->assertTrue($newNode->body = $node['body'], 'Body was the same', 'NodeResource: Create');
   }
 
   /**
@@ -211,10 +217,10 @@ class ServicesResourceNodetests extends ServicesWebTestCase {
     $responseArray = $this->servicesPost($this->endpoint->path . '/node', array('node' => $node));
     $nodeResourceCreateReturn = $responseArray['body'];
 
-    $this->assertTrue(isset($nodeResourceCreateReturn['nid']), t('Node was successfully created'), 'NodeResource: Create (Legacy)');
+    $this->assertTrue(isset($nodeResourceCreateReturn['nid']), 'Node was successfully created', 'NodeResource: Create (Legacy)');
     $newNode = node_load($nodeResourceCreateReturn['nid']);
-    $this->assertTrue($newNode->title = $node['title'], t('Title was the same'), 'NodeResource: Create (Legacy)');
-    $this->assertTrue($newNode->body = $node['body'], t('Body was the same'), 'NodeResource: Create (Legacy)');
+    $this->assertTrue($newNode->title = $node['title'], 'Title was the same', 'NodeResource: Create (Legacy)');
+    $this->assertTrue($newNode->body = $node['body'], 'Body was the same', 'NodeResource: Create (Legacy)');
   }
 
   /**
@@ -236,7 +242,7 @@ class ServicesResourceNodetests extends ServicesWebTestCase {
 
     $responseArray = $this->servicesPost($this->endpoint->path . '/node', array('node' => $node));
 
-    $this->assertTrue($responseArray['code'] == 401, t('User with not sufficient permissions cannot create node'), 'NodeResource: Create');
+    $this->assertTrue($responseArray['code'] == 403, 'User with not sufficient permissions cannot create node', 'NodeResource: Create');
   }
 
   /**
@@ -261,7 +267,96 @@ class ServicesResourceNodetests extends ServicesWebTestCase {
     $responseArray = $this->servicesPost($this->endpoint->path . '/node', array('node' => $node));
 
     $nodeResourceUpdateReturn = $responseArray['body'];
-    $this->assertTrue(strpos($responseArray['status'], 'Title field is required.'), t('Node was not created without title.'), 'NodeResource: Create');
+    $this->assertTrue(strpos($responseArray['status'], 'Title field is required.'),
+      'Node was not created without title.', 'NodeResource: Create');
+  }
+
+  /**
+   * Testing targeted_action attach_file.
+   */
+  public function testAttachFileTargetedAction() {
+    // We will do test on the article node type.
+    // Create and log in our privileged user.
+    $account = $this->drupalCreateUser(array(
+      'bypass node access',
+    ));
+    $this->drupalLogin($account);
+
+    // Create article node.
+    $settings = array('type' => 'article');
+    $node = $this->drupalCreateNode($settings);
+
+    // Get a test file.
+    $testfiles = $this->drupalGetTestFiles('image');
+    $testfile1 = array_pop($testfiles);
+    $testfile2 = array_pop($testfiles);
+
+    // Attach one file.
+    $result = $this->servicesPostFile($this->endpoint->path . '/node/' . $node->nid . '/attach_file',
+      array($testfile1->uri), array(), array('field_name' => 'field_image'));
+    $node = node_load($node->nid, TRUE);
+    $this->assertEqual($testfile1->filename, $node->field_image[LANGUAGE_NONE][0]['filename'], 'One file has been attached.');
+
+    // Replace the file on the article node.
+    $result = $this->servicesPostFile($this->endpoint->path . '/node/' . $node->nid . '/attach_file',
+      array($testfile2->uri), array(), array('field_name' => 'field_image', 'attach' => FALSE));
+    $node = node_load($node->nid, TRUE);
+    $this->assertEqual($testfile2->filename, $node->field_image[LANGUAGE_NONE][0]['filename'], 'File has been replaced.');
+
+    // Add another file to the article node. Get validation error.
+    $result = $this->servicesPostFile($this->endpoint->path . '/node/' . $node->nid . '/attach_file',
+      array($testfile1->uri), array(), array('field_name' => 'field_image'));
+    $this->assertEqual($result['body'], 'You cannot upload so many files.', 'Validation on cardinality works.');
+
+    // Update field info. Set cardinality 2.
+    $field_info = field_read_field('field_image');
+    $field_info['cardinality'] = 2;
+    field_update_field($field_info);
+
+    // Upload multiple files.
+    $result = $this->servicesPostFile($this->endpoint->path . '/node/' . $node->nid . '/attach_file',
+      array($testfile1->uri, $testfile2->uri), array(), array('field_name' => 'field_image', 'attach' => FALSE));
+    $node = node_load($node->nid, TRUE);
+    $this->assertTrue(($testfile1->filename == $node->field_image[LANGUAGE_NONE][0]['filename']) &&
+                      ($testfile2->filename == $node->field_image[LANGUAGE_NONE][1]['filename']), 'Multiple files uploaded.');
+
+    // Verify total file count == 2 and also proper delta sequence in db.
+    $query = db_select('field_data_field_image', 'fd');
+    $deltas = $query->condition('entity_type', 'node')
+      ->condition('bundle', $node->type)
+      ->condition('entity_id', $node->nid)
+      ->fields('fd', array('delta'))
+      ->execute()
+      ->fetchCol(0);
+    $this->assertTrue($deltas == array(0,1), 'Attached file deltas are sequential.');
+  }
+
+  /**
+   *  Helper function to perform node updates.
+   *
+   *  @parm $exclude_type
+   *    Integer how should the type value be treated.
+   */
+  function update_node($exclude_type) {
+    $node = $this->drupalCreateNode();
+    $node_update = (array) $node;
+    $node_update['title'] = $this->randomName();
+    $node_update['body'][LANGUAGE_NONE][0]['value'] = $this->randomName();
+
+    if ($exclude_type == SERVICES_NODE_TYPE_EMPTY) {
+      $node_update['type'] = '';
+    }
+    elseif($exclude_type == SERVICES_NODE_TYPE_REMOVED) {
+      unset($node_update['type']);
+    }
+
+    $responseArray = $this->servicesPut($this->endpoint->path . '/node/' . $node->nid, $node_update);
+    // Load node not from cache.
+    $nodeAfterUpdate = node_load($responseArray['body']['nid'], NULL, TRUE);
+    $this->assertTrue(isset($nodeAfterUpdate->nid), 'Node was successfully updated', 'NodeResource: Updated');
+    $this->assertEqual($nodeAfterUpdate->title, $node_update['title'], 'Title is the same', 'NodeResource: Update');
+    $this->assertEqual($nodeAfterUpdate->body[LANGUAGE_NONE][0]['value'], $node_update['body'][LANGUAGE_NONE][0]['value'],
+      'Body is the same', 'NodeResource: Update');
   }
 
   /**
@@ -274,25 +369,10 @@ class ServicesResourceNodetests extends ServicesWebTestCase {
       'bypass node access',
     ));
     $this->drupalLogin($this->privilegedUser);
-    $node = $this->drupalCreateNode();
 
-    $node_update = (array) $node;
-    $node_update['title'] = $this->randomName();
-    $node_update['body'][LANGUAGE_NONE][0]['value'] = $this->randomName();
-
-    $responseArray = $this->servicesPut($this->endpoint->path . '/node/' . $node->nid, $node_update);
-    // Load node not from cache.
-    $nodeAfterUpdate = node_load($responseArray['body']['nid'], NULL, TRUE);
-    $this->assertTrue(isset($nodeAfterUpdate->nid), t('Node was successfully updated'), 'NodeResource: Updated');
-    $this->assertEqual($nodeAfterUpdate->title, $node_update['title'], t('Title is the same'), 'NodeResource: Update');
-    $this->assertEqual($nodeAfterUpdate->body[LANGUAGE_NONE][0]['value'], $node_update['body'][LANGUAGE_NONE][0]['value'], t('Body is the same'), 'NodeResource: Update');
-
-    // Try to update the node without node type.
-    $node_update_no_type = $node_update;
-    unset($node_update_no_type['type']);
-    $node_update_no_type['title'] = $this->randomName();
-    $responseArray = $this->servicesPut($this->endpoint->path . '/node/' . $node->nid, $node_update_no_type);
-    $this->assertNotEqual($responseArray['code'], 200, t('Can\'t update node without specifying node type'), 'NodeResource: Update');
+    $this->update_node(SERVICES_NODE_TYPE_INCLUDE);
+    $this->update_node(SERVICES_NODE_TYPE_EMPTY);
+    $this->update_node(SERVICES_NODE_TYPE_REMOVED);
   }
 
   /**
@@ -317,9 +397,10 @@ class ServicesResourceNodetests extends ServicesWebTestCase {
     $responseArray = $this->servicesPut($this->endpoint->path . '/node/' . $node->nid, array('node' => $node_update));
     // Load node not from cache.
     $nodeAfterUpdate = node_load($responseArray['body']['nid'], NULL, TRUE);
-    $this->assertTrue(isset($nodeAfterUpdate->nid), t('Node was successfully updated'), 'NodeResource: Updated (legacy)');
-    $this->assertEqual($nodeAfterUpdate->title, $node_update['title'], t('Title is the same'), 'NodeResource: Update (legacy)');
-    $this->assertEqual($nodeAfterUpdate->body[LANGUAGE_NONE][0]['value'], $node_update['body'][LANGUAGE_NONE][0]['value'], t('Body is the same'), 'NodeResource: Update (legacy)');
+    $this->assertTrue(isset($nodeAfterUpdate->nid), 'Node was successfully updated', 'NodeResource: Updated (legacy)');
+    $this->assertEqual($nodeAfterUpdate->title, $node_update['title'], 'Title is the same', 'NodeResource: Update (legacy)');
+    $this->assertEqual($nodeAfterUpdate->body[LANGUAGE_NONE][0]['value'], $node_update['body'][LANGUAGE_NONE][0]['value'],
+      'Body is the same', 'NodeResource: Update (legacy)');
   }
 
   /**
@@ -345,7 +426,8 @@ class ServicesResourceNodetests extends ServicesWebTestCase {
 
     $responseArray = $this->servicesPut($this->endpoint->path . '/node/' . $node->nid, array('node' => $node_update));
 
-    $this->assertTrue(strpos($responseArray['status'], 'Access denied for user'), t('Updating the node failed without needed permissions. This is good!'), 'NodeResource: Update');
+    $this->assertTrue(strpos($responseArray['status'], 'Access denied for user'),
+      'Updating the node failed without needed permissions. This is good!', 'NodeResource: Update');
   }
 
   /**
@@ -367,7 +449,8 @@ class ServicesResourceNodetests extends ServicesWebTestCase {
     );
 
     $responseArray = $this->servicesPut($this->endpoint->path . '/node/' . $node->nid, array('node' => $node_update));
-    $this->assertTrue(strpos($responseArray['status'], 'Title field is required.'), t('Node was not updated without title.'), 'NodeResource: Update');
+    $this->assertTrue(strpos($responseArray['status'], 'Title field is required.'),
+      'Node was not updated without title.', 'NodeResource: Update');
   }
 
   /**
@@ -385,18 +468,19 @@ class ServicesResourceNodetests extends ServicesWebTestCase {
 
     $responseArray = $this->servicesDelete($this->endpoint->path . '/node/' . $node->nid, $data);
     $deleted_node = node_load($node->nid, NULL, TRUE);
-    $this->assertTrue(empty($deleted_node), t('Node was deleted.'), 'NodeResource: Deleted');
+    $this->assertTrue(empty($deleted_node), 'Node was deleted.', 'NodeResource: Deleted');
 
     $responseArray = $this->servicesDelete($this->endpoint->path . '/node/' . $node->nid, $data);
 
-    $this->assertFalse($responseArray['code'] == 200, t('Node was deleted. It shoudlnt have been because it doesnt exist'), 'NodeResource: Deleted');
+    $this->assertFalse($responseArray['code'] == 200,
+      'Node was deleted. It shoudlnt have been because it doesnt exist', 'NodeResource: Deleted');
   }
 }
 
 /**
  * Test create node with taxonomy terms attached.
  */
-class ServicesResourceNodeTaxonomytests extends ServicesResourceNodetests {
+class ServicesResourceNodeTaxonomytests extends ServicesWebTestCase {
   // Class variables
   protected $admin_user = NULL ;
   // Endpoint details.
@@ -409,9 +493,9 @@ class ServicesResourceNodeTaxonomytests extends ServicesResourceNodetests {
    */
   public static function getInfo() {
     return array(
-      'name' => t('Resource Node - taxonomy'),
-      'description' => t('Test the resource Node taxonomy methods and actions.'),
-      'group' => t('Services'),
+      'name' => 'Resource Node - taxonomy',
+      'description' => 'Test the resource Node taxonomy methods and actions.',
+      'group' => 'Services',
     );
   }
 
@@ -459,6 +543,8 @@ class ServicesResourceNodeTaxonomytests extends ServicesResourceNodetests {
       ),
     );
     field_create_instance($this->instance);
+
+    $this->endpoint =  $this->saveNewEndpoint();
   }
 
   /**
@@ -484,17 +570,17 @@ class ServicesResourceNodeTaxonomytests extends ServicesResourceNodetests {
     $responseArray = $this->servicesPost($this->endpoint->path . '/node', array('node' => $edit));
 
     $nodeResourceCreateReturn = $responseArray['body'];
-    $this->assertTrue(isset($nodeResourceCreateReturn['nid']), t('Node was successfully created'), 'NodeResource: Create');
+    $this->assertTrue(isset($nodeResourceCreateReturn['nid']), 'Node was successfully created', 'NodeResource: Create');
     $newNode = node_load($nodeResourceCreateReturn['nid']);
-    $this->assertTrue($newNode->{$field_name}[$langcode][0]['tid'] =  $term1->tid, t('Term was the same'), 'Taxonomy: Create');
+    $this->assertTrue($newNode->{$field_name}[$langcode][0]['tid'] =  $term1->tid, 'Term was the same', 'Taxonomy: Create');
 
     // Edit the node with a different term.
     $edit[$field_name][$langcode][0] = $term2->tid;
     $responseArray = $this->servicesPost($this->endpoint->path . '/node', array('node' => $edit));
     $nodeResourceCreateReturn = $responseArray['body'];
-    $this->assertTrue(isset($nodeResourceCreateReturn['nid']), t('Node was successfully created'), 'NodeResource: Create');
+    $this->assertTrue(isset($nodeResourceCreateReturn['nid']), 'Node was successfully created', 'NodeResource: Create');
     $newNode = node_load($nodeResourceCreateReturn['nid']);
-    $this->assertTrue($newNode->{$field_name}[$langcode][0]['tid'] =  $term2->tid, t('Term was the same'), 'Taxonomy: updated');
+    $this->assertTrue($newNode->{$field_name}[$langcode][0]['tid'] =  $term2->tid, 'Term was the same', 'Taxonomy: updated');
   }
 
   /**

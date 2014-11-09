@@ -261,7 +261,7 @@ function entityform_form_wrapper($entityform, $mode = 'submit', $form_context = 
   if (!empty($entityform_type->data['instruction_pre'])) {
     $output['intro'] = array(
       '#type' => 'markup',
-      '#markup' => "<div class='pre-intructions' >" . _entityform_format_text($entityform_type->data['instruction_pre'], array('entityform_type' => $entityform_type)) . "</div>",
+      '#markup' => "<div class='pre-instructions' >" . _entityform_format_text($entityform_type->data['instruction_pre'], array('entityform_type' => $entityform_type)) . "</div>",
       '#weight' => -100,
     );
   }
@@ -312,6 +312,7 @@ function entityform_edit_form($form, &$form_state, $entityform, $mode = 'submit'
   $is_review = FALSE;
   if (!empty($form_state['values']['op']) && $form_state['values']['op'] == t('Change')) {
     $entityform = $form_state['entityform_preview_entity'];
+    unset($form_state['entityform_preview_entity']);
   }
   else {
     if (!empty($entityform_type->data['preview_page']) && !empty($form_state['entityform_preview_entity'])) {
@@ -527,9 +528,9 @@ function entityform_edit_form_submit(&$form, &$form_state) {
   else {
     // If this entityform type has preview mode and we are in submit store preview.
     if (empty($form_state['clicked_button']['#entityform_after_review'])
-         && !$entityform->draft
-         && !empty($entityform_type->data['preview_page'])
-         && $form_state['entityform_form_mode'] == 'submit') {
+      && !$entityform->draft
+      && !empty($entityform_type->data['preview_page'])
+      && $form_state['entityform_form_mode'] == 'submit') {
       $form_state['entityform_preview_entity'] = $entityform;
       $form_state['rebuild'] = TRUE;
       return;

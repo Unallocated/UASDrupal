@@ -25,5 +25,17 @@ plupload.addI18n({
   "IO error.": Drupal.t("IO error."),
   "Start upload" : Drupal.t("Start upload"),
   "Stop upload" : Drupal.t("Stop upload"),
-  "%d files queued" : Drupal.t("%d files queued")
+  "%d files queued" : Drupal.t("%d files queued"),
+  "Drag files here." : Drupal.t("Drag files here."),
+  "Start upload" : Drupal.t("Start upload"),
+  "%d files queued" : Drupal.t("%d files queued"),
+  "File: %s" : Drupal.t("File: %s"),
+  "Close" : Drupal.t("Close"),
+  "Using runtime: " : Drupal.t("Using runtime: "),
+  "File: %f, size: %s, max file size: %m" : Drupal.t("File: %f, size: %s, max file size: %m"),
+  "Upload element accepts only %d file(s) at a time. Extra files were stripped." : Drupal.t("Upload element accepts only %d file(s) at a time. Extra files were stripped."),
+  "Upload URL might be wrong or doesn\"t exist" : Drupal.t("Upload URL might be wrong or doesn\"t exist"),
+  "Error: File too large: " : Drupal.t("Error: File too large: "),
+  "Error: Invalid file extension: " : Drupal.t("Error: Invalid file extension: "),
+  "File count error." : Drupal.t("File count error.")
 });

@@ -60,7 +60,6 @@ dependencies[] = facetapi_collapsible
 dependencies[] = facetapi_pretty_paths
 dependencies[] = search_api_views
 dependencies[] = search_api_facetapi
-dependencies[] = memcache
 dependencies[] = mailsystem
 dependencies[] = mandrill
 

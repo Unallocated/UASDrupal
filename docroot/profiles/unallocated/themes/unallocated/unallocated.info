@@ -1,0 +1,31 @@
+name = unallocated
+description = Unallocated custom theme
+version = 7.x-1.0
+core = 7.x
+
+stylesheets[all][] = css/layout.css
+
+scripts[] = scripts/foutbgone.js
+scripts[] = scripts/menu.js
+
+regions[user_bar_first] = User bar first
+regions[user_bar_second] = User bar second
+regions[branding] = Branding
+regions[menu] = Menu
+regions[sidebar_first] = Sidebar first
+regions[sidebar_second] = Sidebar second
+regions[header_first] = Header first
+regions[header_second] = Header second
+regions[preface_first] = Preface first
+regions[preface_second] = Preface second
+regions[preface_third] = Preface third
+regions[postscript_first] = Postscript first
+regions[postscript_second] = Postscript second
+regions[postscript_third] = Postscript third
+regions[postscript_fourth] = Postscript fourth
+regions[post_postscript] = Post postscript
+regions[header_first] = Header first
+regions[header_second] = Header second
+regions[content] = Content
+
+features[] = favicon

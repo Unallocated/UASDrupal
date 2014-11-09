@@ -1,0 +1,157 @@
+@charset "UTF-8";
+/* CSS Document */
+
+@import "reset.css";
+@import "skeleton-1040.css";
+
+/* font declarations - use Oswald for headings, Lato for everything else */
+@font-face {
+    font-family: 'latoitalic';
+    src: url('lato/lato-italic-webfont.eot');
+    src: url('lato/lato-italic-webfont.eot?#iefix') format('embedded-opentype'),
+         url('lato/lato-italic-webfont.woff2') format('woff2'),
+         url('lato/lato-italic-webfont.woff') format('woff'),
+         url('lato/lato-italic-webfont.ttf') format('truetype'),
+         url('lato/lato-italic-webfont.svg#latoitalic') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'latobold';
+    src: url('lato/lato-bold-webfont.eot');
+    src: url('lato/lato-bold-webfont.eot?#iefix') format('embedded-opentype'),
+         url('lato/lato-bold-webfont.woff2') format('woff2'),
+         url('lato/lato-bold-webfont.woff') format('woff'),
+         url('lato/lato-bold-webfont.ttf') format('truetype'),
+         url('lato/lato-bold-webfont.svg#latobold') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'latoregular';
+    src: url('lato/lato-regular-webfont.eot');
+    src: url('lato/lato-regular-webfont.eot?#iefix') format('embedded-opentype'),
+         url('lato/lato-regular-webfont.woff2') format('woff2'),
+         url('lato/lato-regular-webfont.woff') format('woff'),
+         url('lato/lato-regular-webfont.ttf') format('truetype'),
+         url('lato/lato-regular-webfont.svg#latoregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'oswaldbold';
+    src: url('oswald/oswald-bold-webfont.eot');
+    src: url('oswald/oswald-bold-webfont.eot?#iefix') format('embedded-opentype'),
+         url('oswald/oswald-bold-webfont.woff2') format('woff2'),
+         url('oswald/oswald-bold-webfont.woff') format('woff'),
+         url('oswald/oswald-bold-webfont.ttf') format('truetype'),
+         url('oswald/oswald-bold-webfont.svg#oswaldbold') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'oswaldbook';
+    src: url('oswald/oswald-regular-webfont.eot');
+    src: url('oswald/oswald-regular-webfont.eot?#iefix') format('embedded-opentype'),
+         url('oswald/oswald-regular-webfont.woff2') format('woff2'),
+         url('oswald/oswald-regular-webfont.woff') format('woff'),
+         url('oswald/oswald-regular-webfont.ttf') format('truetype'),
+         url('oswald/oswald-regular-webfont.svg#oswaldbook') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+html {
+	font-size: 62.5%;
+}
+body {
+	background: #222;
+	font-family: latoregular, sans-serif;
+	font-size: 14px;
+	font-size: 1.4rem;
+	color: #000;
+}
+a:link, a:visited {
+	color: #eba713;
+	text-decoration: underline;
+}
+a:hover {
+	color: #ff4500;
+}
+h1, h2, h3 {
+	font-family: 'Oswald', san-serif;
+	font-weight: bold;
+	text-transform: uppercase;
+	font-size: 20px;
+	font-size: 2rem;
+	color: #ff4500;
+	letter-spacing: 2px;
+	letter-spacing: .2rem;
+}
+h2 {
+	font-size: 18px;
+	font-size: 1.8rem;
+	margin: 25px 0 15px;
+}
+h3 {
+	font-size: 16px;
+	font-size: 1.6rem;
+}
+.imgR { /* used to float an image to the right */
+	float: right;
+	padding: 0 0 10px 10px;
+}
+.imgL { /* used to float an image to the left */
+	float: left;
+	padding: 0 10px 10px 0;
+}
+.imgC { /* used to center images */
+	margin: 10px auto;
+}
+img { /* removes borders from images */
+	border: none;
+}
+p { /* puts spacing between lines of text in a paragraph */
+	line-height: 1.5;
+}
+.center { /* centers text */
+	text-align: center;
+}
+
+/* main navigation */
+#nav select {
+	display: none;
+}
+
+/* flexible images */
+img, object {
+	max-width: 100%;
+	height: auto;
+}
+
+/* Mobile Portrait Size and Mobile Landscape Size (devices and browsers) */
+@media only screen and (min-width: 320px) and (max-width: 767px) {
+	#nav ul {
+		display: none;
+	}
+	#nav select {
+		display: inline-block;
+		width: 100%;
+	}
+	option {
+		padding-top: 7px;
+		padding-bottom: 7px;
+		font-size: 15px;
+	}  
+}
+
+
+
+/* #Tablet (Portrait)
+================================================== */
+/* Note: Design for a width of 768px */
+
+@media only screen and (min-width: 768px) and (max-width: 959px) {
+	
+}
+

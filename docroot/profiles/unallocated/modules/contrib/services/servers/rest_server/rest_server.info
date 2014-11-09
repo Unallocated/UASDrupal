@@ -4,20 +4,25 @@ package = Services - servers
 
 files[] = rest_server.module
 
-files[] = includes/models.inc
-files[] = includes/rest_server.views.inc
 files[] = includes/RESTServer.inc
-
+files[] = includes/ServicesContentTypeNegotiator.inc
+files[] = includes/ServicesRESTServerFactory.inc
+files[] = includes/ServicesContext.inc
+files[] = includes/ServicesParser.inc
+files[] = includes/ServicesFormatter.inc
+files[] = tests/ServicesRESTServerTests.test
+files[] = tests/rest_server_mock_classes.inc
 files[] = lib/bencode.php
 files[] = lib/mimeparse.php
-files[] = lib/spyc.php
 
 dependencies[] = services
+dependencies[] = libraries (>=2.x)
 
 core = 7.x
-; Information added by drupal.org packaging script on 2011-11-16
-version = "7.x-3.1"
+
+; Information added by Drupal.org packaging script on 2014-10-21
+version = "7.x-3.10+6-dev"
 core = "7.x"
 project = "services"
-datestamp = "1321482643"
+datestamp = "1413903550"
 

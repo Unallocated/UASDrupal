@@ -6,163 +6,237 @@
  */
 
 class RESTServer {
-  private $endpoint;
+  /* @var $negotiator ServicesContentTypeNegotiatorInterface */
+  protected $negotiator;
+  /* @var $context ServicesContextInterface */
+  protected $context;
+
+  protected $resources;
+  protected $parsers;
+  protected $formatters;
+
+  protected $controller;
+
+  /**
+   * Constructor. Initialize properties.
+   */
+  function __construct(ServicesContextInterface $context, ServicesContentTypeNegotiatorInterface $negotiator, $resources, $parsers, $formatters) {
+    $this->context = $context;
+    $this->negotiator = $negotiator;
+
+    $this->resources = $resources;
+    $this->parsers = $parsers;
+    $this->formatters = $formatters;
+  }
 
   /**
    * Handles the call to the REST server
-   *
-   * @param string $canonical_path
-   * @param string $endpoint_path
-   * @return void
    */
-  public function handle($canonical_path, $endpoint_path) {
-    $this->endpoint_path = $endpoint_path;
+  public function handle() {
+    $controller = $this->getController();
+
+    $formatter = $this->getResponseFormatter();
+
     services_set_server_info('resource_uri_formatter', array(&$this, 'uri_formatter'));
 
-    // Determine the request method
-    $method = $_SERVER['REQUEST_METHOD'];
-    if ($method == 'POST' && isset($_SERVER['HTTP_X_HTTP_METHOD_OVERRIDE'])) {
-      $method = $_SERVER['HTTP_X_HTTP_METHOD_OVERRIDE'];
+    try {
+      // Parse the request data
+      $arguments = $this->getControllerArguments($controller);
+      $result = services_controller_execute($controller, $arguments);
     }
-    if ($method == 'POST' && (isset($_GET['_method']) && $_GET['_method'])) {
-      $method = $_GET['_method'];
+    catch (ServicesException $e) {
+      $result = $this->handleException($e);
     }
-    $path = explode('/', $canonical_path);
-    $leaf = array_pop($path);
-    $resource_name = array_shift($path);
-    // Extract response format info from the path
-    $matches = array();
-    if ($leaf && preg_match('/^(.+)\.([^\.]+)$/', $leaf, $matches)) {
-      $leaf = $matches[1];
-      $response_format = $matches[2];
+
+    return $this->render($formatter, $result);
+  }
+
+  /**
+   * Controller is part of the resource like
+   *
+   * array(
+   *  'file' => array('type' => 'inc', 'module' => 'services', 'name' => 'resources/node_resource'),
+   *  'callback' => '_node_resource_create',
+   *  'args' => array(
+   *    array(
+   *      'name' => 'node',
+   *      'optional' => FALSE,
+   *      'source' => 'data',
+   *      'description' => 'The node data to create',
+   *      'type' => 'array',
+   *    ),
+   *  ),
+   *  'access callback' => '_node_resource_access',
+   *  'access arguments' => array('create'),
+   *  'access arguments append' => TRUE,
+   * ),
+   *
+   * This method determines what is the controller responsible for processing of the request.
+   *
+   * @return array
+   */
+  protected function getController() {
+    if (empty($this->controller)) {
+      $resource_name = $this->getResourceName();
+
+      if (empty($resource_name) || !isset($this->resources[$resource_name])) {
+        return services_error(t('Could not find resource @name.', array('@name' => $resource_name)), 404);
+      }
+
+      $resource = $this->resources[$resource_name];
+      $this->controller = $this->resolveControllerApplyVersion($resource, $resource_name);
+
+      if (empty($this->controller)) {
+        return services_error(t('Could not find the controller.'), 404);
+      }
     }
-    // Response will vary with accept headers
-    // if no format was supplied as path suffix
+
+    return $this->controller;
+  }
+
+  /**
+   * Wrapper around resolveController() to apply version.
+   *
+   * @param array $resource
+   *   Resource definition
+   * @param string $resource_name
+   *   Name of the resource. Needed for applying version.
+   *
+   * @return array $controller
+   *   Controller definition
+   */
+  protected function resolveControllerApplyVersion($resource, $resource_name) {
+    $apply_version_method = '';
+    $controller = $this->resolveController($resource, $apply_version_method);
+    services_request_apply_version($controller, array('method' => $apply_version_method, 'resource' => $resource_name));
+
+    return $controller;
+  }
+
+  /**
+   * Canonical path is the url of the request without path of endpoint.
+   *
+   * For example endpoint has path 'rest'. Canonical of request to url
+   * 'rest/node/1.php' will be 'node/1.php'.
+   *
+   * @return string
+   */
+  public function getCanonicalPath() {
+    // Use drupal_static so we can clear this static cache during unit testing.
+    // @see MockServicesRESTServerFactory constructor.
+    $canonical_path = &drupal_static('RESTServerGetCanonicalPath');
+    if (empty($canonical_path)) {
+      $canonical_path = $this->context->getCanonicalPath();
+      $canonical_path = $this->negotiator->getParsedCanonicalPath($canonical_path);
+    }
+    return $canonical_path;
+  }
+
+  /**
+   * Explode canonical path to parts by '/'.
+   *
+   * @return array
+   */
+  protected function getCanonicalPathArray() {
+    $canonical_path = $this->getCanonicalPath();
+    $canonical_path_array = explode('/', $canonical_path);
+
+    return $canonical_path_array;
+  }
+
+  /**
+   * Example. We have endpoint with path 'rest'.
+   * Request is done to url /rest/node/1.php'.
+   * Name of resource in this case is 'node'.
+   *
+   * @return string
+   */
+  protected function getResourceName() {
+    $canonical_path_array = $this->getCanonicalPathArray();
+    $resource_name = array_shift($canonical_path_array);
+
+    return $resource_name;
+  }
+
+  /**
+   * Response formatter is responsible for encoding the response.
+   *
+   * @return array
+   * example:
+   * array(
+   *  'xml' => array(
+   *    'mime types' => array('application/xml', 'text/xml'),
+   *    'formatter class' => 'ServicesXMLFormatter',
+   *  ),
+   * )
+   */
+  protected function getResponseFormatter() {
+    $mime_type = '';
+
+    $canonical_path_not_parsed = $this->context->getCanonicalPath();
+    $response_format = $this->getResponseFormatFromURL($canonical_path_not_parsed);
+
     if (empty($response_format)) {
-      drupal_add_http_header('Vary', 'Accept');
+      $response_format = $this->getResponseFormatContentTypeNegotiations($mime_type, $canonical_path_not_parsed, $this->formatters);
     }
 
-    // Return the leaf to the path array if it's not the resource name
-    if (isset($leaf)) {
-      if (!$resource_name) {
-        $resource_name = $leaf;
-      }
-      else {
-        array_push($path, $leaf);
-      }
-    }
+    $formatter = array();
 
-    $endpoint = services_get_server_info('endpoint', '');
-    $endpoint_definition = services_endpoint_load($endpoint);
-
-    // Get the server settings from the endpoint.
-    $this->settings = !empty($endpoint_definition->server_settings['rest_server']) ? $endpoint_definition->server_settings['rest_server'] : array();
-    // Normalize the settings so that we get the expected structure
-    // and sensible defaults.
-    $this->settings = rest_server_setup_settings($this->settings);
-
-    $resources = services_get_resources($endpoint);
-    $controller = FALSE;
-    if (!empty($resource_name) && isset($resources[$resource_name])) {
-      $resource = $resources[$resource_name];
-
-      // Get the operation and fill with default values
-      $controller = $this->resolveController($resource, $method, $path);
-    }
-    else {
-      //This will stop the 404 from happening when you request just the endpoint.
-      if ($endpoint_definition->path == $resource_name) {
-        $response = t('Services Endpoint "@name" has been setup successfully.', array('@name' => $endpoint));
-        drupal_alter('services_endpoint_response', $response);
-        return $response;
-      }
-      return services_error(t('Could not find resource @name.', array('@name' => $resource_name)), 404);
-    }
-
-    if (!$controller) {
-      return services_error(t('Could not find the controller.'), 404);
-    }
-
-    // Parse the request data
-    $data = array();
-    $arguments = $this->getControllerArguments($controller, $path, $method, $data);
-
-    $formats = $this->responseFormatters();
-
-    // Negotiate response format based on accept-headers if we
-    // don't have a response format
-    if (empty($response_format)) {
-      $mime_candidates = array();
-      $mime_map = array();
-      // Add all formatters that accepts raw data, or supports the format model
-      foreach ($formats as $format => $formatter) {
-        if (!isset($formatter['model']) || $this->supportedControllerModel($controller, $formatter)) {
-          foreach ($formatter['mime types'] as $m) {
-            $mime_candidates[] = $m;
-            $mime_map[$m] = $format;
-          }
-        }
-      }
-
-      // Get the best matching format, default to json
-      $response_format = 'json';
-      if (isset($_SERVER['HTTP_ACCEPT'])) {
-        $mime = $this->mimeParse();
-        $mime_type = $mime->best_match($mime_candidates, $_SERVER['HTTP_ACCEPT']);
-        $response_format = $mime_map[$mime_type];
-      }
+    if (isset($this->formatters[$response_format])) {
+      $formatter = $this->formatters[$response_format];
     }
 
     // Check if we support the response format and determine the mime type
-    if (empty($mime_type) && isset($formats[$response_format])) {
-      $formatter = $formats[$response_format];
-      if (!isset($formatter['model']) || $this->supportedControllerModel($controller, $formatter)) {
-        $mime_type = $formatter['mime types'][0];
-      }
+    if (empty($mime_type) && !empty($formatter)) {
+      $mime_type = $formatter['mime types'][0];
     }
 
     if (empty($response_format) || empty($mime_type)) {
       return services_error(t('Unknown or unsupported response format.'), 406);
     }
 
-    // Give the model (if any) a opportunity to alter the arguments.
-    // This might be needed for the model to ensure that all the required
-    // information is requested.
-    if (isset($formatter['model'])) {
-      $cm = &$controller['models'][$formatter['model']];
-      if (!isset($cm['arguments'])) {
-        $cm['arguments'] = array();
-      }
-
-      // Check if any of the model arguments have been overridden
-      if (isset($cm['allow_overrides'])) {
-        foreach ($cm['allow_overrides'] as $arg) {
-          if (isset($_GET[$formatter['model'] . ':' . $arg])) {
-            $cm['arguments'][$arg] = $_GET[$formatter['model'] . ':' . $arg];
-          }
-        }
-      }
-
-      if (isset($cm['class']) && class_exists($cm['class'])) {
-        if (method_exists($cm['class'], 'alterArguments')) {
-          call_user_func_array($cm['class'] . '::alterArguments', array(&$arguments, $cm['arguments']));
-        }
-      }
-    }
-
-    try {
-      $result = services_controller_execute($controller, $arguments);
-    }
-    catch (ServicesException $e) {
-      $errors = $this->handleException($e);
-      drupal_alter('rest_server_execute_errors', $errors, $controller, $arguments);
-      $result = $errors;
-    }
-    $formatter = $formats[$response_format];
-
-    // Set the content type and render output
+    // Set the content type and render output.
     drupal_add_http_header('Content-type', $mime_type);
-    return $this->renderFormatterView($controller, $formatter, $result);
+
+    return $formatter;
+  }
+
+
+  /**
+   * Retrieve formatter from URL. If format is in the path, we remove it from $canonical_path.
+   *
+   * For example <endpoint>/<path>.<format>
+   *
+   * @param $canonical_path
+   *
+   * @return string
+   */
+  protected function getResponseFormatFromURL($canonical_path) {
+    return $this->negotiator->getResponseFormatFromURL($canonical_path);
+  }
+
+  /**
+   * Determine response format and mime type using headers to negotiate content types.
+   *
+   * @param string $mime_type
+   *   Mime type. This variable to be overriden.
+   * @param string $canonical_path
+   *   Canonical path of the request.
+   * @param array $formats
+   *   Enabled formats by endpoint.
+   *
+   * @return string
+   *   Negotiated response format. For example 'json'.
+   */
+  protected function getResponseFormatContentTypeNegotiations(&$mime_type, $canonical_path, $formats) {
+    return $this->negotiator->getResponseFormatContentTypeNegotiations($mime_type, $canonical_path, $formats, $this->context);
+  }
+
+  /**
+   * Determine the request method
+   */
+  protected function getRequestMethod() {
+    return $this->context->getRequestMethod();
   }
 
   /**
@@ -174,7 +248,7 @@ class RESTServer {
    *  Returns the formatted resource uri
    */
   public function uri_formatter($path) {
-    return url($this->endpoint_path . '/' . join($path, '/'), array(
+    return url($this->context->getEndpointPath() . '/' . join($path, '/'), array(
       'absolute' => TRUE,
     ));
   }
@@ -184,79 +258,112 @@ class RESTServer {
    *
    * @param array $controller
    *  The controller definition
-   * @param string $path
-   * @param string $method
-   *  The method used to make the request
-   * @param array $sources
-   *  An array of the sources used for getting the arguments for the call
    * @return void
    */
-  private function getControllerArguments($controller, $path, $method, &$sources = array()) {
-    // Get argument sources
-    $parameters = $_GET;
-    if (isset($parameters['_method'])) {
-      unset($parameters['_method']);
-    }
+  protected function getControllerArguments($controller) {
+    $path_array = $this->getCanonicalPathArray();
+    array_shift($path_array);
 
-    $data = $this->parseRequest($method, $controller);
+    $data = $this->parseRequestBody();
     drupal_alter('rest_server_request_parsed', $data, $controller);
 
-    $defaults = array(
-      'path' => $path,
-      'param' => $parameters,
+    $headers = $this->parseRequestHeaders();
+    drupal_alter('rest_server_headers_parsed', $headers);
+
+    $sources = array(
+      'path' => $path_array,
+      'param' => $this->context->getGetVariable(),
       'data' => $data,
+      'headers' => $headers,
     );
-    foreach ($defaults as $key => $data) {
-      if (!isset($sources[$key])) {
-        $sources[$key] = $data;
-      }
-    }
     // Map source data to arguments.
+    return $this->getControllerArgumentsFromSources($controller, $sources);
+  }
+
+  /**
+   * array $controller
+   *   Controller definition
+   * array $sources
+   *   Array of sources for arguments. Consists of following elements:
+   *  'path' - path requested
+   *  'params' - GET variables
+   *  'data' - parsed POST data
+   *  'headers' - request headers
+   *
+   * @return array
+   */
+  protected function getControllerArgumentsFromSources($controller, $sources) {
     $arguments = array();
-    if (isset($controller['args'])) {
-      foreach ($controller['args'] as $i => $info) {
-        // Fill in argument from source
-        if (isset($info['source'])) {
-          if (is_array($info['source'])) {
-            list($source) = array_keys($info['source']);
-            $key = $info['source'][$source];
-            if (isset($sources[$source][$key])) {
-              $arguments[$i] = $sources[$source][$key];
-            }
+    if (!isset($controller['args'])) {
+      return array();
+    }
+
+    foreach ($controller['args'] as $argument_number => $argument_info) {
+      // Fill in argument from source
+      if (isset($argument_info['source'])) {
+        $argument_source = $argument_info['source'];
+        if (is_array($argument_source)) {
+          $argument_source_keys = array_keys($argument_source);
+          $source_name = reset($argument_source_keys);
+          $argument_name = $argument_source[$source_name];
+          // Path arguments can be only integers. i.e.'path' => 0 and not 'path' => '0'.
+          if ($source_name == 'path') {
+            $argument_name = (int) $argument_name;
           }
-          else {
-            if (isset($sources[$info['source']])) {
-              $arguments[$i] = $sources[$info['source']];
-            }
-          }
-          // Convert to array if argument expected to be array.
-          if (isset($info['type']) && $info['type'] == 'array' && isset($arguments[$i])) {
-            $arguments[$i] = (array)$arguments[$i];
-          }
-        }
-        // When argument isn't set, insert default value if provided or
-        // throw a exception if the argument isn't optional.
-        if (!isset($arguments[$i])) {
-          if (isset($info['default value'])) {
-            $arguments[$i] = $info['default value'];
-          }
-          elseif (!isset($info['optional']) || !$info['optional']) {
-            return services_error(t('Missing required argument @arg', array('@arg' => $info['name'])), 401);
-          }
-          else {
-            $arguments[$i] = NULL;
+          if (isset($sources[$source_name][$argument_name])) {
+            $arguments[$argument_number] = $sources[$source_name][$argument_name];
           }
         }
+        else {
+          if (isset($sources[$argument_source])) {
+            $arguments[$argument_number] = $sources[$argument_source];
+          }
+        }
+        // Convert to specific data type.
+        if (isset($argument_info['type']) && isset($arguments[$argument_number])) {
+          switch ($argument_info['type']) {
+            case 'array':
+              $arguments[$argument_number] = (array) $arguments[$argument_number];
+              break;
+          }
+        }
+      }
+      // When argument isn't set, insert default value if provided or
+      // throw a exception if the argument isn't optional.
+      if (!isset($arguments[$argument_number])) {
+        if (!isset($argument_info['optional']) || !$argument_info['optional']) {
+          return services_error(t('Missing required argument @arg', array('@arg' => $argument_info['name'])), 401);
+        }
+        // Set default value or NULL if default value is not set.
+        $arguments[$argument_number] = isset($argument_info['default value']) ? $argument_info['default value'] : NULL;
       }
     }
     return $arguments;
   }
 
-  private function parseRequest($method, $controller) {
+  protected function parseRequestHeaders() {
+    $headers = array();
+    $http_if_modified_since = $this->context->getServerVariable('HTTP_IF_MODIFIED_SINCE');
+    if (!empty($http_if_modified_since)) {
+      $headers['IF_MODIFIED_SINCE'] = strtotime(preg_replace('/;.*$/', '', $http_if_modified_since));
+    }
+    return $headers;
+  }
+
+  /**
+   * Parse request body based on $_SERVER['CONTENT_TYPE'].s
+   *
+   * @return array|mixed
+   */
+  protected function parseRequestBody() {
+    $method = $this->getRequestMethod();
     switch ($method) {
       case 'POST':
       case 'PUT':
-        $type = self::parseContentHeader($_SERVER['CONTENT_TYPE']);
+        $server_content_type = $this->context->getServerVariable('CONTENT_TYPE');
+        if (!empty($server_content_type)) {
+          $type = $this->parseContentHeader($server_content_type);
+        }
 
         // Get the mime type for the request, default to form-urlencoded
         if (isset($type['value'])) {
@@ -267,28 +374,15 @@ class RESTServer {
         }
 
         // Get the parser for the mime type
-        $parser = $this->requestParser($mime, $controller);
+        $parser = $this->matchParser($mime, $this->parsers);
         if (!$parser) {
           return services_error(t('Unsupported request content type @mime', array('@mime' => $mime)), 406);
         }
-        // php://input is not available with enctype="multipart/form-data".
-        // see http://php.net/manual/en/wrappers.php.php
-        if ($mime == 'multipart/form-data') {
-          $data = call_user_func($parser);
-        }
-        else {
-          // Read the raw input stream
-          if (module_exists('inputstream')) {
-            $handle = fopen('drupal://input', 'r');
-          }
-          else {
-            $handle = fopen('php://input', 'r');
-          }
 
-          if ($handle) {
-            $data = call_user_func($parser, $handle);
-            fclose($handle);
-          }
+        $data = array();
+        if (class_exists($parser) && in_array('ServicesParserInterface', class_implements($parser))) {
+          $parser_object = new $parser;
+          $data = $parser_object->parse($this->context);
         }
         return $data;
 
@@ -297,7 +391,15 @@ class RESTServer {
     }
   }
 
-  public static function parseContentHeader($value) {
+  /**
+   * Extract value of the header string.
+   *
+   * @param string $value
+   *
+   * @return array $type
+   *   Value that is used $type['value']
+   */
+  protected function parseContentHeader($value) {
     $ret_val = array();
     $value_pattern = '/^([^;]+)(;\s*(.+)\s*)?$/';
     $param_pattern = '/([a-z]+)=(([^\"][^;]+)|(\"(\\\"|[^"])+\"))/';
@@ -323,124 +425,24 @@ class RESTServer {
     return $ret_val;
   }
 
-  public static function contentFromStream($handle) {
-    $content = '';
-    while (!feof($handle)) {
-      $content .= fread($handle, 8192);
-    }
-    return $content;
-  }
-
-  public static function fileRecieve($handle, $validators = array()) {
-    $validators['file_validate_name_length'] = array();
-
-    $type = RESTServer::parseContentHeader($_SERVER['CONTENT_TYPE']);
-    $disposition = RESTServer::parseContentHeader($_SERVER['HTTP_CONTENT_DISPOSITION']);
-
-    $filename = file_munge_filename(trim(basename(($disposition['params']['filename']))));
-
-    // Rename potentially executable files, to help prevent exploits.
-    if (preg_match('/\.(php|pl|py|cgi|asp|js)$/i', $filename) && (drupal_substr($filename, -4) != '.txt')) {
-      $type['value'] = 'text/plain';
-      $filename .= '.txt';
-    }
-
-    $filepath = file_destination(file_create_path(file_directory_temp() . '/' . $filename), FILE_EXISTS_RENAME);
-    $file = (object)array(
-      'uid' => 0,
-      'filename' => $filename,
-      'filepath' => $filepath,
-      'filemime' => $type['value'],
-      'status' => FILE_STATUS_TEMPORARY,
-      'timestamp' => time(),
-    );
-    RESTServer::streamToFile($handle, $filepath);
-    $file->filesize = filesize($filepath);
-
-    // Call the validation functions.
-    $errors = array();
-    foreach ($validators as $function => $args) {
-      array_unshift($args, $file);
-      $errors = array_merge($errors, call_user_func_array($function, $args));
-    }
-    if (!empty($errors)) {
-      return services_error(t('Errors while validating the file - @errors', array('@errors' => implode(" ", $errors))), 406);
-    }
-
-    drupal_write_record('files', $file);
-
-    return $file;
-  }
-
-  public static function streamToFile($source, $file) {
-    $fp = fopen($file, 'w');
-    if ($fp) {
-      self::streamCopy($source, $fp);
-      fclose($fp);
-      return TRUE;
-    }
-    return FALSE;
-  }
-
-  public static function streamCopy($source, $destination) {
-    while (!feof($source)) {
-      $content = fread($source, 8192);
-      fwrite($destination, $content);
-    }
-  }
-
-  private function renderFormatterView($controller, $formatter, $result) {
-    // Wrap the results in a model class if required by the formatter
-    if (isset($formatter['model'])) {
-      $cm = $controller['models'][$formatter['model']];
-      $model_arguments = isset($cm['arguments'])?$cm['arguments']:array();
-
-      $model_class = new ReflectionClass($cm['class']);
-      $result = $model_class->newInstanceArgs(array($result, $model_arguments));
-    }
-
-    $view_class = new ReflectionClass($formatter['view']);
-    $view_arguments = isset($formatter['view arguments'])?$formatter['view arguments']:array();
-    $view = $view_class->newInstanceArgs(array($result, $view_arguments));
-    return $view->render();
-  }
-
   /**
-   * Get best match parser for $controller based on $mime type.
-   */
-  private function requestParser($mime, $controller = NULL) {
-    // Check if the controller has declared support for parsing the mime type.
-    if ($controller && !empty($controller['rest request parsers'])) {
-      $parser = $this->matchParser($mime, $controller['rest request parsers']);
-      if ($parser) {
-        return $parser;
-      }
-    }
-
-    $parsers = rest_server_request_parsers();
-
-    // Remove parsers that have been disabled for this endpoint.
-    foreach (array_keys($parsers) as $key) {
-      if (!$this->settings['parsers'][$key]) {
-        unset($parsers[$key]);
-      }
-    }
-
-    return $this->matchParser($mime, $parsers);
-  }
-
-  /**
-   * Create a instance of the Mimeparse utility class.
+   * Render results using formatter.
    *
-   * @return Mimeparse
+   * @param array $formatter
+   *   Formatter definition
+   * @param $result
+   *   Value to be rendered
+   *
+   * @return string
+   *   Rendered result
    */
-  private function mimeParse() {
-    static $mimeparse;
-    if (!$mimeparse) {
-      module_load_include('php', 'rest_server', 'lib/mimeparse');
-      $mimeparse = new Mimeparse();
+  protected function render($formatter, $result) {
+    if ( !isset($formatter['formatter class'])
+      || array_search('ServicesFormatterInterface', class_implements($formatter['formatter class'])) === FALSE) {
+      return services_error('Formatter is invalid.', 500);
     }
-    return $mimeparse;
+    $formatter_object = new $formatter['formatter class'];
+    return $formatter_object->render($result);
   }
 
   /**
@@ -453,136 +455,250 @@ class RESTServer {
    * @return mixed
    *  Returns a parser callback or FALSE if no match was found.
    */
-  private function matchParser($mime, $parsers) {
-    $mimeparse = $this->mimeParse();
+  protected function matchParser($mime, $parsers) {
+    $mimeparse = $this->negotiator->mimeParse();
     $mime_type = $mimeparse->best_match(array_keys($parsers), $mime);
 
     return ($mime_type) ? $parsers[$mime_type] : FALSE;
   }
 
-  public static function parseURLEncoded($handle) {
-    parse_str(self::contentFromStream($handle), $data);
-    return $data;
-  }
+  /**
+   * Determine controller.
+   *
+   * @param array $resource
+   *   Full definition of the resource.
+   * @param string $operation
+   *   Type of operation ('index', 'retrieve' etc.). We are going to override this variable.
+   *   Needed for applying version.
+   *
+   * @return array
+   *   Controller definition.
+   */
+  protected function resolveController($resource, &$operation) {
+    $request_method = $this->getRequestMethod();
 
-  public static function parsePHP($handle) {
-    return unserialize(self::contentFromStream($handle));
-  }
+    $canonical_path_array = $this->getCanonicalPathArray();
+    array_shift($canonical_path_array);
 
-  public static function parseJSON($handle) {
-    return json_decode(self::contentFromStream($handle), TRUE);
-  }
+    $canon_path_count = count($canonical_path_array);
+    $operation_type = NULL;
+    $operation = NULL;
 
-  public static function parseFile($handle) {
-    return self::contentFromStream($handle);
-  }
-
-  public static function parseMultipart() {
-    return $_POST;
-  }
-
-  public static function parseYAML($handle) {
-    module_load_include('php', 'rest_server', 'lib/spyc');
-    return Spyc::YAMLLoadString(self::contentFromStream($handle));
-  }
-
-  private function responseFormatters($format = NULL) {
-    $formatters = rest_server_response_formatters();
-
-    // Remove formatters that have been disabled for this endpoint.
-    foreach (array_keys($formatters) as $key) {
-      if (!$this->settings['formatters'][$key]) {
-        unset($formatters[$key]);
-      }
+    // For any HEAD request return response "200 OK".
+    if ($request_method == 'HEAD') {
+      return services_error('OK', 200);
     }
 
-    if ($format) {
-      return isset($formatters[$format]) ? $formatters[$format] : FALSE;
+    // For any OPTIONS request return only the headers.
+    if ($request_method == 'OPTIONS') {
+      exit;
     }
 
-    return $formatters;
+    // We do not group "if" conditions on purpose for better readability.
+
+    // 'index' method.
+    if (   $request_method == 'GET'
+        && isset($resource['operations']['index'])
+        && $this->checkNumberOfArguments($canon_path_count, $resource['operations']['index'])
+      ) {
+      $operation_type = 'operations';
+      $operation = 'index';
+    }
+
+    // 'retrieve' method.
+    // First path element should be not empty.
+    if (   $request_method == 'GET'
+        && $canon_path_count >= 1
+        && isset($resource['operations']['retrieve'])
+        && $this->checkNumberOfArguments($canon_path_count, $resource['operations']['retrieve'])
+        && !empty($canonical_path_array[0])
+      ) {
+      $operation_type = 'operations';
+      $operation = 'retrieve';
+    }
+
+    // 'relationships'
+    // First path element should be not empty,
+    // second should be name of targeted action.
+    if (   $request_method == 'GET'
+        && $canon_path_count >= 2
+        && isset($resource['relationships'][$canonical_path_array[1]])
+        && $this->checkNumberOfArguments($canon_path_count, $resource['relationships'][$canonical_path_array[1]], 1)
+        && isset($canonical_path_array[0])
+      ) {
+      $operation_type = 'relationships';
+      $operation = $canonical_path_array[1];
+    }
+
+    // 'update'
+    // First path element should be not empty.
+    if (   $request_method == 'PUT'
+        && $canon_path_count >= 1
+        && isset($resource['operations']['update'])
+        && $this->checkNumberOfArguments($canon_path_count, $resource['operations']['update'])
+        && !empty($canonical_path_array[0])
+      ) {
+      $operation_type = 'operations';
+      $operation = 'update';
+    }
+
+    // 'delete'
+    // First path element should be not empty.
+    if (   $request_method == 'DELETE'
+        && $canon_path_count >= 1
+        && isset($resource['operations']['delete'])
+        && $this->checkNumberOfArguments($canon_path_count, $resource['operations']['delete'])
+        && !empty($canonical_path_array[0])
+      ) {
+      $operation_type = 'operations';
+      $operation = 'delete';
+    }
+
+    // 'create' method.
+    // First path element should be not empty.
+    if (   $request_method == 'POST'
+        && isset($resource['operations']['create'])
+        && $this->checkNumberOfArguments($canon_path_count, $resource['operations']['create'])
+      ) {
+      $operation_type = 'operations';
+      $operation = 'create';
+    }
+
+    // 'actions'
+    // First path element should be action name
+    if (   $request_method == 'POST'
+        && $canon_path_count >= 1
+        && isset($resource['actions'][$canonical_path_array[0]])
+        && $this->checkNumberOfArguments($canon_path_count, $resource['actions'][$canonical_path_array[0]], 1)
+      ) {
+      $operation_type = 'actions';
+      $operation = $canonical_path_array[0];
+    }
+
+    // 'targeted_actions'
+    // First path element should be not empty,
+    // second should be name of targeted action.
+    if (   $request_method == 'POST'
+        && $canon_path_count >= 2
+        && isset($resource['targeted_actions'][$canonical_path_array[1]])
+        && $this->checkNumberOfArguments($canon_path_count, $resource['targeted_actions'][$canonical_path_array[1]], 1)
+        && !empty($canonical_path_array[0])
+      ) {
+      $operation_type = 'targeted_actions';
+      $operation = $canonical_path_array[1];
+    }
+
+    if (empty($operation_type) || empty($operation) || empty($resource[$operation_type][$operation])) {
+      return FALSE;
+    }
+
+    $controller = $resource[$operation_type][$operation];
+
+    if (isset($resource['endpoint']['operations'][$operation]['settings'])) {
+      // Add the endpoint's settings for the specified operation.
+      $controller['endpoint'] = $resource['endpoint']['operations'][$operation]['settings'];
+    }
+
+    if (isset($resource['file']) && empty($controller['file'])) {
+      $controller['file'] = $resource['file'];
+    }
+
+    return $controller;
   }
 
-  private function supportedControllerModel($controller, $format) {
-    if (
-      // The format uses models
-      isset($format['model']) &&
-      // The controller provides models
-      isset($controller['models']) &&
-      // The controller supports the model required by the format
-      isset($controller['models'][$format['model']])) {
-        return $controller['models'][$format['model']];
-    }
-  }
+  /**
+   * Count possible numbers of 'path' arguments of the method.
+   */
+  protected function checkNumberOfArguments($args_number, $resource_operation, $required_args = 0) {
+    $not_required_args = 0;
 
-  private function resolveController($resource, $method, $path) {
-    $pc = count($path);
-    // Use the index handler for all empty path request, except on POST
-    if (!$pc && $method!='POST') {
-      return isset($resource['index']) ? $resource['index'] : NULL;
-    }
-    // Detect the standard crud operations
-    elseif (($pc == 1 && ($method == 'GET' || $method == 'PUT' || $method == 'DELETE')) || ($pc == 0 && $method == 'POST')) {
-      $action_mapping = array(
-        'GET' => 'retrieve',
-        'POST' => 'create',
-        'PUT' => 'update',
-        'DELETE' => 'delete',
-      );
-      if (isset($resource[$action_mapping[$method]])) {
-        $controller = $resource[$action_mapping[$method]];
-        if (isset($resource['file'])) {
-          $controller['file'] = $resource['file'];
+    if (isset($resource_operation['args'])) {
+      foreach ($resource_operation['args'] as $argument) {
+        if (isset($argument['source']) && is_array($argument['source']) && isset($argument['source']['path'])) {
+          if (!empty($argument['optional'])) {
+            $not_required_args++;
+          }
+          else {
+            $required_args++;
+          }
         }
-        return $controller;
       }
     }
-    // Detect relationship requests
-    elseif ($pc >= 2 && $method == 'GET') {
-      if (isset($resource['relationships']) && $resource['relationships'][$path[1]]) {
-        $relationship = $resource['relationships'][$path[1]];
-        return $relationship;
-      }
-    }
-    // Detect action requests
-    elseif ($pc == 1 && $method == 'POST') {
-      return $resource['actions'][$path[0]];
-    }
-    // Detect action requests targeted at specific resources
-    elseif ($pc >= 2 && $method == 'POST') {
-      $action = $resource['targeted_actions'][$path[1]];
-      return $action;
-    }
+
+    return $args_number >= $required_args && $args_number <= $required_args + $not_required_args;
   }
-  function handleException($exception){
-    $code = $exception->getCode();
-    switch ($code) {
+
+  /**
+   * Set proper header and message in case of exception.
+   *
+   * @param object $exception
+   *   Exception object
+   * @param array $controller
+   *   Controller that was executed.
+   * @param array $arguments
+   *   Set of arguments.
+   *
+   * @return string $error_data
+   *   Error message from exception.
+   */
+  public function handleException($exception, $controller = array(), $arguments = array()){
+    $error_code = $exception->getCode();
+    $error_message = $exception->getMessage();
+    $error_data = method_exists($exception, 'getData') ? $exception->getData() : '';
+
+    switch ($error_code) {
       case 204:
-        drupal_add_http_header('HTTP/1.0 204 No Content', $exception->getMessage());
+        $error_header_status_message = $this->formatHttpHeaderStatusMessage('204 No Content', $error_message);
         break;
       case 304:
-        drupal_add_http_header('HTTP/1.0 304 Not Modified', $exception->getMessage());
+        $error_header_status_message = $this->formatHttpHeaderStatusMessage('304 Not Modified', $error_message);
         break;
       case 401:
-        drupal_add_http_header('HTTP/1.0 401 Unauthorized', $exception->getMessage());
+        $error_header_status_message = $this->formatHttpHeaderStatusMessage('401 Unauthorized', $error_message);
         break;
       case 404:
-        drupal_add_http_header('HTTP/1.0 404 Not found', $exception->getMessage());
+        $error_header_status_message = $this->formatHttpHeaderStatusMessage('404 Not found', $error_message);
         break;
       case 406:
-        drupal_add_http_header('HTTP/1.0 406 Not Acceptable', $exception->getMessage());
+        $error_header_status_message = $this->formatHttpHeaderStatusMessage('406 Not Acceptable', $error_message);
+        break;
+      case 200:
+        $error_header_status_message = $this->formatHttpHeaderStatusMessage('200', $error_message);
         break;
       default:
-        if ($code >= 400 && $code < 600) {
-          drupal_add_http_header('HTTP/1.0 ' . $code, $exception->getMessage());
+        if ($error_code >= 400 && $error_code < 600) {
+          $error_header_status_message = $this->formatHttpHeaderStatusMessage($error_code, $error_message);
         }
         else {
-          drupal_add_http_header('HTTP/1.0 500 An error occurred: (' . $code . ')',  $exception->getMessage());
+          $error_header_status_message = $this->formatHttpHeaderStatusMessage('500 Internal Server Error', "An error occurred ({$error_code}): {$error_message}");
         }
         break;
     }
-    if(method_exists($exception,'getData')){
-      return $exception->getData();
-    }
+
+    $error_alter_array = array(
+      'code' => $error_code,
+      'header_message' => &$error_header_status_message,
+      'body_data' => &$error_data,
+    );
+    drupal_alter('rest_server_execute_errors', $error_alter_array, $controller, $arguments);
+
+    drupal_add_http_header('Status', strip_tags(str_replace(PHP_EOL, '', $error_header_status_message)));
+
+    return $error_data;
+  }
+
+  /**
+   * Formats a status code and message for use as an HTTP header message.
+   *
+   * @param $status_code
+   *   An HTTP status code, e.g. "404 Not found" or "200".
+   * @param $message
+   *   A message string.
+   *
+   * @return string
+   *   A properly formatted HTTP header status message.
+   */
+  protected function formatHttpHeaderStatusMessage($status_code, $message) {
+    return "{$status_code} : {$message}";
   }
 }

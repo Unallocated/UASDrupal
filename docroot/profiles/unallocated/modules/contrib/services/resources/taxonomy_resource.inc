@@ -11,114 +11,121 @@ function _taxonomy_resource_definition() {
 
   return array(
     'taxonomy_term' => array(
-      'retrieve' => array(
-        'callback' => '_taxonomy_term_resource_retrieve',
-        'args' => array(
-          array(
-            'name' => 'tid',
-            'optional' => FALSE,
-            'source' => array('path' => 0),
-            'type' => 'int',
-            'description' => 'The tid of the taxonomy term to get',
+      'operations' => array(
+        'retrieve' => array(
+          'help' => 'Retrieve a term',
+          'callback' => '_taxonomy_term_resource_retrieve',
+          'args' => array(
+            array(
+              'name' => 'tid',
+              'optional' => FALSE,
+              'source' => array('path' => 0),
+              'type' => 'int',
+              'description' => 'The tid of the taxonomy term to get',
+            ),
           ),
+          'access arguments' => array('access content'),
+          'file' => array('type' => 'inc', 'module' => 'services', 'name' => 'resources/taxonomy_resource'),
         ),
-        'access arguments' => array('access content'),
-        'file' => array('type' => 'inc', 'module' => 'services', 'name' => 'resources/taxonomy_resource'),
-      ),
-      'create' => array(
-        'callback' => '_taxonomy_term_resource_create',
-        'args' => array(
-          array(
-            'name' => 'term',
-            'optional' => FALSE,
-            'source' => 'data',
-            'description' => 'The taxonomy term object to create',
-            'type' => 'array',
+        'create' => array(
+          'help' => 'Create a term',
+          'callback' => '_taxonomy_term_resource_create',
+          'args' => array(
+            array(
+              'name' => 'term',
+              'optional' => FALSE,
+              'source' => 'data',
+              'description' => 'The taxonomy term object to create',
+              'type' => 'array',
+            ),
           ),
+          'access callback' => '_taxonomy_resource_create_access',
+          'access arguments append' => TRUE,
+          'file' => array('type' => 'inc', 'module' => 'services', 'name' => 'resources/taxonomy_resource'),
         ),
-        'access callback' => '_taxonomy_resource_create_access',
-        'access arguments append' => TRUE,
-        'file' => array('type' => 'inc', 'module' => 'services', 'name' => 'resources/taxonomy_resource'),
-      ),
-      'update' => array(
-        'callback' => '_taxonomy_term_resource_update',
-        'args' => array(
-          array(
-            'name' => 'tid',
-            'optional' => FALSE,
-            'source' => array('path' => 0),
-            'description' => 'The unique identifier for this taxonomy term.',
-            'type' => 'int',
+        'update' => array(
+          'help' => 'Update a term',
+          'callback' => '_taxonomy_term_resource_update',
+          'args' => array(
+            array(
+              'name' => 'tid',
+              'optional' => FALSE,
+              'source' => array('path' => 0),
+              'description' => 'The unique identifier for this taxonomy term.',
+              'type' => 'int',
+            ),
+            array(
+              'name' => 'term',
+              'optional' => FALSE,
+              'source' => 'data',
+              'description' => 'The taxonomy term data to update',
+              'type' => 'array',
+            ),
           ),
-          array(
-            'name' => 'term',
-            'optional' => FALSE,
-            'source' => 'data',
-            'description' => 'The taxonomy term data to update',
-            'type' => 'array',
-          ),
+          'access callback' => '_taxonomy_resource_update_access',
+          'access arguments append' => TRUE,
+          'file' => array('type' => 'inc', 'module' => 'services', 'name' => 'resources/taxonomy_resource'),
         ),
-        'access callback' => '_taxonomy_resource_update_access',
-        'access arguments append' => TRUE,
-        'file' => array('type' => 'inc', 'module' => 'services', 'name' => 'resources/taxonomy_resource'),
-      ),
-      'delete' => array(
-        'callback' => '_taxonomy_term_resource_delete',
-        'args' => array(
-          array(
-            'name' => 'tid',
-            'optional' => FALSE,
-            'source' => array('path' => 0),
-            'type' => 'int',
+        'delete' => array(
+          'help' => 'Delete the term',
+          'callback' => '_taxonomy_term_resource_delete',
+          'args' => array(
+            array(
+              'name' => 'tid',
+              'optional' => FALSE,
+              'source' => array('path' => 0),
+              'type' => 'int',
+            ),
           ),
+          'access callback' => '_taxonomy_resource_delete_access',
+          'access arguments append' => TRUE,
+          'file' => array('type' => 'inc', 'module' => 'services', 'name' => 'resources/taxonomy_resource'),
         ),
-        'access callback' => '_taxonomy_resource_delete_access',
-        'access arguments append' => TRUE,
-        'file' => array('type' => 'inc', 'module' => 'services', 'name' => 'resources/taxonomy_resource'),
-      ),
-      'index' => array(
-        'file' => array('type' => 'inc', 'module' => 'services', 'name' => 'resources/taxonomy_resource'),
-        'callback' => '_taxonomy_term_resource_index',
-        'args' => array(
-          array(
-            'name' => 'page',
-            'optional' => TRUE,
-            'type' => 'int',
-            'description' => 'The zero-based index of the page to get, defaults to 0.',
-            'default value' => 0,
-            'source' => array('param' => 'page'),
+        'index' => array(
+          'help' => 'List all terms',
+          'file' => array('type' => 'inc', 'module' => 'services', 'name' => 'resources/taxonomy_resource'),
+          'callback' => '_taxonomy_term_resource_index',
+          'args' => array(
+            array(
+              'name' => 'page',
+              'optional' => TRUE,
+              'type' => 'int',
+              'description' => 'The zero-based index of the page to get, defaults to 0.',
+              'default value' => 0,
+              'source' => array('param' => 'page'),
+            ),
+            array(
+              'name' => 'fields',
+              'optional' => TRUE,
+              'type' => 'string',
+              'description' => 'The fields to get.',
+              'default value' => '*',
+              'source' => array('param' => 'fields'),
+            ),
+            array(
+              'name' => 'parameters',
+              'optional' => TRUE,
+              'type' => 'array',
+              'description' => 'Parameters',
+              'default value' => array(),
+              'source' => array('param' => 'parameters'),
+            ),
+            array(
+              'name' => 'pagesize',
+              'optional' => TRUE,
+              'type' => 'int',
+              'description' => 'Number of records to get per page.',
+              'default value' => variable_get('services_taxonomy_term_index_page_size', 20),
+              'source' => array('param' => 'pagesize'),
+            ),
           ),
-          array(
-            'name' => 'fields',
-            'optional' => TRUE,
-            'type' => 'string',
-            'description' => 'The fields to get.',
-            'default value' => '*',
-            'source' => array('param' => 'fields'),
-          ),
-          array(
-            'name' => 'parameters',
-            'optional' => TRUE,
-            'type' => 'array',
-            'description' => 'Parameters',
-            'default value' => array(),
-            'source' => array('param' => 'parameters'),
-          ),
-          array(
-            'name' => 'pagesize',
-            'optional' => TRUE,
-            'type' => 'init',
-            'description' => 'Number of records to get per page.',
-            'default value' => variable_get('services_taxonomy_term_index_page_size', 20),
-            'source' => array('param' => 'pagesize'),
-          ),
+          'access arguments' => array('access content'),
         ),
-        'access arguments' => array('access content'),
       ),
       'actions' => array(
         'selectNodes' => array(
           'file' => array('type' => 'inc', 'module' => 'services', 'name' => 'resources/taxonomy_resource'),
-          'help'   => t('This method returns all nodes with provided taxonomy id.'),
+          'help'   => t('Returns all nodes with provided taxonomy id.'),
           'access arguments' => array('access content'),
           'callback' => 'taxonomy_service_select_nodes',
           'args'     => array(
@@ -159,111 +166,118 @@ function _taxonomy_resource_definition() {
     ),
     'taxonomy_vocabulary' => array(
       'file' => array('type' => 'inc', 'module' => 'services', 'name' => 'resources/taxonomy_resource'),
-      'retrieve' => array(
-        'callback' => '_taxonomy_vocabulary_resource_retrieve',
-        'args' => array(
-          array(
-            'name' => 'vid',
-            'optional' => FALSE,
-            'source' => array('path' => 0),
-            'type' => 'int',
-            'description' => 'The vid of the taxonomy vocabulary to get',
+      'operations' => array(
+        'retrieve' => array(
+          'help' => 'Retrieve a taxonomy vocabulary',
+          'callback' => '_taxonomy_vocabulary_resource_retrieve',
+          'args' => array(
+            array(
+              'name' => 'vid',
+              'optional' => FALSE,
+              'source' => array('path' => 0),
+              'type' => 'int',
+              'description' => 'The vid of the taxonomy vocabulary to get',
+            ),
           ),
+          'access arguments' => array('access content'),
+          'file' => array('type' => 'inc', 'module' => 'services', 'name' => 'resources/taxonomy_resource'),
         ),
-        'access arguments' => array('access content'),
-        'file' => array('type' => 'inc', 'module' => 'services', 'name' => 'resources/taxonomy_resource'),
-      ),
-      'create' => array(
-        'callback' => '_taxonomy_vocabulary_resource_create',
-        'args' => array(
-          array(
-            'name' => 'vocabulary',
-            'optional' => FALSE,
-            'source' => 'data',
-            'description' => 'The taxonomy vocabulary object to create',
-            'type' => 'array',
+        'create' => array(
+          'help' => 'Create a taxonomy vocabulary',
+          'callback' => '_taxonomy_vocabulary_resource_create',
+          'args' => array(
+            array(
+              'name' => 'vocabulary',
+              'optional' => FALSE,
+              'source' => 'data',
+              'description' => 'The taxonomy vocabulary object to create',
+              'type' => 'array',
+            ),
           ),
+          'access arguments' => array('administer taxonomy'),
+          'file' => array('type' => 'inc', 'module' => 'services', 'name' => 'resources/taxonomy_resource'),
         ),
-        'access arguments' => array('administer taxonomy'),
-        'file' => array('type' => 'inc', 'module' => 'services', 'name' => 'resources/taxonomy_resource'),
-      ),
-      'update' => array(
-        'callback' => '_taxonomy_vocabulary_resource_update',
-        'args' => array(
-          array(
-            'name' => 'vid',
-            'optional' => FALSE,
-            'source' => array('path' => 0),
-            'description' => 'The unique identifier for this taxonomy vocabulary.',
-            'type' => 'int',
+        'update' => array(
+          'help' => 'Update a taxonomy vocabulary',
+          'callback' => '_taxonomy_vocabulary_resource_update',
+          'args' => array(
+            array(
+              'name' => 'vid',
+              'optional' => FALSE,
+              'source' => array('path' => 0),
+              'description' => 'The unique identifier for this taxonomy vocabulary.',
+              'type' => 'int',
+            ),
+            array(
+              'name' => 'vocabulary',
+              'optional' => FALSE,
+              'source' => 'data',
+              'description' => 'The taxonomy vocabulary data to update',
+              'type' => 'array',
+            ),
           ),
-          array(
-            'name' => 'vocabulary',
-            'optional' => FALSE,
-            'source' => 'data',
-            'description' => 'The taxonomy vocabulary data to update',
-            'type' => 'array',
-          ),
+          'access arguments' => array('administer taxonomy'),
+          'file' => array('type' => 'inc', 'module' => 'services', 'name' => 'resources/taxonomy_resource'),
         ),
-        'access arguments' => array('administer taxonomy'),
-        'file' => array('type' => 'inc', 'module' => 'services', 'name' => 'resources/taxonomy_resource'),
-      ),
-      'delete' => array(
-        'callback' => '_taxonomy_vocabulary_resource_delete',
-        'args' => array(
-          array(
-            'name' => 'vid',
-            'optional' => FALSE,
-            'source' => array('path' => 0),
-            'type' => 'int',
+        'delete' => array(
+          'help' => 'Delete a taxonomy vocabulary',
+          'callback' => '_taxonomy_vocabulary_resource_delete',
+          'args' => array(
+            array(
+              'name' => 'vid',
+              'optional' => FALSE,
+              'source' => array('path' => 0),
+              'type' => 'int',
+            ),
           ),
+          'access arguments' => array('administer taxonomy'),
+          'file' => array('type' => 'inc', 'module' => 'services', 'name' => 'resources/taxonomy_resource'),
         ),
-        'access arguments' => array('administer taxonomy'),
-        'file' => array('type' => 'inc', 'module' => 'services', 'name' => 'resources/taxonomy_resource'),
-      ),
-      'index' => array(
-        'file' => array('type' => 'inc', 'module' => 'services', 'name' => 'resources/taxonomy_resource'),
-        'callback' => '_taxonomy_vocabulary_resource_index',
-        'args' => array(
-          array(
-            'name' => 'page',
-            'optional' => TRUE,
-            'type' => 'int',
-            'description' => 'The zero-based index of the page to get, defaults to 0.',
-            'default value' => 0,
-            'source' => array('param' => 'page'),
+        'index' => array(
+          'help' => 'List all taxonomy vocabularies',
+          'file' => array('type' => 'inc', 'module' => 'services', 'name' => 'resources/taxonomy_resource'),
+          'callback' => '_taxonomy_vocabulary_resource_index',
+          'args' => array(
+            array(
+              'name' => 'page',
+              'optional' => TRUE,
+              'type' => 'int',
+              'description' => 'The zero-based index of the page to get, defaults to 0.',
+              'default value' => 0,
+              'source' => array('param' => 'page'),
+            ),
+            array(
+              'name' => 'fields',
+              'optional' => TRUE,
+              'type' => 'string',
+              'description' => 'The fields to get.',
+              'default value' => '*',
+              'source' => array('param' => 'fields'),
+            ),
+            array(
+              'name' => 'parameters',
+              'optional' => TRUE,
+              'type' => 'array',
+              'description' => 'Parameters',
+              'default value' => array(),
+              'source' => array('param' => 'parameters'),
+            ),
+            array(
+              'name' => 'pagesize',
+              'optional' => TRUE,
+              'type' => 'int',
+              'description' => 'Number of records to get per page.',
+              'default value' => variable_get('services_taxonomy_vocabulary_index_page_size', 20),
+              'source' => array('param' => 'pagesize'),
+            ),
           ),
-          array(
-            'name' => 'fields',
-            'optional' => TRUE,
-            'type' => 'string',
-            'description' => 'The fields to get.',
-            'default value' => '*',
-            'source' => array('param' => 'fields'),
-          ),
-          array(
-            'name' => 'parameters',
-            'optional' => TRUE,
-            'type' => 'array',
-            'description' => 'Parameters',
-            'default value' => array(),
-            'source' => array('param' => 'parameters'),
-          ),
-          array(
-            'name' => 'pagesize',
-            'optional' => TRUE,
-            'type' => 'init',
-            'description' => 'Number of records to get per page.',
-            'default value' => variable_get('services_taxonomy_vocabulary_index_page_size', 20),
-            'source' => array('param' => 'pagesize'),
-          ),
+          'access arguments' => array('access content'),
         ),
-        'access arguments' => array('access content'),
       ),
       'actions' => array(
         'getTree' => array(
           'file' => array('type' => 'inc', 'module' => 'services', 'name' => 'resources/taxonomy_resource'),
-          'help'   => t('This method returns a full list of taxonomy terms.'),
+          'help'   => t('Returns a full list of taxonomy terms.'),
           'access arguments' => array('access content'),
           'callback' => 'taxonomy_service_get_tree',
           'args'     => array(
@@ -288,6 +302,14 @@ function _taxonomy_resource_definition() {
               'description'  => t('The number of levels of the tree to return. Leave NULL to return all levels.'),
               'source'       => array('data' => 'maxdepth'),
               'default value' => NULL,
+              'optional'     => TRUE,
+            ),
+            array(
+              'name'         => 'load_entities',
+              'type'         => 'int',
+              'description'  => t('Whether the tree of terms should contain full term entity objects. If 1 (TRUE), a full entity load will occur on the term objects. Otherwise they are partial objects to save execution time and memory consumption. Defaults to 0 (FALSE).'),
+              'source'       => array('data' => 'load_entities'),
+              'default value' => 0,
               'optional'     => TRUE,
             ),
           ),
@@ -458,8 +480,8 @@ function _taxonomy_vocabulary_resource_delete($vid) {
  *
  * @see taxonomy_get_tree()
  */
-function taxonomy_service_get_tree($vid, $parent = 0, $max_depth = NULL) {
-  $terms = taxonomy_get_tree($vid, $parent, $max_depth);
+function taxonomy_service_get_tree($vid, $parent = 0, $max_depth = NULL, $load_entities = 0) {
+  $terms = taxonomy_get_tree($vid, $parent, $max_depth, $load_entities);
   if (empty($terms)) {
     return services_error(t('No vocabulary with id @vid found.', array('@vid' => $vid)), 404);
   }
@@ -502,7 +524,7 @@ function taxonomy_service_select_nodes($tid = '', $pager, $limit,  $order) {
 function _taxonomy_resource_update_access($tid, $term) {
   // Adds backwards compatability with regression fixed in #1083242
   $term = _services_arg_value($term, 'term');
-  
+
   $term = (object) $term;
   if (!isset($term->vid)) {
     return services_error(t('Term object needs vid property.'), 406);

@@ -47,20 +47,6 @@ function unallocated_install() {
   // Setting the media_gallery module creates a conflict with taxonomy. We'll enable it here instead of as a dependency.
   module_enable(array('media_gallery'));
 
-  // Set up login destination
-  $login_destination = array(
-    'triggers' => array(array('login' => 'login', 'logout' => 'logout')),
-    'roles' => array(array(3=>0)),
-    'pages_type' => 0,
-    'pages' => '',
-    'destination_type' => 0,
-    'destination' => "<front>",
-    'weight' => 0,
-  );
-  $login_destination['triggers'] = serialize($login_destination['triggers']);
-  $login_destination['roles'] = serialize($login_destination['roles']);
-
-  drupal_write_record('login_destination', $login_destination);
 }
 
 /**
@@ -98,36 +84,6 @@ function unallocated_update_7001() {
     'mandrill',
     'mailsystem',
     'memcache'
-  );
-
-  module_enable($modules);
-}
-
-/**
- * 7024 - Set up frontpage settings.
- */
-function unallocated_update_7024() {
-  // Set front-page settings.
-  db_merge('front_page')
-    ->key(array('rid' => 1)) // The role ID for anonymous user.
-    ->fields(array(
-      'mode' => '',
-      'data' => '',
-      'filter_format' => '',
-    ))
-    ->execute();
-
-  db_merge('front_page')
-    ->key(array('rid' => 2)) // The role ID for the authenticated user
-    ->fields(array(
-      'mode' => 'alias',
-      'data' => '',
-      'filter_format' => '',
-    ))
-    ->execute();
-
-  $modules = array(
-    'uas_front_page_settings',
   );
 
   module_enable($modules);

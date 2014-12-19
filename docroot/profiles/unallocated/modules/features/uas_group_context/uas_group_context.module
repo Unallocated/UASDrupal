@@ -1,7 +1,0 @@
-<?php
-/**
- * @file
- * Code for the UAS Group context feature.
- */
-
-include_once 'uas_group_context.features.inc';

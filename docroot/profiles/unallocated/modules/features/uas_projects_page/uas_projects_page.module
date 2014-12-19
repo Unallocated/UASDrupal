@@ -1,7 +1,0 @@
-<?php
-/**
- * @file
- * Code for the UAS Projects Page feature.
- */
-
-include_once 'uas_projects_page.features.inc';

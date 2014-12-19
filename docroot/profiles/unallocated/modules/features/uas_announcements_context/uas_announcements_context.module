@@ -1,7 +1,0 @@
-<?php
-/**
- * @file
- * Code for the UAS Announcements Context feature.
- */
-
-include_once 'uas_announcements_context.features.inc';

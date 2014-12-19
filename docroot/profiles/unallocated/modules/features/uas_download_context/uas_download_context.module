@@ -1,7 +1,0 @@
-<?php
-/**
- * @file
- * Code for the UAS Download Context feature.
- */
-
-include_once 'uas_download_context.features.inc';

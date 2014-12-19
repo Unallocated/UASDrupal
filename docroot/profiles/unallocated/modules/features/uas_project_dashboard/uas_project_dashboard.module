@@ -1,7 +1,0 @@
-<?php
-/**
- * @file
- * Code for the UAS Project Dashboard feature.
- */
-
-include_once 'uas_project_dashboard.features.inc';

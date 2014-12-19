@@ -1,7 +1,0 @@
-<?php
-/**
- * @file
- * Code for the UAS Main Context feature.
- */
-
-include_once 'uas_main_context.features.inc';

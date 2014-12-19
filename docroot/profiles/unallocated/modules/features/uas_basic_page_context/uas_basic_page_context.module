@@ -1,7 +1,0 @@
-<?php
-/**
- * @file
- * Code for the UAS Basic Page Context feature.
- */
-
-include_once 'uas_basic_page_context.features.inc';

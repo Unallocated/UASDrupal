@@ -1,8 +1,0 @@
-name = UAS Front Page settings
-core = 7.x
-package = Features
-dependencies[] = front_page
-dependencies[] = strongarm
-features[ctools][] = strongarm:strongarm:1
-features[features_api][] = api:1
-features[variable][] = front_page_enable

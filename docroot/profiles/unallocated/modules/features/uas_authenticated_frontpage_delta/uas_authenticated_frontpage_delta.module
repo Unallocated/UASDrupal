@@ -1,7 +1,0 @@
-<?php
-/**
- * @file
- * Code for the UAS Authenticated Frontpage Delta feature.
- */
-
-include_once 'uas_authenticated_frontpage_delta.features.inc';

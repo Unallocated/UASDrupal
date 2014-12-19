@@ -1,7 +1,0 @@
-<?php
-/**
- * @file
- * Code for the UAS Tutorials feature.
- */
-
-include_once 'uas_tutorials.features.inc';

@@ -1,7 +1,0 @@
-<?php
-/**
- * @file
- * Code for the UAS Video Context feature.
- */
-
-include_once 'uas_video_context.features.inc';

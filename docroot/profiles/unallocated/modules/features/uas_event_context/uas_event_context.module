@@ -1,7 +1,0 @@
-<?php
-/**
- * @file
- * Code for the UAS Event Context feature.
- */
-
-include_once 'uas_event_context.features.inc';

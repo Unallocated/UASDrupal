@@ -1,7 +1,0 @@
-<?php
-/**
- * @file
- * Code for the home-page-anonymous-context feature.
- */
-
-include_once 'home_page_anonymous_context.features.inc';

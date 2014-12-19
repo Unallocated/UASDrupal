@@ -1,9 +1,0 @@
-name = Content Filters
-core = 7.x
-package = UAS Defaults
-version = 7.x-1.0
-project = content_filters
-dependencies[] = features
-dependencies[] = filter
-features[features_api][] = api:1
-features[filter][] = filtered_html

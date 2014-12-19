@@ -1,7 +1,0 @@
-<?php
-/**
- * @file
- * Code for the Related Users Block feature.
- */
-
-include_once 'related_users_block.features.inc';

@@ -1,7 +1,0 @@
-<?php
-/**
- * @file
- * Code for the UAS Groups Dashboard feature.
- */
-
-include_once 'uas_groups_dashboard.features.inc';

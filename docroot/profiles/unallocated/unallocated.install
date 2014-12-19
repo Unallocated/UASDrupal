@@ -20,49 +20,23 @@ function unallocated_install() {
     'content_type_download',
     'content_type_event',
     'content_type_group',
+    'content_type_tutorial',
     'frontpage_slideshow',
-    'home_page_anonymous_context',
     'box_front_page_know_more',
     'box_hackerspace_intro',
-    'space_status_indicator',
     'uas_announcements_view',
     'uas_site_configuration',
     'uas_pathauto_settings',
     'uas_default_content',
-    'uas_contact_form',
-    'uas_main_nav',
-    'uas_events',
-    'uas_announcements_context',
-    'uas_article_context',
-    'uas_basic_page_context',
-    'uas_download_context',
-    'uas_event_context',
-    'uas_project_context',
-    'uas_video_context',
-    'uas_group_context',
-    'uas_groups_dashboard',
-    'uas_project_dashboard',
+    'uas_contact_form',  #TODO: Add conditional field dependencies
     'uas_my_projects_view',
     'uas_my_groups_view',
     'uas_latest_group_content',
-    'uas_front_page_settings',
-    'uas_authenticated_frontpage_delta',
-    'content_type_tutorial',
     'uas_user',
-    'home_page_authenticated',
-    'related_users_block',
-    'uas_resources_page',
-    'uas_articles',
-    'uas_videos',
-    'uas_tutorials',
-    'uas_downloads',
     'uas_search',
-    'uas_main_context',
-    'uas_projects_page',
     'profile_user_content',
     'profile_user_groups',
     'uas_user_login_block',
-    'content_filters',
     'uas_roles_and_permissions',
     'uas_members_directory',
     'uas_footer_context',
@@ -72,44 +46,6 @@ function unallocated_install() {
 
   // Setting the media_gallery module creates a conflict with taxonomy. We'll enable it here instead of as a dependency.
   module_enable(array('media_gallery'));
-
-  // Unset the main content block.
-  db_merge('block')
-    ->key(array('theme' => 'uas', 'delta' => 'main', 'module' => 'system'))
-    ->fields(array(
-      'region' => (''),
-      'pages' => trim(''),
-      'status' => (int) (0),
-    ))
-    ->execute();
-
-  $roles = user_roles();
-
-  foreach($roles as $rid => $roles) {
-
-    switch($rid) {
-      case 2:
-        db_merge('front_page')
-          ->key(array('rid' => $rid)) // The role ID for the authenticated user
-          ->fields(array(
-            'mode' => 'alias',
-            'data' => 'member-home',
-            'filter_format' => '',
-          ))
-          ->execute();
-        break;
-      default:
-        db_merge('front_page')
-          ->key(array('rid' => $rid)) // The role ID for anonymous user.
-          ->fields(array(
-            'mode' => '',
-            'data' => '',
-            'filter_format' => '',
-          ))
-          ->execute();
-        break;
-    }
-  }
 
   // Set up login destination
   $login_destination = array(
@@ -132,275 +68,36 @@ function unallocated_install() {
  */
 function unallocated_update_7001() {
   $modules = array(
-    'delta',
-    'delta_ui',
     'context',
-    'context_ui',
-  );
-
-  module_enable($modules);
-}
-
-/**
- * 7002 - Enable the frontpage anonymous context module
- */
-function unallocated_update_7002() {
-
-  module_enable(array('home_page_anonymous_context'));
-}
-
-/**
- * 7003 - Enable the frontpage slideshow and relevant modules.
- */
-function unallocated_update_7003() {
-  $modules = array(
     'fe_nodequeue',
     'strongarm',
-    'frontpage_slideshow',
     'flexslider',
     'flexslider_views',
-    'ais'
-  );
-
-  module_enable($modules);
-}
-
-/**
- * 7004 - Enable the anonymous frontpage blocks.
- */
-function unallocated_update_7004() {
-  $modules = array(
-    'box_front_page_know_more',
-    'box_hackerspace_intro',
-    'space_status_indicator'
-  );
-
-  module_enable($modules);
-}
-
-/**
- * 7005 - Update default UAS checkin url.
- */
-function unallocated_update_7005() {
-  variable_set('uas_checkin_status_url', 'http://unallocatedspace.org/status');
-}
-
-/**
- * 7006 - Add uas_announcements_view as requirements to unallocated install profile.
- */
-function unallocated_update_7006() {
-
-  // Enable the UAS Announcements Views
-  $modules = array(
-    'uas_announcements_view'
-  );
-
-  module_enable($modules);
-
-  // Set the front page to 'announcements'
-  variable_set('site_frontpage', 'announcements');
-}
-
-/**
- * 7007 - Set new front page.
- */
-function unallocated_update_7007() {
-
-  // Set the front page to 'announcements'
-  variable_set('site_frontpage', 'frontpage-slideshow');
-}
-
-/**
- * 7008 - Remove Main content block from default settings.
- */
-function unallocated_update_7008() {
-  db_merge('block')
-    ->key(array('theme' => 'uas', 'delta' => 'main', 'module' => 'system'))
-    ->fields(array(
-      'region' => (''),
-      'pages' => trim(''),
-      'status' => (int) (0),
-    ))
-    ->execute();
-}
-
-/**
- * 7009 - Enable the uas_site_configuration settings.
- */
-function unallocated_update_7009() {
-  $modules = array(
-    'uas_site_configuration',
-  );
-
-  module_enable($modules);
-}
-
-/**
- * 7010 - Enable date modules
- */
-function unallocated_update_7010() {
-  $modules = array(
+    'ais',
     'date',
     'date_popup',
     'date_repeat',
     'date_repeat_field',
     'date_views',
     'date_all_day',
-    'content_type_events',
-    ''
-  );
-
-  module_enable($modules);
-}
-
-/**
- * 7011 - Enable node export modules and features
- */
-function unallocated_update_7011() {
-  $modules = array(
     'node_export',
     'node_export_features',
-  );
-
-  module_enable($modules);
-}
-
-/**
- * 7012 - Enable pathauto settings
- */
-function unallocated_update_7012() {
-  $modules = array(
-    'uas_pathauto_settings',
-  );
-
-  module_enable($modules);
-}
-
-/**
- * 7013 - Enable default content module and contact form.
- */
-function unallocated_update_7013() {
-  $modules = array(
-    'uas_default_content',
-    'uas_contact_form',
-  );
-
-  module_enable($modules);
-}
-
-/**
- * 7014 - Enable main navigation feature.
- */
-function unallocated_update_7014() {
-  $modules = array(
-    'uas_main_nav'
-  );
-
-  module_enable($modules);
-}
-
-/**
- * 7015 - Enable events content type
- */
-function unallocated_update_7015() {
-  $modules = array(
-    'uas_events'
-  );
-
-  module_enable($modules);
-}
-
-/**
- * 7016 - Enable content type contexts and place blocks
- */
-function unallocated_update_7016() {
-  $modules = array(
-    'uas_announcements_context',
-    'uas_article_context',
-    'uas_basic_page_context',
-    'uas_download_context',
-    'uas_event_context',
-    'uas_project_context',
-    'uas_video_context',
-  );
-
-  module_enable($modules);
-}
-
-/**
- * 7017 - Enable group and group context settings
- */
-function unallocated_update_7017() {
-  $modules = array(
-    'content_type_group',
-    'uas_group_context',
-  );
-
-  module_enable($modules);
-}
-
-/**
- * 7018 - Enable the og_extras and entityreference_prepopulate modules
- */
-function unallocated_update_7018() {
-  $modules = array(
     'og_extras',
     'entityreference_prepopulate',
-  );
-
-  module_enable($modules);
-}
-
-/**
- * 7019 - Set default view state for og_extra_groups and provide alternate
- */
-function unallocated_update_7019() {
-  $modules = array(
-    'uas_groups_dashboard',
-  );
-
-  module_enable($modules);
-}
-
-/**
- * 7020 - Set default view state for og_extra_groups and provide alternate
- */
-function unallocated_update_7020() {
-  $modules = array(
-    'uas_project_dashboard',
-  );
-
-  module_enable($modules);
-}
-
-/**
- * 7021 - Added the 'My Projects' view
- */
-function unallocated_update_7021() {
-  $modules = array(
-    'uas_my_projects_view',
-  );
-
-  module_enable($modules);
-}
-
-/**
- * 7022 - Added the 'My groups' view
- */
-function unallocated_update_7022() {
-  $modules = array(
-    'uas_my_groups_view',
-  );
-
-  module_enable($modules);
-}
-
-/**
- * 7023 - Added the 'My groups' view
- */
-function unallocated_update_7023() {
-  $modules = array(
-    'uas_latest_group_content',
+    'media_gallery',
+    'plupload',
+    'facetapi',
+    'date_facet',
+    'search_api',
+    'search_api_solr',
+    'facetapi_collapsible',
+    'facetapi_pretty_paths',
+    'uas_search',
+    'search_api_views',
+    'search_api_facetapi',
+    'mandrill',
+    'mailsystem',
+    'memcache'
   );
 
   module_enable($modules);
@@ -431,169 +128,6 @@ function unallocated_update_7024() {
 
   $modules = array(
     'uas_front_page_settings',
-  );
-
-  module_enable($modules);
-}
-
-/**
- * 7025 - Enable the authenticated frontpage delta
- */
-function unallocated_update_7025() {
-  $modules = array(
-    'uas_authenticated_frontpage_delta',
-  );
-
-  module_enable($modules);
-}
-
-/**
- * 7026 - Enable the tutorial content type
- */
-function unallocated_update_7026() {
-  $modules = array(
-    'content_type_tutorial',
-    'uas_tutorial_context',
-  );
-
-  module_enable($modules);
-}
-
-/**
- * 7027 - Enable the tutorial content type
- */
-function unallocated_update_7027() {
-  $modules = array(
-    'uas_user',
-  );
-
-  module_enable($modules);
-}
-
-/**
- * 7028 - Enable contextual block and front page modules
- */
-function unallocated_update_7028() {
-  $modules = array(
-    'uas_user',
-    'home_page_authenticated',
-    'related_users_block',
-    'uas_resources_page',
-    'media_gallery',
-    'plupload',
-  );
-
-  module_enable($modules);
-}
-
-/**
- * 7029 - Added "Articles" page
- */
-function unallocated_update_7029() {
-  $modules = array(
-    'uas_articles',
-    'uas_videos',
-    'uas_tutorials',
-    'uas_downloads',
-  );
-
-  module_enable($modules);
-}
-
-/**
- * 7030 - Added the dependency modules for the search features
- */
-function unallocated_update_7030() {
-  $modules = array(
-    'facetapi',
-    'date_facet',
-    'search_api',
-    'search_api_solr',
-    'facetapi_collapsible',
-    'facetapi_pretty_paths',
-    'uas_search',
-    'search_api_views',
-    'search_api_facetapi',
-  );
-
-  module_enable($modules);
-
-}
-
-/**
- * 7031 - Added main context to set page defaults.
- */
-function unallocated_update_7031() {
-  $modules = array(
-    'uas_main_context'
-  );
-
-  module_enable($modules);
-}
-
-/**
- * 7032 - Added project page context
- */
-function unallocated_update_7032() {
-  $modules = array(
-    'uas_projects_page'
-  );
-
-  module_enable($modules);
-}
-
-/**
- * 7033 - Added project page context
- */
-function unallocated_update_7033() {
-  $modules = array(
-    'context_filters'
-  );
-
-  module_enable($modules);
-}
-
-/**
- * 7034 - Added project page context
- */
-function unallocated_update_7034() {
-  $modules = array(
-    'uas_roles_and_permissions'
-  );
-
-  module_enable($modules);
-}
-
-/**
- * 7035 - Added members directory and supporting functionality
- */
-function unallocated_update_7035() {
-  $modules = array(
-    'uas_members_directory'
-  );
-
-  module_enable($modules);
-}
-
-/**
- * 7036 - Added footer
- */
-function unallocated_update_7036() {
-  $modules = array(
-    'uas_footer_context'
-  );
-
-  module_enable($modules);
-}
-
-/**
- * 7037 - Added mailhandling utility.
- */
-function unallocated_update_7037() {
-  $modules = array(
-    'mandrill',
-    'mailsystem',
-    'memcache'
   );
 
   module_enable($modules);

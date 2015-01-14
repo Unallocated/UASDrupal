@@ -51,6 +51,7 @@ dependencies[] = facetapi
 dependencies[] = facetapi_bonus
 dependencies[] = facetapi_collapsible
 dependencies[] = facetapi_pretty_paths
+dependencies[] = ftools
 dependencies[] = login_destination
 dependencies[] = mailsystem
 dependencies[] = mandrill
@@ -65,6 +66,7 @@ dependencies[] = search_api
 dependencies[] = search_api_facetapi
 dependencies[] = search_api_solr
 dependencies[] = search_api_views
+dependencies[] = strongarm
 
 ; Custom modules
 dependencies[] = uas_maintenance

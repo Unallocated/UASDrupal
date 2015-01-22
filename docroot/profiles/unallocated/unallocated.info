@@ -56,6 +56,7 @@ dependencies[] = login_destination
 dependencies[] = mailsystem
 dependencies[] = mandrill
 dependencies[] = menu_block
+;dependencies[] = memcache
 dependencies[] = module_filter
 dependencies[] = node_export
 dependencies[] = node_export_features

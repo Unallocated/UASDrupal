@@ -25,7 +25,6 @@ function unallocated_install() {
     'box_front_page_know_more',
     'box_hackerspace_intro',
     'uas_announcements_view',
-    'uas_site_configuration',
     'uas_pathauto_settings',
     'uas_default_content',
     'uas_contact_form',  #TODO: Add conditional field dependencies
@@ -34,59 +33,18 @@ function unallocated_install() {
     'uas_latest_group_content',
     'uas_user',
     'uas_search',
+    'uas_site_configuration',
     'profile_user_content',
     'profile_user_groups',
     'uas_user_login_block',
-    'uas_roles_and_permissions',
+//    'uas_roles_and_permissions',
     'uas_members_directory',
     'uas_footer_context',
   );
 
-  module_enable($features);
+  module_enable($features, TRUE);
 
   // Setting the media_gallery module creates a conflict with taxonomy. We'll enable it here instead of as a dependency.
   module_enable(array('media_gallery'));
 
 }
-
-/**
- * 7001 - Enable delta, delta_ui, and context modules.
- */
-/**/
-function unallocated_update_7001() {
-  $modules = array(
-    'context',
-    'fe_nodequeue',
-    'strongarm',
-    'flexslider',
-    'flexslider_views',
-    'ais',
-    'date',
-    'date_popup',
-    'date_repeat',
-    'date_repeat_field',
-    'date_views',
-    'date_all_day',
-    'node_export',
-    'node_export_features',
-    'og_extras',
-    'entityreference_prepopulate',
-    'media_gallery',
-    'plupload',
-    'facetapi',
-    'date_facet',
-    'search_api',
-    'search_api_solr',
-    'facetapi_collapsible',
-    'facetapi_pretty_paths',
-    'uas_search',
-    'search_api_views',
-    'search_api_facetapi',
-    'mandrill',
-    'mailsystem',
-    'memcache'
-  );
-
-  module_enable($modules);
-}
-/**/

@@ -1,0 +1,77 @@
+@charset "utf-8";
+/* CSS Document */
+
+#core   		                 	
+{
+background-color: #ffffff;
+min-height: 400px;
+}
+
+.region-sidebar-first
+{
+margin: 10px;
+
+}
+
+#logoImg
+{
+    display:block;
+	margin: 20px;
+	float: left;
+	width: auto;
+	height: 12.5%;
+}
+
+img
+{
+	margin: 10px;
+}
+
+body
+{
+	width: 100%;	
+}
+
+#top_zone, #bottom_zone
+{
+	background: #333;
+	height: auto;
+	color: white;
+}
+
+#top_zone, #bottom_zone li
+{
+	  text-decoration: none;
+}
+
+.leaf, .expanded, .collapsed
+{
+	height: auto;
+	width: auto;
+	text-align: center;
+	font-size: 20px; 
+	float: left;
+	display: inline-block;
+}
+
+.leaf, .expanded, .collapsed:hover {
+
+}
+
+nav .leaf, nav .expanded, nav .collapsed:visited
+{
+	color: red;
+}
+
+nav .leaf, nav .expanded, nav .collapsed:hover {
+
+}
+
+#boxes-box-uas_address_box 
+{
+    background: url('../images/logo_inverted.png') no-repeat center top;
+	background-size: contain;
+    padding-top: 130px;
+	margin: 30px;
+    text-align: center;
+}

@@ -1,6 +1,7 @@
 @charset "UTF-8";
 /* CSS Document */
 
+@import "unallocated.css";
 @import "reset.css";
 @import "skeleton-1040.css";
 
@@ -65,26 +66,26 @@ html {
 	font-size: 62.5%;
 }
 body {
-	background: #222;
-	font-family: latoregular, sans-serif;
+
+	background: #333;
+	font-family: Arial, Helvetica, sans-serif;
+
 	font-size: 14px;
 	font-size: 1.4rem;
 	color: #000;
 }
 a:link, a:visited {
-	color: #eba713;
-	text-decoration: underline;
+	color: #1459FA;
 }
 a:hover {
 	color: #ff4500;
 }
 h1, h2, h3 {
-	font-family: 'Oswald', san-serif;
-	font-weight: bold;
+	font-family: 'GeosansLight', san-serif;
 	text-transform: uppercase;
 	font-size: 20px;
 	font-size: 2rem;
-	color: #ff4500;
+	color: #000;
 	letter-spacing: 2px;
 	letter-spacing: .2rem;
 }
@@ -112,7 +113,7 @@ img { /* removes borders from images */
 	border: none;
 }
 p { /* puts spacing between lines of text in a paragraph */
-	line-height: 1.5;
+	line-height: 1.8;
 }
 .center { /* centers text */
 	text-align: center;
@@ -142,10 +143,8 @@ img, object {
 		padding-top: 7px;
 		padding-bottom: 7px;
 		font-size: 15px;
-	}  
+	}
 }
-
-
 
 /* #Tablet (Portrait)
 ================================================== */

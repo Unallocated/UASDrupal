@@ -75,3 +75,41 @@ nav .leaf, nav .expanded, nav .collapsed:hover {
 	margin: 30px;
     text-align: center;
 }
+
+#first-break {
+    background: #888888;
+    color: #FFFFFF;
+}
+
+#second-break {
+    background: #cccccc;
+    min-height: 200px;
+}
+
+#third-break {
+    background: #cccccc;
+}
+
+#front-page-secondary {
+    background: #FFFFFF;
+}
+
+.know-more-list {
+    list-style: none;
+}
+
+.know-more-list li {
+    float: left;
+}
+
+.know-more-list a {
+    display: block;
+    font-size: 1.3em;
+    color: #FFFFFF;
+    padding: 10px 0 10px 70px;
+}
+
+.know-more-list .know-more-read-faq a 	{ 	background: transparent url('../images/icons/question-mark.png') 10px center no-repeat; }
+.know-more-list .know-more-contact a 	{ 	background: transparent url('../images/icons/envelope-icon.png') 10px center no-repeat;}
+.know-more-list .know-more-classes a 	{	background: transparent url('../images/icons/graduation-cap.png') 10px center no-repeat; }
+.know-more-list .know-more-beginners a 	{ 	background: transparent url('../images/icons/person-icon.png') 10px center no-repeat;}

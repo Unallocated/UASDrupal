@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the box_front_page_donate feature.
+ */
+
+include_once 'box_front_page_donate.features.inc';

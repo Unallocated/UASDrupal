@@ -22,6 +22,7 @@ function unallocated_install() {
     'content_type_group',
     'content_type_tutorial',
     'frontpage_slideshow',
+    'box_front_page_donate',
     'box_front_page_know_more',
     'box_hackerspace_intro',
     'uas_announcements_view',
@@ -46,5 +47,17 @@ function unallocated_install() {
 
   // Setting the media_gallery module creates a conflict with taxonomy. We'll enable it here instead of as a dependency.
   module_enable(array('media_gallery'));
+}
 
+/**
+ * 7001 - Added donations box feature and front page.
+ */
+function unallocated_update_7001() {
+  $modules = array(
+    'box_front_page_donate',
+    'frontpage_blocks_anonymous',
+    'uas_menus'
+  );
+
+  module_enable($modules);
 }

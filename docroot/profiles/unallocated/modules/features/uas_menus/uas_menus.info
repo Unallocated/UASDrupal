@@ -1,0 +1,11 @@
+name = UAS Menus
+core = 7.x
+package = UAS Main
+version = 7.x-1.0
+project = uas_menus
+dependencies[] = context
+dependencies[] = ctools
+dependencies[] = menu_block
+features[context][] = uas_main
+features[ctools][] = context:context:3
+features[features_api][] = api:2

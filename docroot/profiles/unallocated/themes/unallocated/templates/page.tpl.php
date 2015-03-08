@@ -9,19 +9,19 @@ $ColumnBWidth = '"eleven columns omega"';
 $ColumnBottomWidth ='"four columns"';
 
 ?>
+
 <div id= 'top_zone'>
   <div class= 'container'>
     <?php if ($logo): ?>
-          <a href="<?php print $front_page; ?>" title="<?php  print t('Home'); ?>" rel="home" id="logo">
-            <img id="logoImg", src="<?php print $logo; ?>" alt="<?php print t('Home'); ?>" />
-          </a>
+      <a href="<?php print $front_page; ?>" title="<?php  print t('Home'); ?>" rel="home" id="logo">
+        <img id="logoImg" src="<?php print $logo; ?>" alt="<?php print t('Home'); ?>" />
+      </a>
     <?php endif; ?>
 
   </div>
-</div>
-
-<div class= 'nav container'>
-  <?php print render($page['menu']); ?>
+  <div class= 'nav container'>
+    <?php print render($page['main_nav']); ?>
+  </div>
 </div>
 
 <div id='core' class="<?php print $fullWidth; ?>">
@@ -41,7 +41,7 @@ $ColumnBottomWidth ='"four columns"';
   </div>
 </div>
 
-<div id= 'bottom_zone'>;
+<div id= 'bottom_zone'>
 	<div class= 'container'>
 
 		<div class="<?php print $ColumnBottomWidth; ?>">
@@ -51,7 +51,7 @@ $ColumnBottomWidth ='"four columns"';
 
 
 		<div class="<?php print $ColumnBottomWidth; ?>">
-			print render($page['postscript_first']);
+			<?php print render($page['postscript_first']); ?>
 		</div>
 
 

@@ -1,0 +1,16 @@
+name = Frontpage Blocks Anonymous
+core = 7.x
+package = UAS Pages
+version = 7.x-1.0
+project = frontpage_blocks_anonymous
+dependencies[] = box_front_page_know_more
+dependencies[] = box_hackerspace_intro
+dependencies[] = boxes
+dependencies[] = context
+dependencies[] = ctools
+dependencies[] = views
+features[box][] = front_page_donate
+features[context][] = frontpage-main
+features[ctools][] = boxes:box:1
+features[ctools][] = context:context:3
+features[features_api][] = api:2

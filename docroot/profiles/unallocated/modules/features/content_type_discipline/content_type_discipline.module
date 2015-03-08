@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the content_type_discipline feature.
+ */
+
+include_once 'content_type_discipline.features.inc';

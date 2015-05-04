@@ -1,0 +1,9 @@
+name = Discipline Display
+core = 7.x
+package = Uas Blocks
+version = 7.x-1.0
+project = discipline_display
+features[ctools][] = views:views_default:3.0
+features[features_api][] = api:2
+features[views_view][] = disciplines
+features_exclude[dependencies][views] = views

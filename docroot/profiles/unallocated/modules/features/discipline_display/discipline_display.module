@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Discipline Display feature.
+ */
+
+include_once 'discipline_display.features.inc';

@@ -1,8 +1,12 @@
 .uas-checkin-status-wrapper {
-	background-color: #222222;
 	background-image: -webkit-gradient(linear, left top, left bottom, from(#222222), to(#505050));
+	
+/*	Following lines were removed, as the coloring of the page had changed
+
 	border: 5px solid #505050;
+	background-color: #222222;
 	margin-bottom: 10px;
+*/
 }
 
 .uas-checkin-status-inner {

@@ -3,7 +3,6 @@
 /**
  * Implementation of hook_views_default_views_alter().
  */
-/*
 function uas_maintenance_views_default_views_alter(&$views) {
 
   // Alter only the 'og_extras_groups' view.
@@ -11,11 +10,10 @@ function uas_maintenance_views_default_views_alter(&$views) {
     $views['og_extras_groups']->disabled = TRUE;
   }
 }
-/**/
+
 /**
  * Implements hook_menu_block_blocks().
  */
-/*
 function uas_menu_block_blocks() {
   // The array key is the block delta used by menu block.
   return array(
@@ -32,4 +30,3 @@ function uas_menu_block_blocks() {
     ),
   );
 }
-/**/

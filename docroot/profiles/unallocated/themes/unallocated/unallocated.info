@@ -8,29 +8,9 @@ stylesheets[all][] = css/layout.css
 scripts[] = scripts/foutbgone.js
 scripts[] = scripts/menu.js
 
-;regions[user_bar_first] = User bar first
-;regions[user_bar_second] = User bar second
-;regions[branding] = Branding
-;regions[menu] = Menu
-;regions[sidebar_first] = Sidebar first
-;regions[sidebar_second] = Sidebar second
-;regions[header_first] = Header first
-;regions[header_second] = Header second
-;regions[preface_first] = Preface first
-;regions[preface_second] = Preface second
-;regions[preface_third] = Preface third
-;regions[postscript_first] = Postscript first
-;regions[postscript_second] = Postscript second
-;regions[postscript_third] = Postscript third
-;regions[postscript_fourth] = Postscript fourth
-;regions[post_postscript] = Post postscript
-;regions[header_first] = Header first
-;regions[header_second] = Header second
-;regions[content] = Content
-
 regions[user_bar_first] = User Bar first
 regions[branding] = Branding
-regions[main_nav] = Main Nav
+regions[menu] = Menu
 regions[sidebar_first] = Sidebar first
 regions[content] = Content
 regions[bottom_logo] = Bottom Logo
@@ -38,14 +18,5 @@ regions[postscript_first] = Postscript
 regions[post_postscript] = Post Postscript
 regions[post_post_postscript] = Post Post Postscript
 
-regions[front_slideshow] = Front Slideshow
-regions[front_slideshow_sidebar] = Front Slideshow Sidebar
-regions[first_break] = First Break
-regions[second_break] = Second Break
-regions[third_break] = Third Break
-regions[front_second_left] = Front Secondary Left
-regions[front_second_right] = Front Secondary Right
-
 features[] = favicon
 features[] = logo
-

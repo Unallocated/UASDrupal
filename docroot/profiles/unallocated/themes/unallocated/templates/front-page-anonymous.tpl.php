@@ -22,41 +22,45 @@ $ColumnBottomWidth ='"four columns"';
       </a>
     <?php endif; ?>
 
+    <div id ='branding' class= 'container'>
+      <?php print render($page['branding']); ?>
+    </div>
+
   </div>
-  <div class= 'nav container'>
+  <div id ='main-nav' class= 'nav container'>
     <?php print render($page['main_nav']); ?>
   </div>
 </div>
 
 <div id='core' class="<?php print $fullWidth; ?>">
-  <div class="container">
+  <div class="container whiteShade">
 
     <div id="front-page-main" class="twelve columns alpha"><?php print render($page['front_slideshow']); ?></div>
-    <div class="four columns omega" style="border: 1px solid green"><?php print render($page['front_slideshow_sidebar']); ?></div>
+    <div id ="front_slideshow" class="four columns omega"><?php print render($page['front_slideshow_sidebar']); ?></div>
 
   </div>
 </div>
 
-<div id="first-break" class="sixteen columns">
+<div id="first-break" class="sixteen columns break">
   <div class="container">
     <div id="first-break-main" class="sixteen columns"><?php print render($page['first_break']); ?></div>
   </div>
 </div>
 
-<div id="second-break" class="sixteen columns">
+<div id="second-break" class="sixteen columns break">
   <div class="container">
     <div id="second-break-main" class="sixteen columns"><?php print render($page['second_break']); ?></div>
   </div>
 </div>
 
-<div id="front-page-secondary" class="sixteen columns">
+<div id="front-page-secondary" class="sixteen columns whiteShade">
   <div class="container">
     <div id="front-page-secondary-left" class="eight columns alpha"><?php print render($page['front_second_left']); ?></div>
     <div id="front-page-secondary-right" class="eight columns omega"><?php print render($page['front_second_right']); ?></div>
   </div>
 </div>
 
-<div id="third-break" class="sixteen columns">
+<div id="third-break" class="sixteen columns break">
   <div class="container">
     <div id="third-break-main" class="sixteen columns"><?php print render($page['third_break']); ?></div>
   </div>
@@ -71,17 +75,17 @@ $ColumnBottomWidth ='"four columns"';
     </div>
 
 
-    <div class="<?php print $ColumnBottomWidth; ?>">
+    <div id ='post-script' class="<?php print $ColumnBottomWidth; ?>">
       <?php print render($page['postscript_first']); ?>
     </div>
 
 
-    <div class="<?php print $ColumnBottomWidth; ?>">
+    <div id ="post-post-script" class="<?php print $ColumnBottomWidth; ?>">
       <?php print render($page['post_postscript']); ?>
     </div>
 
 
-    <div class="<?php print $ColumnBottomWidth; ?>">
+    <div id ="post-post-post-script" class="<?php print $ColumnBottomWidth; ?>">
       <?php print render($page['post_post_postscript']); ?>
     </div>
 

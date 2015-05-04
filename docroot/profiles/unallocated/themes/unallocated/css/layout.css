@@ -6,17 +6,18 @@
 @import "skeleton-1040.css";
 
 /* font declarations - use Oswald for headings, Lato for everything else */
-@font-face {
-    font-family: 'GeosansLight';
-        src: url('MSGothic/MSGOTHIC.ttf') format('truetype');
+@font-face 
+{
+    font-family: 'GermanLight';
+        src: url('GermanAuto/din1451alt.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
-	width: 50%;
 }
 
-@font-face {
-    font-family: 'GeosansOblique';
-        src: url('MSGothic/MSGOTHIC.ttf'), format('truetype');
+@font-face 
+{
+    font-family: 'GermanOblique';
+        src: url('GermanAuto/din1451altG.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 }
@@ -25,31 +26,57 @@ html {
 	font-size: 62.5%;
 }
 body {
+
 	background: #333;
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: Arial, sans-serif;
+
 	font-size: 14px;
 	font-size: 1.4rem;
 	color: #000;
 }
 a:link, a:visited {
-	color: #1459FA;
+	color: #c48500;
+	text-decoration:none;
 }
-a:hover {
-	color: #ff4500;
+a:hover, li a.active {
+	color: #ffaf08;
 }
+
+.break a:link, .break a:visited, .break h1, .break h2, .break h3{
+	color: #c48500;
+	text-decoration:none;
+}
+.break a:hover, .break a.active 
+{
+	color: #ffaf08;
+}
+
 h1, h2, h3 {
-	font-family: 'GeosansLight', san-serif;
+	font-family: 'GermanLight', san-serif;
 	text-transform: uppercase;
-	font-size: 20px;
-	font-size: 2rem;
-	color: #000;
+	font-size: 22px;
+	font-size: 2.2rem;
 	letter-spacing: 2px;
 	letter-spacing: .2rem;
+		color: #c48500;
 }
+
+.whiteShade h1, .whiteShade h2, .whiteShade h3 {
+		color: #ce0c09;
+}
+
+/**
+
+.whiteShade a  
+{
+color: #19871b
+}
+
+*/
+
 h2 {
-	font-size: 18px;
-	font-size: 1.8rem;
-	margin: 25px 0 15px;
+	font-size: 19px;
+	font-size: 1.9rem;
 }
 h3 {
 	font-size: 16px;
@@ -100,11 +127,8 @@ img, object {
 		padding-top: 7px;
 		padding-bottom: 7px;
 		font-size: 15px;
-	}  
-	
+	}
 }
-
-
 
 /* #Tablet (Portrait)
 ================================================== */

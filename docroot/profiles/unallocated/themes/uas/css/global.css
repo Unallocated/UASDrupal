@@ -223,10 +223,10 @@ a:hover {
 	padding: 10px 0 10px 70px;
 }
 
-.know-more-list .know-more-read-faq a 	{ 	background: transparent url('../images/icons/question-mark.png') 10px center no-repeat; }
-.know-more-list .know-more-contact a 	{ 	background: transparent url('../images/icons/envelope-icon.png') 10px center no-repeat;}
-.know-more-list .know-more-classes a 	{	background: transparent url('../images/icons/graduation-cap.png') 10px center no-repeat; }
-.know-more-list .know-more-beginners a 	{ 	background: transparent url('../images/icons/person-icon.png') 10px center no-repeat;}
+.know-more-list .know-more-read-faq a 	{ 	background: transparent url('../../unallocated/images/icons/question-mark.png') 10px center no-repeat; }
+.know-more-list .know-more-contact a 	{ 	background: transparent url('../../unallocated/images/icons/envelope-icon.png') 10px center no-repeat;}
+.know-more-list .know-more-classes a 	{	background: transparent url('../../unallocated/images/icons/graduation-cap.png') 10px center no-repeat; }
+.know-more-list .know-more-beginners a 	{ 	background: transparent url('../../unallocated/images/icons/person-icon.png') 10px center no-repeat;}
 
 
 /*** --- FRONTPAGE SLIDESHOW --- ***/

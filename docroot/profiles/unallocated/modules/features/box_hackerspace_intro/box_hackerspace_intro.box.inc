@@ -19,12 +19,11 @@ function box_hackerspace_intro_default_box() {
   $box->description = 'Hackerspace Intro';
   $box->options = array(
     'body' => array(
-      'value' => 'Unallocated Space is a Hackerspace. Don\'t worry though, this isn\'t as scary as it sounds! We are a group of engineers, programmers, administrators, and hobbyists that come together to explore and share technology. Not good at anything technical? Not a problem - just come prepared to learn!
+      'value' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. In egestas tellus sed nisl pharetra suscipit vulputate arcu condimentum. Suspendisse venenatis volutpat nisl, sit amet fringilla magna cursus eu. Morbi ut elit odio, vitae consectetur enim. Aliquam erat volutpat. 
 
-<a href="#">Learn More About Hackerspaces &raquo;</a>',
+»',
       'format' => 'full_html',
     ),
-    'additional_classes' => '',
   );
   $export['hackerspace_intro'] = $box;
 

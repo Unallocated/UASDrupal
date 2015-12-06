@@ -19,6 +19,11 @@ function unallocated_install() {
   variable_set('theme_default', 'unallocated');
 
   // Enable feature dependencies. They cannot be enabled as a dependency in the .info file.
+
+  $features = array(
+    //'uas_user'
+  );
+  /*
   $features = array(
     'content_type_project',
     'content_type_announcement',
@@ -50,6 +55,7 @@ function unallocated_install() {
     'uas_footer_context',
   );
 
+  /**/
   module_enable($features, TRUE);
 
   // Setting the media_gallery module creates a conflict with taxonomy. We'll enable it here instead of as a dependency.

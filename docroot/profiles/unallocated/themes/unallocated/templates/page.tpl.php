@@ -33,7 +33,7 @@ $ColumnBottomWidth ='"four columns"';
     </div>
 
     <div class="<?php print $ColumnBWidth; ?>">
-      <?php print render($page['content']); ?>
+	<?php print render($page['content']); ?>
     </div>
    <?php else: ?>
       <?php print render($page['content']); ?>

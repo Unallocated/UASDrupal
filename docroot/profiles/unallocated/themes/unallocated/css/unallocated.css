@@ -20,6 +20,12 @@ min-height: 400px;
 	  color: d28e02;
 }
 
+#user-bar
+{
+float: right;
+margin-top:	   .5em;
+margin-bottom: .5em;	
+}
 
 
 #main-nav

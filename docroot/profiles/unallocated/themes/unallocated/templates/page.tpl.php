@@ -17,9 +17,15 @@ $ColumnBottomWidth ='"four columns"';
         <img id="logoImg" src="<?php print $logo; ?>" alt="<?php print t('Home'); ?>" />
       </a>
     <?php endif; ?>
-
+  <div id ='user-bar' class= 'container'>
+      <?php print render($page['user_bar_first']); ?>
   </div>
-  <div class= 'nav container'>
+  <div id ='branding' class= 'container'>
+    <?php print render($page['branding']); ?>
+  </div>
+  
+  </div>
+  <div id ='main-nav' class= 'nav container'>
     <?php print render($page['main_nav']); ?>
   </div>
 </div>
@@ -33,7 +39,7 @@ $ColumnBottomWidth ='"four columns"';
     </div>
 
     <div class="<?php print $ColumnBWidth; ?>">
-      <?php print render($page['content']); ?>
+	<?php print render($page['content']); ?>
     </div>
    <?php else: ?>
       <?php print render($page['content']); ?>

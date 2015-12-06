@@ -21,7 +21,9 @@ $ColumnBottomWidth ='"four columns"';
         <img id="logoImg" src="<?php print $logo; ?>" alt="<?php print t('Home'); ?>" />
       </a>
     <?php endif; ?>
-
+    <div id ='user-bar' class= 'container'>
+      <?php print render($page['user_bar_first']); ?>
+    </div>
     <div id ='branding' class= 'container'>
       <?php print render($page['branding']); ?>
     </div>

@@ -35,7 +35,12 @@ $ColumnBottomWidth ='"four columns"';
 </div>
 
 <div id='core' class="<?php print $fullWidth; ?>">
-  <div class="container whiteShade">
+  <?php if ($messages): ?>
+    <div id="messages"><div class="section clearfix">
+      <?php print $messages; ?>
+    </div></div> <!-- /.section, /#messages -->
+  <?php endif; ?> 
+ <div class="container whiteShade">
 
     <div id="front-page-main" class="twelve columns alpha"><?php print render($page['front_slideshow']); ?></div>
     <div id ="front_slideshow" class="four columns omega"><?php print render($page['front_slideshow_sidebar']); ?></div>

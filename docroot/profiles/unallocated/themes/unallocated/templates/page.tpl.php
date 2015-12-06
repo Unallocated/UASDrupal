@@ -31,6 +31,11 @@ $ColumnBottomWidth ='"four columns"';
 </div>
 
 <div id='core' class="<?php print $fullWidth; ?>">
+  <?php if ($messages): ?>
+    <div id="messages"><div class="section clearfix">
+      <?php print $messages; ?>
+    </div></div> <!-- /.section, /#messages -->
+  <?php endif; ?>
   <div class= container>
 
   <?php if($page['sidebar_first']): ?>

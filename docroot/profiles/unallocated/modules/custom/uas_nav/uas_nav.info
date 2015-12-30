@@ -1,0 +1,4 @@
+name = UAS Navigation
+description = Custom navigation elements for UAS.
+core = 7.x
+package = UAS

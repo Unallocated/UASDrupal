@@ -1,0 +1,132 @@
+<?php
+
+/**
+ * Implements hook_block_info().
+ */
+function uas_nav_block_info() {
+  $blocks = array();
+
+  $blocks['uas_primary_nav'] = array(
+    'info' => t('UAS Primary Nav'),
+  );
+
+  return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function uas_nav_block_view($delta) {
+
+  switch ($delta) {
+    case 'uas_primary_nav':
+
+      $block['subject'] = t('UAS Primary Nav');
+      $block['content'] = uas_primary_nav_menu();
+
+      break;
+    default:
+      $block = array();
+  }
+
+  //die('<pre>'.print_r(menu_navigation_links('main-menu'), TRUE).'</pre>');
+  return $block;
+}
+
+function uas_primary_nav_menu() {
+
+  $links = array();
+
+  $nav_items = uas_primary_nav_definitions();
+
+  foreach ($nav_items as $item) {
+
+    $is_active = 0;
+
+    $link_real_path = drupal_get_normal_path($item['href']);
+
+    if($link_real_path == current_path() || ($item['href'] == '<front>' && drupal_is_front_page())) {
+      $is_active = 1;
+    }
+
+    $links[] = array(
+      'link' => array(
+        'mlid' => uniqid("uas_nav_", true),
+        'title' => $item['title'],
+        'href' => $item['href'],
+        'hidden' => 0,
+        'access' => 1,
+        'menu_name' => 'uas_primary_nav',
+        'has_children' => 0,
+        'in_active_trail' => $is_active,
+        'localized_options' => array()
+      ),
+      'below' => array()
+    );
+  }
+
+  $menu_output = menu_tree_output($links, TRUE);
+
+  return $menu_output;
+  /**
+   * $menu = array(
+   *  'menu id' => array(
+   *    'link' => array(
+   *      'link_title' => string,
+   *      'link_path' => string
+   *      'access' => bool,
+   *      'hidden' => bool,
+   *      'has_children' => bool,
+   *      'in_active_trail' => bool,
+   *      'localized_options' => array(
+   *        'attributes' => array(
+   *          'class' = array(string, ..., n)
+   *        )
+   *      )
+   *
+   */
+
+
+  //$links = uas_primary_nav_definitions();
+
+  return $menu;
+}
+
+/**
+ * Primary navigation definitions.
+ */
+function uas_primary_nav_definitions() {
+
+  return array(
+    array(
+      'title' => t('Home'),
+      'href' => '<front>',
+    ),
+    array(
+      'title' => t('Groups'),
+      'href' => 'groups',
+    ),
+    array(
+      'title' => t('Events'),
+      'href' => 'events',
+    ),
+    array(
+      'title' => t('Resources'),
+      'href' => 'resources',
+    ),
+    array(
+      'title' => t('Donations'),
+      'href' => 'donations'
+    ),
+    array(
+      'title' => t('Contact'),
+      'href' => 'contact'
+    )
+  );
+
+
+}
+
+function _uas_process_nav_item() {
+
+}

@@ -20,15 +20,18 @@ $ColumnBottomWidth ='"four columns"';
   <div id ='user-bar' class= 'container'>
       <?php print render($page['user_bar_first']); ?>
   </div>
-  <div id ='branding' class= 'container'>
-    <?php print render($page['branding']); ?>
-  </div>
   
   </div>
   <div id ='main-nav' class= 'nav container'>
     <?php print render($page['main_nav']); ?>
   </div>
 </div>
+
+<?php if($messages): ?>
+  <div id="messages" class="container">
+    <div class="row"><?php print $messages; ?></div>
+  </div>
+<?php endif; ?>
 
 <div id='core' class="<?php print $fullWidth; ?>">
   <div class= container>

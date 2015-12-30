@@ -31,6 +31,7 @@ scripts[] = scripts/menu.js
 regions[user_bar_first] = User Bar first
 regions[branding] = Branding
 regions[main_nav] = Main Nav
+regions[search] = Search
 regions[sidebar_first] = Sidebar first
 regions[content] = Content
 regions[bottom_logo] = Bottom Logo

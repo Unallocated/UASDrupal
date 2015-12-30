@@ -9,7 +9,7 @@
 @font-face 
 {
     font-family: 'GermanLight';
-        src: url('GermanAuto/din1451alt.ttf') format('truetype');
+	src: url('fonts/GermanAuto/din1451alt.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 }
@@ -17,7 +17,7 @@
 @font-face 
 {
     font-family: 'GermanOblique';
-        src: url('GermanAuto/din1451altG.ttf') format('truetype');
+        src: url('fonts/GermanAuto/din1451altG.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 }
@@ -38,7 +38,8 @@ a:link, a:visited {
 	color: #c48500;
 	text-decoration:none;
 }
-a:hover, li a.active {
+
+a:hover, li a.active-trail {
 	color: #ffaf08;
 }
 
@@ -46,7 +47,7 @@ a:hover, li a.active {
 	color: #c48500;
 	text-decoration:none;
 }
-.break a:hover, .break a.active 
+.break a:hover, .break a.active
 {
 	color: #ffaf08;
 }

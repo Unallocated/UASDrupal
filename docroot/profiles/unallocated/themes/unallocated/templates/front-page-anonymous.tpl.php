@@ -1,45 +1,8 @@
-<?php
-//Container Declaration, for easy adjustment. Change details here, not in main file.
 
-$third = '"one-third columns"';
-$fullWidth = '"sixteen columns"';
-$fullWidthNav = '"nav sixteen columns"';
-$ColumnAWidth = '"five columns alpha"';
-$ColumnBWidth = '"eleven columns omega"';
-$ColumnBottomWidth ='"four columns"';
-
-
-//die('<pre>'.print_r(array_keys($page), TRUE).'</pre>');
-
-
-?>
-
-<div id= 'top_zone'>
-  <div class= 'container'>
-    <?php if ($logo): ?>
-      <a href="<?php print $front_page; ?>" title="<?php  print t('Home'); ?>" rel="home" id="logo">
-        <img id="logoImg" src="<?php print $logo; ?>" alt="<?php print t('Home'); ?>" />
-      </a>
-    <?php endif; ?>
-    <div id ='user-bar' class= 'container'>
-      <?php print render($page['user_bar_first']); ?>
-    </div>
-    <div id ='branding' class= 'container'>
-      <?php print render($page['branding']); ?>
-    </div>
-
-  </div>
-  <div id ='main-nav' class= 'nav container'>
-    <?php print render($page['main_nav']); ?>
-  </div>
-</div>
-
-<div id='core' class="<?php print $fullWidth; ?>">
-  <div class="container whiteShade">
-
+<div id='core' class="container whiteShade">
+  <div class="row">
     <div id="front-page-main" class="twelve columns alpha"><?php print render($page['front_slideshow']); ?></div>
     <div id ="front_slideshow" class="four columns omega"><?php print render($page['front_slideshow_sidebar']); ?></div>
-
   </div>
 </div>
 
